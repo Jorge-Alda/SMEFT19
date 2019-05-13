@@ -9,14 +9,14 @@ from numpy.linalg import svd
 from numpy import sqrt
 import yaml
 from flavio.statistics.functions import pull, delta_chi2
+from iminuit import Minuit
 
 def roundsig(x, num=4):
 	l = int(np.log10(abs(x)))
 	return round(x, -l+num)
 
 def minimum(fit, x0):
-	from scipy.optimize import minimize
-	
+		
 	'''
 bf, Lmin = minimum(fit, x0)
 
@@ -33,9 +33,10 @@ Return:
 	global Lmin
 	global dim
 	print('Minimizing...')
-	res = minimize(fit, x0, method='nelder-mead')
-	bf = np.array(res.x)
-	Lmin = res.fun
+	m = Minuit.from_array_func(fit, x=x0, errordef=0.5, print_level=0)
+	m.migrad()
+	bf = m.values[0]
+	Lmin = m.get_fmin()
 	dim = len(x0)
 	L0 = fit(np.zeros(dim))
 	p = pull(abs(Lmin-L0), dim)
