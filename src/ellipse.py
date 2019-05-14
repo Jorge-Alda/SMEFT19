@@ -18,62 +18,36 @@ def roundsig(x, num=4):
 def minimum(fit, x0):
 		
 	'''
-bf, Lmin = minimum(fit, x0)
+bf, v, d, Lmin = minimum(fit, x0)
 
 Arguments
-	- fit: function that takes one point in parameter space and returns its log-likelihhod
-		example: -2*SMEFTglob.likelihood(x, 'global')
+	- fit: function that takes one point in parameter space and returns its negative log-likelihhod
+		example: -SMEFTglob.likelihood_global(x, scenarios.scVI)
 	- x0: list or np.array containing an initial guess
 
 Return:
 	- bf: np.array with the point in parameter space with the best fit
+	- v: Unitary matrix containing the axes of the ellipse
+	- d: diagonal matrix containing the inverse of the squares of the semiaxes
 	- Lmin: value of fit(bf)
 	'''
 	global bf
 	global Lmin
 	global dim
 	print('Minimizing...')
-	m = Minuit.from_array_func(fit, x=x0, errordef=0.5, print_level=0)
-	bf = m.values[0]
-	Lmin = m.get_fmin()
+	m = Minuit.from_array_func(fit, x0, error=0.01, errordef=0.5, print_level=0)
+	m.migrad()
+	m.hesse()
+	bf = m.np_values()
+	Lmin = m.fval
 	dim = len(x0)
 	L0 = fit(np.zeros(dim))
 	p = pull(abs(Lmin-L0), dim)
 	print('Pull: ' + str(p) + ' sigma')
-	return bf, Lmin
+	v, d, vt = svd(m.np_matrix())
+	d_ellipse = np.diag(1/d)
+	return bf, v, d_ellipse, Lmin
 	
-def ellipseform(bf, fit, step=1e-3):
-	'''
-v, d = ellipseform(bf, fit, step=1e-3)
-		
-Arguments:
-	- bf: np.array with the point in parameter space with the best fit
-	- fit: function that takes one point in parameter space and returns its log-likelihhod
-		example: -2*SMEFTglob.likelihood(x, 'global')
-	- step (optional): distance from the best fit used to compute the quadratic form
-
-Returns:
-	- v: np.matrix containing the orientation of the axes of the ellipsoid
-	- d: np.array containing the principal axes of the ellipsoid
-	'''
-	dim = len(bf)
-	Lmin = fit(bf)
-	Q = np.matrix(np.zeros([dim, dim]))
-	for i in range(0, dim):
-		delta = np.zeros(dim)
-		delta[i] = step
-		Q1 = fit(bf+delta)-Lmin
-		Q2 = fit(bf-delta)-Lmin
-		Q[i,i] = 0.5*(Q1+Q2)/step**2
-	for i in range(0, dim):
-		for j in range(0, i):
-			delta = np.zeros(dim)
-			delta[i] = delta[j] = step
-			Q1 = fit(bf+delta)-Lmin
-			Q2 = fit(bf-delta)-Lmin
-			Q[i,j] = Q[j,i] = (Q1+Q2)/(4*step**2) - Q[i,i]/2 - Q[j,j]/2
-	v, d, vt = svd(Q)
-	return v, d
 
 def parametrize(x, bf, v, d, nsigmas=1):
 	'''
@@ -89,9 +63,7 @@ Arguments:
 Returns:
 	- xe: Projection of the point xe in the ellipsoid of equal probability
 	'''
-	from flavio.statistics.functions import delta_chi2
-	deltaL = delta_chi2(nsigmas, len(x))
-	xp = x * sqrt(deltaL/d)
+	xp = x * sqrt(nsigmas/np.diag(d))
 	xe = bf + v @ xp
 	return np.array(xe).flatten()
 
@@ -144,25 +116,7 @@ def notablepoints(fin, fout, fit):
 	chi2_ex_m = []
 	a = np.sqrt(p/d)
 	bestchi2 = fit(bf)
-	for i in range(0,n):
-		loop = True
-		while loop:
-			ex_p0 = np.array(bf + v[i,:] * a[i]).flatten()
-			ex_m0 = np.array(bf - v[i,:] * a[i]).flatten()
-			chi2_p0 = fit(ex_p0) - bestchi2
-			chi2_m0 = fit(ex_m0) - bestchi2
-			chi2_mean = (chi2_p0 + chi2_m0)/2
-			if abs(chi2_mean/p - 1) > 0.1:
-				d[i] = d[i] * chi2_mean/p
-				a = np.sqrt(p/d)
-			else:
-				loop = False
-				ex_p.append(ex_p0)
-				ex_m.append(ex_m0)
-				chi2_ex_p.append(chi2_p0)
-				chi2_ex_m.append(chi2_m0)
-	save(bf, v, d, fin.replace('.yaml', '_c.yaml'))
-	H = v @ np.diag(d) @ v.T
+	H = v @ d @ v.T
 	cross_p = []
 	cross_m = []
 	chi2_cross_p = []
@@ -221,18 +175,3 @@ def notablepoints(fin, fout, fit):
 	f.write(texnumber(chi2_SM_m) +  r' \\\hline' + '\n')
 	f.write(r'\end{tabular}')
 	f.close()
-
-def findellipse(vect, fin, fit):
-	bf, v, d = load(fin)
-	dim = len(bf)
-	delta = delta_chi2(1, dim)
-	bestchi2 = fit(bf)
-	loop = True
-	while loop:
-		chi2 = fit(bf + vect) - bestchi2
-		if abs(chi2/delta -1) > 0.1:
-			vect = vect * np.sqrt(delta/chi2)
-		else:
-			loop = False
-			print(bf + vect)
-
