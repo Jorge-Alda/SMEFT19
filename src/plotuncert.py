@@ -1,57 +1,69 @@
-import texfig # https://github.com/knly/texfig
+import texfig
+import numpy as np
 import yaml
 import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib.patches import Rectangle
 
-def plot(fin, fout, obstype):
-	f = open(fin, 'rt')
-	values = yaml.load(f)
-	f.close()
-	
-	if obstype == 'RD':
+
+def errorplot(flist, plottype, fout):
+	fig = texfig.figure()
+	if plottype == 'RD':
 		observables = ['Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
 		texlabels = [r'$R_D^\ell$', r'$R_{D^*}^\ell$', r'$R_{D^*}^\mu$']
-		legloc = 1
-	elif obstype == 'RK':
-		observables = [('<Rmue>(B+->Kll)', 1.0, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1), ('<Rmue>(B0->K*ll)', 1.1, 6.0)]
-		texlabels = [r'$R_K^{[1,6]}$', r'$R_{K^*}^{[0.045, 1.1]}$', r'$R_{K^*}^{[1.1, 6]}$']
-		legloc = 3
-	elif obstype == 'RZ':
-		observables = ['R_e', 'R_mu', 'R_tau']
-		texlabels = [r'$R_e$', r'$R_\mu$', r'$R_\tau$']
-		legloc = 1
+		#legloc = 1
+	elif plottype == 'RK':
+		observables = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1), ('<Rmue>(B0->K*ll)', 1.1, 6.0)]
+		texlabels = [r'$R_K^{[1.1,6]}$', r'$R_{K^*}^{[0.045, 1.1]}$', r'$R_{K^*}^{[1.1, 6]}$']
+		#legloc = 3
+	nobs = len(texlabels)
+	nhyp = len(flist)
+	ax=plt.gca()
+	plt.xlim([0, nobs])
+	#plt.ylim([-0.055, 0.015])
+	markers = ['o', '^', 's', '*', 'D']
 
-	x = []
-	y = []
-	erry = []
-	z = [0, 0.99999, 0.5]*len(observables)
-
-	obsnum = 0
-	for obs in observables:
-		x.append(obsnum)
-		y.append(values[str(obs)]['NP']['central'])
-		erry.append(values[str(obs)]['NP']['uncert'])
-		x.append(obsnum+0.2)
-		y.append(values[str(obs)]['SM']['central'])
-		erry.append(values[str(obs)]['SM']['uncert'])
-		x.append(obsnum+0.4)
-		y.append(values[str(obs)]['exp']['central'])
-		erry.append(values[str(obs)]['exp']['uncert'])
-		obsnum += 1
-
-	plt.figure()
-	cm=plt.get_cmap('brg')
-	plt.scatter(x, y, c=z, s=15, cmap=cm, zorder=10)
-	for i, (xval, yval, y_error_val, zval) in enumerate(zip(x, y, erry, z)):
-		plt.errorbar(xval, yval, yerr=y_error_val, linestyle='', c=cm(zval))
-	
-	if obstype == 'RK':
-		plt.ylim([0.5, 1.05])
-	plt.xticks(np.arange(0.2, 0.2+len(observables), 1), texlabels)
-	plt.tick_params(axis='x', length=0)
-	npArtist = plt.Line2D((0,1),(0,0), color = cm(z[0]) )
-	smArtist = plt.Line2D((0,1),(0,0), color = cm(z[1]))
-	expArtist = plt.Line2D((0,1),(0,0), color = cm(z[2]))
-	plt.legend([npArtist, smArtist, expArtist], ['New Physics', 'Standard Model', 'Measurement'], loc=legloc)
-
+	data = np.zeros([nhyp, nobs,2])
+	smdata = np.zeros([nobs,2])
+	expdata = np.zeros([nobs,2])
+	leglabels = []
+	hyp = 0
+	for fin in flist:
+		f = open(fin, 'rt')
+		values = yaml.load(f)
+		f.close()
+		try:
+			leglabels.append(values['name'])
+		except:
+			leglabels.append(fin[:-5])
+		
+		o = 0
+		for obs in observables:
+			data[hyp][o][0] = values[str(obs)]['NP']['central']
+			data[hyp][o][1] = values[str(obs)]['NP']['uncert']
+			smdata[o][0] = values[str(obs)]['SM']['central']
+			smdata[o][1] = values[str(obs)]['SM']['uncert']
+			expdata[o][0] = values[str(obs)]['exp']['central']
+			expdata[o][1] = values[str(obs)]['exp']['uncert']
+			o += 1
+		hyp += 1
+		
+	for o in range(0, nobs):
+		for i in range(0, nhyp):
+			if o==0:
+				plt.plot(o+(i+1)/(nhyp+1), data[i][o][0], marker=markers[i], color='b', label=leglabels[i])
+			else:
+				plt.plot(o+(i+1)/(nhyp+1), data[i][o][0], marker=markers[i], color='b')
+			plt.errorbar(o+(i+1)/(nhyp+1), data[i][o][0], yerr=data[i][o][1], color='b')
+			
+		if o==0:
+			ax.add_patch(Rectangle( (o, smdata[o][0]-smdata[o][1]), 1, 2*smdata[o][1], color='orange', alpha=0.7, label='SM'))		
+			ax.add_patch(Rectangle( (o, expdata[o][0]-expdata[o][1]), 1, 2*expdata[o][1], color='green', alpha=0.7, label='Experimental'))
+		else:
+			ax.add_patch(Rectangle( (o, expdata[o][0]-expdata[o][1]), 1, 2*expdata[o][1], color='green', alpha=0.7))
+			ax.add_patch(Rectangle( (o, smdata[o][0]-smdata[o][1]), 1, 2*smdata[o][1], color='orange', alpha=0.7))		
+			
+		
+	ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs) )
+	ax.set_xticklabels(texlabels + [''])
+	plt.legend()
 	texfig.savefig(fout)
