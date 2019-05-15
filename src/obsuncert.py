@@ -6,7 +6,7 @@ import numpy as np
 import yaml
 
 
-obslist = ['Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)', ('<Rmue>(B+->Kll)', 1.0, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1), ('<Rmue>(B0->K*ll)', 1.1, 6.0), 'R_e', 'R_mu', 'R_tau', 'FLtot(B0->D*taunu)']
+obslist = [('<Rmue>(B+->Kll)', 1.0, 6.0), ('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1), ('<Rmue>(B0->K*ll)', 1.1, 6.0), 'Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
 
 def distrsphere(dim):
 	vect = np.random.randn(dim)

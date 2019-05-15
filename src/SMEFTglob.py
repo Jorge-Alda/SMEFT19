@@ -7,6 +7,10 @@ import numpy as np
 import smelli
 from math import isinf
 
+'''
+WARNING: To use the latest experimental values of RK(*), you must work with the developement (github) version of flavio and modify some files of smelli
+'''
+
 fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml', 'likelihood_ewpt.yaml', 'global']
 labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
 

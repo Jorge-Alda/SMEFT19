@@ -42,7 +42,7 @@ Return:
 	Lmin = m.fval
 	dim = len(x0)
 	L0 = fit(np.zeros(dim))
-	p = pull(abs(Lmin-L0), dim)
+	p = pull(2*abs(Lmin-L0), dim)
 	print('Pull: ' + str(p) + ' sigma')
 	v, d, vt = svd(m.np_matrix())
 	d_ellipse = np.diag(1/d)
@@ -63,7 +63,8 @@ Arguments:
 Returns:
 	- xe: Projection of the point xe in the ellipsoid of equal probability
 	'''
-	xp = x * sqrt(nsigmas/np.diag(d))
+	r = delta_chi2(nsigmas, len(bf))
+	xp = x * sqrt(r/np.diag(d))
 	xe = bf + v @ xp
 	return np.array(xe).flatten()
 
@@ -114,7 +115,7 @@ def notablepoints(fin, fout, fit):
 	ex_m = []
 	chi2_ex_p = []
 	chi2_ex_m = []
-	a = np.sqrt(p/d)
+	a = np.sqrt(p/np.diag(d))
 	bestchi2 = fit(bf)
 	H = v @ d @ v.T
 	cross_p = []
