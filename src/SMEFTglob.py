@@ -23,12 +23,12 @@ point = 0
 def update_cache(x, wfun):
 	if x not in cache.keys():
 		cache[x] = dict()
-			with warnings.catch_warnings():
-				warnings.simplefilter('ignore')
-				glpp = gl.parameter_point(wfun(x))
-				gldict = glpp.log_likelihood_dict()
-				for f in fits:
-					cache[x][f] = gldict[f]
+		with warnings.catch_warnings():
+			warnings.simplefilter('ignore')
+			glpp = gl.parameter_point(wfun(x))
+			gldict = glpp.log_likelihood_dict()
+			for f in fits:
+				cache[x][f] = gldict[f]
 
 def likelihood_fit_cached(x, wfun, f):
 	xt = tuple(x)

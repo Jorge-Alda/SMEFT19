@@ -63,7 +63,7 @@ Arguments:
 Returns:
 	- xe: Projection of the point xe in the ellipsoid of equal probability
 	'''
-	r = delta_chi2(nsigmas, len(bf))
+	r = 2*delta_chi2(nsigmas, len(bf))
 	xp = x * sqrt(r/np.diag(d))
 	xe = bf + v @ xp
 	return np.array(xe).flatten()
@@ -115,7 +115,7 @@ def notablepoints(fin, fout, fit):
 	ex_m = []
 	chi2_ex_p = []
 	chi2_ex_m = []
-	a = np.sqrt(p/np.diag(d))
+	a = np.sqrt(2*p/np.diag(d))
 	bestchi2 = fit(bf)
 	H = v @ d @ v.T
 	cross_p = []
@@ -123,7 +123,8 @@ def notablepoints(fin, fout, fit):
 	chi2_cross_p = []
 	chi2_cross_m = []
 	for i in range(0,n):
-		dC = float(np.sqrt(p/H[i,i]))
+		# Moving along operator axes
+		dC = float(np.sqrt(2*p/H[i,i]))
 		delta = np.zeros(n)
 		delta[i] = dC
 		point_p = bf + delta
@@ -134,8 +135,18 @@ def notablepoints(fin, fout, fit):
 		cross_m.append(point_m)
 		chi2_cross_p.append(chi2_p)
 		chi2_cross_m.append(chi2_m)
+		#Moving along ellipsoid axes
+		delta[i] = 1
+		point_p = parametrize(delta, bf, v, d)
+		point_m = parametrize(-delta, bf, v, d)
+		chi2_p = fit(point_p) - bestchi2
+		chi2_m = fit(point_m) - bestchi2
+		ex_p.append(point_p)
+		ex_m.append(point_m)
+		chi2_ex_p.append(chi2_p)
+		chi2_ex_m.append(chi2_m)
 	bfm = np.matrix(bf)
-	dSM = float(np.sqrt(p/(bfm @ H @ bfm.T ) ))
+	dSM = float(np.sqrt(2*p/(bfm @ H @ bfm.T ) ))
 	SM_p = bf*(1+dSM)
 	SM_m = bf*(1-dSM)
 	chi2_SM_p = fit(SM_p) - bestchi2
