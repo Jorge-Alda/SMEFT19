@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import smelli
 from math import isinf
+import warnings
 
 '''
 WARNING: To use the latest experimental values of RK(*), you must work with the developement (github) version of flavio and modify some files of smelli
@@ -22,10 +23,12 @@ point = 0
 def update_cache(x, wfun):
 	if x not in cache.keys():
 		cache[x] = dict()
-		glpp = gl.parameter_point(wfun(x))
-		gldict = glpp.log_likelihood_dict()
-		for f in fits:
-			cache[x][f] = gldict[f]
+			with warnings.catch_warnings():
+				warnings.simplefilter('ignore')
+				glpp = gl.parameter_point(wfun(x))
+				gldict = glpp.log_likelihood_dict()
+				for f in fits:
+					cache[x][f] = gldict[f]
 
 def likelihood_fit_cached(x, wfun, f):
 	xt = tuple(x)
@@ -33,8 +36,10 @@ def likelihood_fit_cached(x, wfun, f):
 	return cache[xt][f]
 
 def likelihood_global(x, wfun):
-	glpp = gl.parameter_point(wfun(x))
-	return glpp.log_likelihood_global()
+	with warnings.catch_warnings():
+		warnings.simplefilter('ignore')
+		glpp = gl.parameter_point(wfun(x))
+		return glpp.log_likelihood_global()
 
 def plot(wfun, xmin, xmax, ymin, ymax):
 	import texfig # https://github.com/knly/texfig
@@ -45,8 +50,10 @@ def plot(wfun, xmin, xmax, ymin, ymax):
 	i=0
 	for f in fits:
 		print('Plotting ' + f) 
-		loglike = lambda x: likelihood_fit(x, wfun, f)
-		flavio.plots.likelihood_contour(loglike , 1.1*xmin, 1.1*xmax, 1.1*ymin, 1.1*ymax, col=i, label=labels[f], interpolation_factor=5, n_sigma=(1,2))
+		with warnings.catch_warnings():
+			warnings.simplefilter('ignore')
+			loglike = lambda x: likelihood_fit(x, wfun, f)
+			flavio.plots.likelihood_contour(loglike , 1.1*xmin, 1.1*xmax, 1.1*ymin, 1.1*ymax, col=i, label=labels[f], interpolation_factor=5, n_sigma=(1,2))
 		i+=1
 	plt.xlabel(r'$C_{\ell q(1)}^{\mu} = C_{\ell q(3)}^{\mu}$')
 	plt.ylabel(r'$C_{\ell q(1)}^{\tau} = C_{\ell q(3)}^{\tau}$')
