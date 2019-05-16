@@ -153,7 +153,7 @@ def notablepoints(fin, fout, fit):
 	chi2_SM_m = fit(SM_m) - bestchi2
 	from comparepulls import texnumber
 	f = open(fout, 'w')
-	f.write(r'\begin{tabular}{|' + 'c|'*(n+3) + r'}\\\hline' + '\n'  )
+	f.write(r'\begin{tabular}{|' + 'c|'*(n+3) + r'}\hline' + '\n'  )
 	f.write(r'$j$ & $s$ & ' + ' & '*n + r'$\Delta \chi^2$\\\hline' + '\n' )
 	f.write(r'BF & & ')
 	for i in range(0, n):
