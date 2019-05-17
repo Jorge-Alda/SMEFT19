@@ -7,7 +7,6 @@ import numpy as np
 import smelli
 from math import isinf
 import warnings
-import yaml
 
 '''
 WARNING: To use the latest experimental values of RK(*), you must work with version 1.4 of flavio and modify some files of smelli and flavio
@@ -35,7 +34,7 @@ def update_cache(x, wfun):
 						for f2 in fits[:-1]:
 							g += cache[x][f2]
 					else: 
-						g = -70
+						g = -68
 				cache[x][f] = g
 				
 
@@ -54,7 +53,7 @@ def likelihood_global(x, wfun):
 		glpp = gl.parameter_point(wfun(x))
 		return glpp.log_likelihood_global()
 
-def plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout):
+def plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0):
 	import texfig # https://github.com/knly/texfig
 	fig=plt.figure(figsize=(4,4))
 	plt.xlim([xmin,xmax])
@@ -70,5 +69,11 @@ def plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout):
 		i+=1
 	plt.xlabel(axlabels[0])
 	plt.ylabel(axlabels[1])
-	plt.legend(loc=4)
+	plt.axhline(0, color='black', linewidth=0.5)
+	plt.axvline(0, color='black', linewidth=0.5)
+	ax = fig.gca()
+	ax.xaxis.set_ticks_position('both')
+	ax.yaxis.set_ticks_position('both')
+	plt.legend(loc = locleg)
+	plt.tight_layout(pad=0.5)
 	texfig.savefig(fout)
