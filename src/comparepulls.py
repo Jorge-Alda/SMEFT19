@@ -6,6 +6,7 @@ import flavio
 import matplotlib.pyplot as plt
 import re
 import numpy as np
+import yaml
 
 def sign(x, y):
 	if float(x) < float(y):
@@ -37,14 +38,22 @@ def compare(wfun, fin, fout):
 	glNP = gl.parameter_point(w)
 	obsSM = glSM.obstable()
 	obsNP = glNP.obstable()
-	obscoll = obsSM['pull'].keys()
+	try:
+		fyaml = open('observables.yaml', 'rt')
+		obscoll = yaml.load(fyaml)
+		fyaml.close()
+	except:	
+		obscoll = list(obsSM['pull exp.'].keys())
+		fyaml = open('observables.yaml', 'wt')
+		yaml.dump(obscoll, fyaml)
+		fyaml.close()
 	
 	#TeX table
 	f = open(fout+'.tex', 'wt')
 	obsnum = 0
 	f.write('\\begin{longtable}{|c|c|c|c|c|}\\hline\n & Observable &\t NP prediction &\t NP pull & SM pull\\endhead\\hline\n')
 	for obs in obscoll:
-		f.write('{} &\t {} &\t {} &\t {} $ \\sigma$ &\t {} $ \\sigma$ \\\\ \\hline\n'.format(obsnum, tex(obs), texnumber(obsNP.loc[[obs], 'theory'], 5), texnumber(obsNP.loc[[obs], 'pull'], 2), texnumber(obsSM.loc[[obs], 'pull'], 2)) )
+		f.write('{} &\t {} &\t {} &\t {} $ \\sigma$ &\t {} $ \\sigma$ \\\\ \\hline\n'.format(obsnum, tex(obs), texnumber(obsNP.loc[[obs], 'theory'], 5), texnumber(obsNP.loc[[obs], 'pull exp.'], 2), texnumber(obsSM.loc[[obs], 'pull exp.'], 2)) )
 		obsnum += 1
 	f.write('\\end{longtable}')
 	f.close()
@@ -53,8 +62,8 @@ def compare(wfun, fin, fout):
 	NP = []
 	SM = []
 	for obs in obscoll:
-		NP.append(float(obsNP.loc[[obs], 'pull']))
-		SM.append(float(obsSM.loc[[obs], 'pull']))
+		NP.append(float(obsNP.loc[[obs], 'pull exp.']))
+		SM.append(float(obsSM.loc[[obs], 'pull exp.']))
 			
 	plt.figure()
 	plt.plot(NP, label='New Physics')
@@ -73,11 +82,10 @@ def compare(wfun, fin, fout):
 	plt.xlabel('Observable')
 	plt.ylabel(r'$|$Pull$|$')
 	plt.legend(loc=1)
-	
+	plt.tight_layout(pad=0.5)
 	texfig.savefig(fout)
 
 def pointpull(x, wfun, fin):
-	from ellipse import parametrize
 	bf, v, d = load(fin)
 	w = wfun(bf)
 	wx = wfun(x)
@@ -88,12 +96,22 @@ def pointpull(x, wfun, fin):
 	obsSM = glSM.obstable()
 	obsNP = glNP.obstable()
 	obsx = glx.obstable()
-	obscoll = obsSM['pull'].keys()
+	try:
+		fyaml = open('observables.yaml', 'rt')
+		obscoll = yaml.load(fyaml)
+		fyaml.close()
+	except:	
+		obscoll = list(obsSM['pull exp.'].keys())
+		fyaml = open('observables.yaml', 'wt')
+		yaml.dump(obscoll, fyaml)
+		fyaml.close()
 	dicpull = dict()
+	i = 0
 	for obs in obscoll:
-		pull = float(obsNP.loc[[obs], 'pull'])*sign(obsNP.loc[[obs], 'theory'], obsNP.loc[[obs], 'experiment'] )
-		pullx = float(obsx.loc[[obs], 'pull'])*sign(obsx.loc[[obs], 'theory'], obsx.loc[[obs], 'experiment'] )
-		dicpull[str(obs)] = (pullx-pull)**2
+		pull = float(obsNP.loc[[obs], 'pull exp.'])*sign(obsNP.loc[[obs], 'theory'], obsNP.loc[[obs], 'experiment'] )
+		pullx = float(obsx.loc[[obs], 'pull exp.'])*sign(obsx.loc[[obs], 'theory'], obsx.loc[[obs], 'experiment'] )
+		dicpull[i] = (pullx-pull)**2
+		i += 1
 	sortdict = sorted(dicpull, key=dicpull.get, reverse=True)[0:5]
 	for obs in sortdict:
-		print(obs + '\t' + str(dicpull[obs]))
+		print(str(obs) + '\t' + obscoll[obs] + '\t' + str(dicpull[obs]))
