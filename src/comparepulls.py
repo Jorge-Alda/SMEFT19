@@ -1,5 +1,5 @@
 import texfig # https://github.com/knly/texfig
-from ellipse import load
+from ellipse import load, parametrize
 import smelli
 from wilson import Wilson
 import flavio
@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import re
 import numpy as np
 import yaml
+from flavio.statistics.functions import delta_chi2
 
 def sign(x, y):
 	if float(x) < float(y):
@@ -85,7 +86,7 @@ def compare(wfun, fin, fout):
 	plt.tight_layout(pad=0.5)
 	texfig.savefig(fout)
 
-def pointpull(x, wfun, fin):
+def pointpull(x, wfun, fin, printlevel=1, numres=5):
 	bf, v, d = load(fin)
 	w = wfun(bf)
 	wx = wfun(x)
@@ -112,6 +113,47 @@ def pointpull(x, wfun, fin):
 		pullx = float(obsx.loc[[obs], 'pull exp.'])*sign(obsx.loc[[obs], 'theory'], obsx.loc[[obs], 'experiment'] )
 		dicpull[i] = (pullx-pull)**2
 		i += 1
-	sortdict = sorted(dicpull, key=dicpull.get, reverse=True)[0:5]
+	sortdict = sorted(dicpull, key=dicpull.get, reverse=True)[0:numres]
+	results = ''
 	for obs in sortdict:
-		print(str(obs) + '\t' + obscoll[obs] + '\t' + str(dicpull[obs]))
+		results += str(obs) + '\t' + str(obscoll[obs]) + '\t' + str(dicpull[obs]) + '\n'
+	if printlevel:
+		print(results)
+	return results
+
+def notablepulls(wfun, fin, fout):
+	f = open(fout, 'wt')
+	bf, v, d = load(fin)
+	n = len(bf)
+	p = delta_chi2(1, n)
+	a = np.sqrt(2*p/np.diag(d))
+	H = v @ d @ v.T
+	for i in range(0,n):
+		# Moving along operator axes
+		dC = float(np.sqrt(2*p/H[i,i]))
+		delta = np.zeros(n)
+		delta[i] = dC
+		f.write('Operator ' + str(i+1) + '+\n**********************\n')
+		f.write(pointpull(bf + delta, wfun, fin, 0))
+		f.write('\n\n')
+		f.write('Operator ' + str(i+1) + '-\n**********************\n')
+		f.write(pointpull(bf - delta, wfun, fin, 0))
+		f.write('\n\n')
+	for i in range(0,n):
+		#Moving along ellipsoid axes
+		delta = np.zeros(n)
+		delta[i] = 1
+		f.write('Axis ' + str(i+1) + '+\n**********************\n')
+		f.write(pointpull(parametrize(delta, bf, v, d), wfun, fin, 0))
+		f.write('\n\n')
+		f.write('Axis ' + str(i+1) + '-\n**********************\n')
+		f.write(pointpull(parametrize(-delta, bf, v, d), wfun, fin, 0))
+		f.write('\n\n')
+	bfm = np.matrix(bf)
+	dSM = float(np.sqrt(2*p/(bfm @ H @ bfm.T ) ))
+	f.write('SM+\n**********************\n')
+	f.write(pointpull(bf*(1+dSM), wfun, fin, 0))
+	f.write('\n\n')
+	f.write('SM-\n**********************\n')
+	f.write(pointpull(bf*(1-dSM), wfun, fin, 0))
+	f.close()	
