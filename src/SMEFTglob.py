@@ -9,7 +9,7 @@ from math import isinf
 import warnings
 
 '''
-WARNING: To use the latest experimental values of RK(*), you must work with version 1.4 of flavio and modify some files of smelli
+WARNING: To use the latest experimental values of RK(*), you must work with version 1.4 of flavio and development version (21-May) of smelli
 '''
 
 fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml', 'likelihood_ewpt.yaml', 'global']

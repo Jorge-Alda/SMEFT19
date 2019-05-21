@@ -1,13 +1,11 @@
-import texfig # https://github.com/knly/texfig
 from ellipse import load, parametrize
-import smelli
+import SMEFTglob
 from wilson import Wilson
 import flavio
-import matplotlib.pyplot as plt
 import re
 import numpy as np
 import yaml
-from flavio.statistics.functions import delta_chi2
+from flavio.statistics.functions import delta_chi2, pull
 
 def sign(x, y):
 	if float(x) < float(y):
@@ -34,10 +32,9 @@ def compare(wfun, fin, fout):
 	bf, v, d = load(fin)
 
 	w = wfun(bf)
-	gl = smelli.GlobalLikelihood()
-	glSM = gl.parameter_point({}, scale=1e3)
+	gl = SMEFTglob.gl
 	glNP = gl.parameter_point(w)
-	obsSM = glSM.obstable()
+	obsSM = gl.obstable_sm
 	obsNP = glNP.obstable()
 	try:
 		fyaml = open('observables.yaml', 'rt')
@@ -60,6 +57,8 @@ def compare(wfun, fin, fout):
 	f.close()
 
 	#Plots
+	import texfig # https://github.com/knly/texfig
+	import matplotlib.pyplot as plt
 	NP = []
 	SM = []
 	for obs in obscoll:
@@ -90,11 +89,10 @@ def pointpull(x, wfun, fin, printlevel=1, numres=5):
 	bf, v, d = load(fin)
 	w = wfun(bf)
 	wx = wfun(x)
-	gl = smelli.GlobalLikelihood()
-	glSM = gl.parameter_point({}, scale=1e3)
+	gl = SMEFTglob
 	glNP = gl.parameter_point(w)
 	glx = gl.parameter_point(wx)
-	obsSM = glSM.obstable()
+	obsSM = gl.obstable_sm
 	obsNP = glNP.obstable()
 	obsx = glx.obstable()
 	try:
@@ -156,4 +154,4 @@ def notablepulls(wfun, fin, fout):
 	f.write('\n\n')
 	f.write('SM-\n**********************\n')
 	f.write(pointpull(bf*(1-dSM), wfun, fin, 0))
-	f.close()	
+	f.close()
