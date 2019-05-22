@@ -34,7 +34,8 @@ def compare(wfun, fin, fout):
 	w = wfun(bf)
 	gl = SMEFTglob.gl
 	glNP = gl.parameter_point(w)
-	obsSM = gl.obstable_sm
+	glSM = gl.parameter_point({}, scale=1000)
+	obsSM = glSM.obstable()
 	obsNP = glNP.obstable()
 	try:
 		fyaml = open('observables.yaml', 'rt')
@@ -51,7 +52,16 @@ def compare(wfun, fin, fout):
 	obsnum = 0
 	f.write('\\begin{longtable}{|c|c|c|c|c|}\\hline\n & Observable &\t NP prediction &\t NP pull & SM pull\\endhead\\hline\n')
 	for obs in obscoll:
-		f.write('{} &\t {} &\t {} &\t {} $ \\sigma$ &\t {} $ \\sigma$ \\\\ \\hline\n'.format(obsnum, tex(obs), texnumber(obsNP.loc[[obs], 'theory'], 5), texnumber(obsNP.loc[[obs], 'pull exp.'], 2), texnumber(obsSM.loc[[obs], 'pull exp.'], 2)) )
+		NPpull = float(obsNP.loc[[obs], 'pull exp.'])
+		SMpull = float(obsSM.loc[[obs], 'pull exp.'])
+		if NPpull > SMpull:
+			col = int(min(50, 50*(NPpull-SMpull)))
+			f.write('{} &\t {} &\t {} &\t {} $ \\sigma$ &\t {} $ \\sigma$ \\\\ \\hline\n'.format(obsnum, tex(obs), texnumber(obsNP.loc[[obs], 'theory'], 5), r'\cellcolor{red!' + str(col) +'} ' + texnumber(NPpull, 2), texnumber(SMpull, 2)) )
+		elif SMpull > NPpull:
+			col = int(min(50, 50*(SMpull-NPpull)))
+			f.write('{} &\t {} &\t {} &\t {} $ \\sigma$ &\t {} $ \\sigma$ \\\\ \\hline\n'.format(obsnum, tex(obs), texnumber(obsNP.loc[[obs], 'theory'], 5), r'\cellcolor{green!' + str(col) +'} ' + texnumber(NPpull, 2), texnumber(SMpull, 2)) )
+		else:
+			f.write('{} &\t {} &\t {} &\t {} $ \\sigma$ &\t {} $ \\sigma$ \\\\ \\hline\n'.format(obsnum, tex(obs), texnumber(obsNP.loc[[obs], 'theory'], 5), texnumber(NPpull, 2), texnumber(SMpull, 2)) )
 		obsnum += 1
 	f.write('\\end{longtable}')
 	f.close()
