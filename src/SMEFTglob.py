@@ -65,7 +65,7 @@ def plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0):
 		with warnings.catch_warnings():
 			warnings.simplefilter('ignore')
 			loglike = lambda x: likelihood_fit_cached(x, wfun, f)
-			flavio.plots.likelihood_contour(loglike , 1.1*xmin, 1.1*xmax, 1.1*ymin, 1.1*ymax, col=i, label=labels[f], interpolation_factor=5, n_sigma=(1,2))
+			flavio.plots.likelihood_contour(loglike , 1.1*xmin, 1.1*xmax, 1.1*ymin, 1.1*ymax, col=i, label=labels[f], interpolation_factor=5, n_sigma=(1,2), steps=55)
 		i+=1
 	plt.xlabel(axlabels[0])
 	plt.ylabel(axlabels[1])
@@ -77,3 +77,4 @@ def plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0):
 	plt.legend(loc = locleg)
 	plt.tight_layout(pad=0.5)
 	texfig.savefig(fout)
+	clearcache()

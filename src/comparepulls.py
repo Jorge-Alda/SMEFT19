@@ -99,7 +99,7 @@ def pointpull(x, wfun, fin, printlevel=1, numres=5):
 	bf, v, d = load(fin)
 	w = wfun(bf)
 	wx = wfun(x)
-	gl = SMEFTglob
+	gl = SMEFTglob.gl
 	glNP = gl.parameter_point(w)
 	glx = gl.parameter_point(wx)
 	obsSM = gl.obstable_sm
