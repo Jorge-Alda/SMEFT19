@@ -27,6 +27,17 @@ def texnumber(x, prec=3):
 		texn = '$' + match.group(1) + '\\times 10^{' + str(int(match.group(3))) + '}$'
 	return texn
 
+def loadobslist():
+	try:
+		fyaml = open('observables.yaml', 'rt')
+		obscoll = yaml.load(fyaml)
+		fyaml.close()
+	except:	
+		obscoll = list(obsSM['pull exp.'].keys())
+		fyaml = open('observables.yaml', 'wt')
+		yaml.dump(obscoll, fyaml)
+		fyaml.close()
+	return obscoll
 	
 def compare(wfun, fin, fout):
 	bf, v, d = load(fin)
@@ -37,15 +48,7 @@ def compare(wfun, fin, fout):
 	glSM = gl.parameter_point({}, scale=1000)
 	obsSM = glSM.obstable()
 	obsNP = glNP.obstable()
-	try:
-		fyaml = open('observables.yaml', 'rt')
-		obscoll = yaml.load(fyaml)
-		fyaml.close()
-	except:	
-		obscoll = list(obsSM['pull exp.'].keys())
-		fyaml = open('observables.yaml', 'wt')
-		yaml.dump(obscoll, fyaml)
-		fyaml.close()
+	obscoll = loadobslist()
 	
 	#TeX table
 	f = open(fout+'.tex', 'wt')
@@ -105,15 +108,7 @@ def pointpull(x, wfun, fin, printlevel=1, numres=5):
 	obsSM = gl.obstable_sm
 	obsNP = glNP.obstable()
 	obsx = glx.obstable()
-	try:
-		fyaml = open('observables.yaml', 'rt')
-		obscoll = yaml.load(fyaml)
-		fyaml.close()
-	except:	
-		obscoll = list(obsSM['pull exp.'].keys())
-		fyaml = open('observables.yaml', 'wt')
-		yaml.dump(obscoll, fyaml)
-		fyaml.close()
+	obscoll = loadobslist()
 	dicpull = dict()
 	i = 0
 	for obs in obscoll:
@@ -165,3 +160,56 @@ def notablepulls(wfun, fin, fout):
 	f.write('SM-\n**********************\n')
 	f.write(pointpull(bf*(1-dSM), wfun, fin, 0))
 	f.close()
+
+def pullevolution(obscode, wfun, fin, direction):
+	'''
+	direction: string with the following format:
+		'wc' + str(i): for the i-th Wilson coefficient
+		'ax' + str(i): for the i-th principal axis of the ellipsoid
+		'sm': for the direction joining the bf and sm points 
+	'''
+	bf, v, d = load(fin)	
+	n = len(bf)
+	p = delta_chi2(1, n)
+	a = np.sqrt(2*p/np.diag(d))
+	H = v @ d @ v.T
+	pull_list = []
+	obscoll = loadobslist()
+	obs = obscoll[obscode]	
+	for c in np.linspace(-1, 1, 200):
+		if direction[:2] == 'wc':
+			i = int(direction[2:])
+			dC = float(np.sqrt(2*p/H[i,i]))
+			delta = np.zeros(n)
+			delta[i] = dC
+			point = bf + c * delta
+		if direction[:2] == 'ax':
+			i = int(direction[2:])
+			delta = np.zeros(n)
+			delta[i] = c
+			point = parametrize(delta, bf, v, d)
+		if direction[:2] == 'sm':
+			bfm = np.matrix(bf)
+			dSM = float(np.sqrt(2*p/(bfm @ H @ bfm.T ) ))
+			point = bf*(1+c*dSM)
+		pull_list.append(SMEFTglob.pull_obs(obs, point, wfun) )
+	return pull_list
+
+def plotevolution(obscodes, wfun, fin, direction, fout):
+	import texfig # https://github.com/knly/texfig
+	import matplotlib.pyplot as plt
+	fig = plt.figure()
+	for o in obscodes:
+		ev = pullevolution(o, wfun, fin, direction)
+		plt.plot(np.linspace(-1, 1, 200), ev, label='Obs. ' + str(o))
+	if direction[:2] == 'ax':
+		i = direction[2:]	
+		plt.xlabel('$\delta C_{' + i + '}/a_{' + i + '}$')
+	plt.ylabel('Pull')
+	plt.axvline(0, color='black', linewidth=0.5)
+	ax = fig.gca()
+	ax.xaxis.set_ticks_position('both')
+	ax.yaxis.set_ticks_position('both')
+	plt.legend()
+	plt.tight_layout(pad=0.5)
+	texfig.savefig(fout)

@@ -78,3 +78,39 @@ def plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0):
 	plt.tight_layout(pad=0.5)
 	texfig.savefig(fout)
 	clearcache()
+
+def fastmeas(obs):
+	obsm = gl.obstable_sm[obs]
+	lhname = obsm['lh_name']
+	return lhname[:4]=='fast'
+
+def prediction(obs, x, wfun):
+	obsm = gl.obstable_sm[obs]
+	lhname = obsm['lh_name']
+	wc = wfun(x)
+	if fastmeas(obs):
+		lh = gl.fast_likelihoods[lhname]
+		m = lh.pseudo_measurement
+		ml = lh.likelihood.measurement_likelihood
+		pred = ml.get_predictions_par(gl.par_dict, wc)
+		return pred[obs]
+	else:
+		lh = gl.likelihoods[lhname]
+		ml = lh.measurement_likelihood
+		pred = ml.get_predictions_par(gl.par_dict, wc)
+		return pred[obs]
+
+def pull_obs(obs, x, wfun):
+	obsm = gl.obstable_sm[obs]
+	lhname = obsm['lh_name']
+	wc = wfun(x)
+	pred = prediction(obs, x, wfun)
+	ll_central = obsm['ll_central']
+	if fastmeas(obs):
+		lh = gl.fast_likelihoods[lhname]
+		m = lh.pseudo_measurement
+		ll = m.get_logprobability_single(obs, pred)
+	else:
+		p_comb = obsm['exp. PDF']
+		ll = p_comb.logpdf([pred])
+	return pull(-2*(ll-ll_central), 1)
