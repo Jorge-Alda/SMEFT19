@@ -205,6 +205,8 @@ def plotevolution(obscodes, wfun, fin, direction, fout):
 	if direction[:2] == 'ax':
 		i = direction[2:]	
 		plt.xlabel('$\delta C_{' + i + '}/a_{' + i + '}$')
+	if direction[:2] == 'sm':
+		plt.xlabel(r'$C_\mathrm{SM}/a_\mathrm{SM}$')	
 	plt.ylabel('Pull')
 	plt.axvline(0, color='black', linewidth=0.5)
 	ax = fig.gca()
