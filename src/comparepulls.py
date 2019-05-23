@@ -129,11 +129,11 @@ def notablepulls(wfun, fin, fout):
 	bf, v, d = load(fin)
 	n = len(bf)
 	p = delta_chi2(1, n)
-	a = np.sqrt(2*p/np.diag(d))
+	a = np.sqrt(p/np.diag(d))
 	H = v @ d @ v.T
 	for i in range(0,n):
 		# Moving along operator axes
-		dC = float(np.sqrt(2*p/H[i,i]))
+		dC = float(np.sqrt(p/H[i,i]))
 		delta = np.zeros(n)
 		delta[i] = dC
 		f.write('Operator ' + str(i+1) + '+\n**********************\n')
@@ -153,7 +153,7 @@ def notablepulls(wfun, fin, fout):
 		f.write(pointpull(parametrize(-delta, bf, v, d), wfun, fin, 0))
 		f.write('\n\n')
 	bfm = np.matrix(bf)
-	dSM = float(np.sqrt(2*p/(bfm @ H @ bfm.T ) ))
+	dSM = float(np.sqrt(p/(bfm @ H @ bfm.T ) ))
 	f.write('SM+\n**********************\n')
 	f.write(pointpull(bf*(1+dSM), wfun, fin, 0))
 	f.write('\n\n')
@@ -178,19 +178,19 @@ def pullevolution(obscode, wfun, fin, direction):
 	obs = obscoll[obscode]	
 	for c in np.linspace(-1, 1, 200):
 		if direction[:2] == 'wc':
-			i = int(direction[2:])
-			dC = float(np.sqrt(2*p/H[i,i]))
+			i = int(direction[2:])-1
+			dC = float(np.sqrt(p/H[i,i]))
 			delta = np.zeros(n)
 			delta[i] = dC
 			point = bf + c * delta
 		if direction[:2] == 'ax':
-			i = int(direction[2:])
+			i = int(direction[2:])-1
 			delta = np.zeros(n)
 			delta[i] = c
 			point = parametrize(delta, bf, v, d)
 		if direction[:2] == 'sm':
 			bfm = np.matrix(bf)
-			dSM = float(np.sqrt(2*p/(bfm @ H @ bfm.T ) ))
+			dSM = float(np.sqrt(p/(bfm @ H @ bfm.T ) ))
 			point = bf*(1+c*dSM)
 		pull_list.append(SMEFTglob.pull_obs(obs, point, wfun) )
 	return pull_list
