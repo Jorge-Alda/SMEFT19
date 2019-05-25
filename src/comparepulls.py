@@ -33,6 +33,9 @@ def loadobslist():
 		obscoll = yaml.load(fyaml)
 		fyaml.close()
 	except:	
+		gl = SMEFTglob.gl
+		glSM = gl.parameter_point({}, scale=1000)
+		obsSM = glSM.obstable()
 		obscoll = list(obsSM['pull exp.'].keys())
 		fyaml = open('observables.yaml', 'wt')
 		yaml.dump(obscoll, fyaml)
