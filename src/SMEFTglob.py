@@ -8,9 +8,6 @@ import smelli
 from math import isinf
 import warnings
 
-'''
-WARNING: To use the latest experimental values of RK(*) and DP4, DP5, you must work with version 1.5 of flavio and development version (24-May) of smelli
-'''
 
 fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml', 'likelihood_ewpt.yaml', 'global']
 labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
