@@ -1,6 +1,5 @@
 import flavio
-import flavio.statistics.fits
-import flavio.plots
+import hatchplot
 from flavio.statistics.functions import pull
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,8 +8,10 @@ from math import isinf
 import warnings
 
 
-fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml', 'likelihood_ewpt.yaml', 'global']
-labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
+#fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml', 'likelihood_ewpt.yaml', 'global']
+#labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
+fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml','likelihood_lfv.yaml','global']
+labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_lfv.yaml':'LFV', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
 
 
 gl = smelli.GlobalLikelihood()		
@@ -50,19 +51,22 @@ def likelihood_global(x, wfun):
 		glpp = gl.parameter_point(wfun(x))
 		return glpp.log_likelihood_global()
 
-def plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0):
+def plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0, steps=55):
 	import texfig # https://github.com/knly/texfig
 	fig=plt.figure(figsize=(4,4))
 	plt.xlim([xmin,xmax])
 	plt.ylim([ymin,ymax])
 
 	i=0
+	colors = [0,1,2,4,5,6,7]
 	for f in fits:
 		print('Plotting ' + f) 
 		with warnings.catch_warnings():
 			warnings.simplefilter('ignore')
 			loglike = lambda x: likelihood_fit_cached(x, wfun, f)
-			flavio.plots.likelihood_contour(loglike , 1.1*xmin, 1.1*xmax, 1.1*ymin, 1.1*ymax, col=i, label=labels[f], interpolation_factor=5, n_sigma=(1,2), steps=55)
+			xmargin = 0.05*(xmax-xmin)
+			ymargin = 0.05*(ymax-ymin)
+			hatchplot.likelihood_hatch_contour(loglike , xmin-xmargin, xmax+xmargin, ymin-ymargin, ymax+ymargin, col=colors[i], label=labels[f], interpolation_factor=5, n_sigma=(1,2), steps=steps)
 		i+=1
 	plt.xlabel(axlabels[0])
 	plt.ylabel(axlabels[1])
