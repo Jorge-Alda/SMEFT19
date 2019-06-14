@@ -1,5 +1,5 @@
 import flavio
-import hatchplot
+from . import hatchplot
 from flavio.statistics.functions import pull
 import matplotlib.pyplot as plt
 import numpy as np

@@ -1,5 +1,5 @@
-from ellipse import load, parametrize
-import SMEFTglob
+from .ellipse import load, parametrize
+from . import SMEFTglob
 from wilson import Wilson
 import flavio
 import re

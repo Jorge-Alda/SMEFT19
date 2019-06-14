@@ -1,4 +1,4 @@
-import ellipse
+from . import ellipse
 from wilson import Wilson
 import flavio
 from math import sqrt
