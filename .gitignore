@@ -100,7 +100,7 @@ venv.bak/
 # mkdocs documentation
 /site
 
-src/texfig.py
+SMEFT19/texfig.py
 
 # mypy
 .mypy_cache/
