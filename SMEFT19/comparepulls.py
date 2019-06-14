@@ -1,5 +1,6 @@
 from .ellipse import load, parametrize
 from . import SMEFTglob
+from .SMEFTglob import loadobslist
 from wilson import Wilson
 import flavio
 import re
@@ -27,20 +28,6 @@ def texnumber(x, prec=3):
 		texn = '$' + match.group(1) + '\\times 10^{' + str(int(match.group(3))) + '}$'
 	return texn
 
-def loadobslist():
-	try:
-		fyaml = open('observables.yaml', 'rt')
-		obscoll = yaml.load(fyaml)
-		fyaml.close()
-	except:	
-		gl = SMEFTglob.gl
-		glSM = gl.parameter_point({}, scale=1000)
-		obsSM = glSM.obstable()
-		obscoll = list(obsSM['pull exp.'].keys())
-		fyaml = open('observables.yaml', 'wt')
-		yaml.dump(obscoll, fyaml)
-		fyaml.close()
-	return obscoll
 	
 def compare(wfun, fin, fout):
 	bf, v, d = load(fin)
@@ -53,7 +40,6 @@ def compare(wfun, fin, fout):
 	obsNP = glNP.obstable()
 	obscoll = loadobslist()
 	
-	#TeX table
 	f = open(fout+'.tex', 'wt')
 	obsnum = 0
 	f.write('\\begin{longtable}{|c|c|c|c|c|}\\hline\n & Observable &\t NP prediction &\t NP pull & SM pull\\endhead\\hline\n')
@@ -72,34 +58,6 @@ def compare(wfun, fin, fout):
 	f.write('\\end{longtable}')
 	f.close()
 
-	#Plots
-	import texfig # https://github.com/knly/texfig
-	import matplotlib.pyplot as plt
-	NP = []
-	SM = []
-	for obs in obscoll:
-		NP.append(float(obsNP.loc[[obs], 'pull exp.']))
-		SM.append(float(obsSM.loc[[obs], 'pull exp.']))
-			
-	plt.figure()
-	plt.plot(NP, label='New Physics')
-	plt.plot(SM, label='Standard Model')
-	vertplus = 0
-	vertminus = 0
-	for i in range(0, len(SM)):
-		if (NP[i]-SM[i]) > 1:
-			v = 0.3 + vertplus
-			vertplus += 0.1		
-			plt.annotate(str(i), xy=(i, NP[i]), xytext=(i, NP[i]+v), fontsize=6, horizontalalignment='right', arrowprops = dict(facecolor = 'black',  arrowstyle='->') )
-		elif (SM[i]-NP[i]) > 1:
-			v = 0.3 + vertminus
-			#vertminus += 0.1		
-			plt.annotate(str(i), xy=(i, NP[i]), xytext=(i, NP[i]-v), fontsize=6, horizontalalignment='left', arrowprops = dict(facecolor = 'black',  arrowstyle='->') )
-	plt.xlabel('Observable')
-	plt.ylabel(r'$|$Pull$|$')
-	plt.legend(loc=1)
-	plt.tight_layout(pad=0.5)
-	texfig.savefig(fout)
 
 def pointpull(x, wfun, fin, printlevel=1, numres=5):
 	bf, v, d = load(fin)
@@ -197,24 +155,3 @@ def pullevolution(obscode, wfun, fin, direction):
 			point = bf*(1+c*dSM)
 		pull_list.append(SMEFTglob.pull_obs(obs, point, wfun) )
 	return pull_list
-
-def plotevolution(obscodes, wfun, fin, direction, fout):
-	import texfig # https://github.com/knly/texfig
-	import matplotlib.pyplot as plt
-	fig = plt.figure()
-	for o in obscodes:
-		ev = pullevolution(o, wfun, fin, direction)
-		plt.plot(np.linspace(-1, 1, 200), ev, label='Obs. ' + str(o))
-	if direction[:2] == 'ax':
-		i = direction[2:]	
-		plt.xlabel('$\delta C_{' + i + '}/a_{' + i + '}$')
-	if direction[:2] == 'sm':
-		plt.xlabel(r'$C_\mathrm{SM}/a_\mathrm{SM}$')	
-	plt.ylabel('Pull')
-	plt.axvline(0, color='black', linewidth=0.5)
-	ax = fig.gca()
-	ax.xaxis.set_ticks_position('both')
-	ax.yaxis.set_ticks_position('both')
-	plt.legend()
-	plt.tight_layout(pad=0.5)
-	texfig.savefig(fout)
