@@ -1,36 +1,54 @@
 from . import SMEFTglob
-from .SMEFTglob import likelihood_fit_cached, loadobslist
+from .SMEFTglob import likelihood_fits, loadobslist
 from .comparepulls import pullevolution
 import warnings
-import texfig # https://github.com/knly/texfig
 import matplotlib.pyplot as plt
+import texfig # https://github.com/knly/texfig
+plt.rcParams['hatch.color'] = 'w'
 from matplotlib.patches import Rectangle
-from flavio.plots.plotfunctions import likelihood_contour_data
 from flavio.statistics.functions import delta_chi2, confidence_level
 import flavio.plots.colors
 import scipy.interpolate
 import numpy as np
 import yaml
-plt.rcParams['hatch.color'] = 'w'
+from parscanning import GridScan
+
 
 hatches = ['/', '\\', '|', '-', '+', 'x', 'o', 'O', '.', '*']
 
-def likelihood_plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0, steps=55, hatched=True):
+
+def likelihood_plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0, n_sigma=(1,2), steps=55, hatched=False, threads=1):
+	fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml', 'likelihood_ewpt.yaml', 'global']
+	labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
+	#fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml','likelihood_lfv.yaml','global']
+	#labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_lfv.yaml':'LFV', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
 	fig=plt.figure(figsize=(4,4))
 	plt.xlim([xmin,xmax])
 	plt.ylim([ymin,ymax])
 
 	i=0
 	colors = [0,1,2,4,5,6,7]
-	for f in fits:
-		print('Plotting ' + f) 
-		with warnings.catch_warnings():
-			warnings.simplefilter('ignore')
-			loglike = lambda x: likelihood_fit_cached(x, wfun, f)
-			xmargin = 0.05*(xmax-xmin)
-			ymargin = 0.05*(ymax-ymin)
-			likelihood_hatch_contour(loglike , xmin-xmargin, xmax+xmargin, ymin-ymargin, ymax+ymargin, col=colors[i], label=labels[f], interpolation_factor=5, n_sigma=(1,2), steps=steps, hatched=hatched)
-		i+=1
+	xmargin = 0.02*(xmax-xmin)
+	ymargin = 0.02*(ymax-ymin)
+	GS = GridScan(likelihood_fits, [xmin-xmargin, ymin-ymargin], [xmax+xmargin, ymax+ymargin], steps)
+	with warnings.catch_warnings():
+		warnings.simplefilter('ignore')
+		if threads == 1:
+			GS.run(wfun)
+		else:
+			GS.run_mp(threads, wfun)
+    
+	for i, f in enumerate(fits):
+		(x, y, z) = GS.meshdata(f)
+		chi = -2*(z-np.max(z))
+		# get the correct values for 2D confidence/credibility contours for n sigma
+		if isinstance(n_sigma, float) or isinstance(n_sigma, int):
+			levels = [delta_chi2(n_sigma, dof=2)]
+		else:
+			levels = [delta_chi2(n, dof=2) for n in n_sigma]
+		hatch_contour(x=x, y=y, z=chi, levels=levels, col=colors[i], label=labels[f], interpolation_factor=5, hatched=hatched)
+
+
 	plt.xlabel(axlabels[0])
 	plt.ylabel(axlabels[1])
 	plt.axhline(0, color='black', linewidth=0.5)
@@ -41,35 +59,6 @@ def likelihood_plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0, step
 	plt.legend(loc = locleg)
 	plt.tight_layout(pad=0.5)
 	texfig.savefig(fout)
-	clearcache()
-
-def likelihood_hatch_contour(log_likelihood, x_min, x_max, y_min, y_max,
-              n_sigma=1, steps=20, threads=1,
-              **kwargs):
-    r"""Plot coloured confidence contours (or bands) given a log likelihood
-    function.
-
-    Parameters:
-
-    - `log_likelihood`: function returning the logarithm of the likelihood.
-      Can e.g. be the method of the same name of a FastFit instance.
-    - `x_min`, `x_max`, `y_min`, `y_max`: data boundaries
-    - `n_sigma`: plot confidence level corresponding to this number of standard
-      deviations. Either a number (defaults to 1) or a tuple to plot several
-      contours.
-    - `steps`: number of grid steps in each dimension (total computing time is
-      this number squared times the computing time of one `log_likelihood` call!)
-
-    All remaining keyword arguments are passed to the `contour` function
-    and allow to control the presentation of the plot (see docstring of
-    `flavio.plots.plotfunctions.contour`).
-    """
-    data = likelihood_contour_data(log_likelihood=log_likelihood,
-                                x_min=x_min, x_max=x_max,
-                                y_min=y_min, y_max=y_max,
-                                n_sigma=n_sigma, steps=steps, threads=threads)
-    data.update(kwargs) #  since we cannot do **data, **kwargs in Python <3.5
-    return hatch_contour(**data)
 
 def hatch_contour(x, y, z, levels,
               interpolation_factor=1,

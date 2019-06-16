@@ -3,45 +3,30 @@ from flavio.statistics.functions import pull
 import numpy as np
 import smelli
 from math import isinf
+import warnings
 
-
-
-#fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml', 'likelihood_ewpt.yaml', 'global']
-#labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
-fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml','likelihood_lfv.yaml','global']
-labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_lfv.yaml':'LFV', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
 
 
 gl = smelli.GlobalLikelihood()		
 
-cache = dict()
-def update_cache(x, wfun):
-	if x not in cache.keys():
-		cache[x] = dict()
-		with warnings.catch_warnings():	
-			warnings.simplefilter('ignore')
-			glpp = gl.parameter_point(wfun(x))
-			gldict = glpp.log_likelihood_dict()
-			for f in fits:
-				g = gldict[f]
-				if isinf(g):
-					if f == 'global':
-						g = 0
-						for f2 in fits[:-1]:
-							g += cache[x][f2]
-					else: 
-						g = -68
-				cache[x][f] = g
-				
+def likelihood_fits(x, wfun):
+	res = dict()
+	with warnings.catch_warnings():	
+		warnings.simplefilter('ignore')
+		glpp = gl.parameter_point(wfun(x))
+		gldict = glpp.log_likelihood_dict()
+		for f in gldict.keys():
+			g = gldict[f]
+			if isinf(g):
+				if f == 'global':
+					g = 0
+					for f2 in list(gldict.keys())[:-1]:
+						g += res[f2]
+				else: 
+					g = -68
+			res[f] = g
+	return res
 
-def clearcache():
-	global cache
-	cache = dict()
-
-def likelihood_fit_cached(x, wfun, f):
-	xt = tuple(x)
-	update_cache(xt, wfun)
-	return cache[xt][f]
 
 def likelihood_global(x, wfun):
 	with warnings.catch_warnings():
