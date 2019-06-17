@@ -17,11 +17,18 @@ from parscanning import GridScan
 hatches = ['/', '\\', '|', '-', '+', 'x', 'o', 'O', '.', '*']
 
 
-def likelihood_plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0, n_sigma=(1,2), steps=55, hatched=False, threads=1):
-	fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml', 'likelihood_ewpt.yaml', 'global']
-	labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
-	#fits = ['likelihood_lfu_fcnc.yaml', 'likelihood_rd_rds.yaml','likelihood_lfv.yaml','global']
-	#labels = {'likelihood_lfu_fcnc.yaml':r'$R_{K^{(*)}}$', 'likelihood_rd_rds.yaml':r'$R_{D^{(*)}}$', 'likelihood_lfv.yaml':'LFV', 'likelihood_ewpt.yaml': 'EW precission', 'global':'Global'}
+def listpoint(x):
+	if len(x) == 2:
+		if len(np.array(x).flat) == 2:
+			return [x,]
+		else:
+			return x
+	else:
+		return x
+
+def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout, locleg=0, n_sigma=(1,2), steps=55, hatched=False, threads=1, bf=None):
+	fitcodes = {'RK':'likelihood_lfu_fcnc.yaml', 'RD':'likelihood_rd_rds.yaml', 'EW':'likelihood_ewpt.yaml', 'LFV':'likelihood_lfv.yaml', 'ZLFV':'likelihood_zlfv.yaml', 'global':'global'}
+	labels = {'RK':r'$R_{K^{(*)}}$', 'RD':r'$R_{D^{(*)}}$', 'EW': 'EW precission', 'LFV':'LFV', 'ZLFV':r'$Z$ LFV',  'global':'Global'}
 	fig=plt.figure(figsize=(4,4))
 	plt.xlim([xmin,xmax])
 	plt.ylim([ymin,ymax])
@@ -37,9 +44,10 @@ def likelihood_plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0, n_si
 			GS.run(wfun)
 		else:
 			GS.run_mp(threads, wfun)
+
     
 	for i, f in enumerate(fits):
-		(x, y, z) = GS.meshdata(f)
+		(x, y, z) = GS.meshdata(fitcodes[f])
 		chi = -2*(z-np.max(z))
 		# get the correct values for 2D confidence/credibility contours for n sigma
 		if isinstance(n_sigma, float) or isinstance(n_sigma, int):
@@ -48,6 +56,10 @@ def likelihood_plot(wfun, xmin, xmax, ymin, ymax, axlabels, fout, locleg=0, n_si
 			levels = [delta_chi2(n, dof=2) for n in n_sigma]
 		hatch_contour(x=x, y=y, z=chi, levels=levels, col=colors[i], label=labels[f], interpolation_factor=5, hatched=hatched)
 
+	
+	if bf is not None:
+		for p in listpoint(bf):
+			plt.scatter(*p, marker='x', s=15, c='black')
 
 	plt.xlabel(axlabels[0])
 	plt.ylabel(axlabels[1])
