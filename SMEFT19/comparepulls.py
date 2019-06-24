@@ -153,5 +153,5 @@ def pullevolution(obscode, wfun, fin, direction):
 			bfm = np.matrix(bf)
 			dSM = float(np.sqrt(p/(bfm @ H @ bfm.T ) ))
 			point = bf*(1+c*dSM)
-		pull_list.append(SMEFTglob.pull_obs(obs, point, wfun) )
+		pull_list.append(SMEFTglob.pull_obs(point, obs, wfun) )
 	return pull_list
