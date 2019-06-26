@@ -29,17 +29,14 @@ def likelihood_fits(x, wfun):
 
 
 def likelihood_global(x, wfun):
-	with warnings.catch_warnings():
-		warnings.simplefilter('ignore')
-		glpp = gl.parameter_point(wfun(x))
-		return glpp.log_likelihood_global()
+	return likelihood_fits(x, wfun)['global']
 
 def fastmeas(obs):
 	obsm = gl.obstable_sm[obs]
 	lhname = obsm['lh_name']
 	return lhname[:4]=='fast'
 
-def prediction(obs, x, wfun):
+def prediction(x, obs, wfun):
 	obsm = gl.obstable_sm[obs]
 	lhname = obsm['lh_name']
 	wc = wfun(x)
@@ -55,11 +52,11 @@ def prediction(obs, x, wfun):
 		pred = ml.get_predictions_par(gl.par_dict, wc)
 		return pred[obs]
 
-def pull_obs(obs, x, wfun):
+def pull_obs(x, obs, wfun):
 	obsm = gl.obstable_sm[obs]
 	lhname = obsm['lh_name']
 	wc = wfun(x)
-	pred = prediction(obs, x, wfun)
+	pred = prediction(x, obs, wfun)
 	ll_central = obsm['ll_central']
 	if fastmeas(obs):
 		lh = gl.fast_likelihoods[lhname]
