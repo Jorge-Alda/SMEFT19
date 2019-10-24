@@ -16,7 +16,7 @@ def roundsig(x, num=4):
 	return round(x, -l+num)
 
 def minimum(fit, x0):
-		
+
 	'''
 bf, v, d, Lmin = minimum(fit, x0)
 
@@ -47,7 +47,7 @@ Return:
 	v, d, vt = svd(m.np_matrix())
 	d_ellipse = np.diag(1/d)
 	return bf, v, d_ellipse, Lmin
-	
+
 
 def parametrize(x, bf, v, d, nsigmas=1):
 	'''
@@ -68,47 +68,61 @@ Returns:
 	xe = bf + v @ xp
 	return np.array(xe).flatten()
 
-def save(bf, v, d, filename):
+def save(bf, v, d, L, filename,  name=None, fit=None):
 	'''
-save(bf, v, d, filename)
+save(bf, v, d, L, filename, name, fit)
 
 Arguments:
 	- bf: np.array with the point in parameter space with the best fit
 	- v: np.matrix containing the orientation of the axes of the ellipsoid
 	- d: np.array containing the principal axes of the ellipsoid
 	- filename: Path to the YAML file where the shape of the ellipse will be saved
+	- L: likelihood at the best fits
+	- name: Descriptive name of the fit (optional)
+	- fit: scenario used to fit the data (optional)
 	'''
 	f = open(filename, 'wt')
 	values = dict()
+	if name is not None:
+		values['name'] = name
+	values['L'] = L
+	if fit is not None:
+		values['fit'] = fit
 	values['bf'] = bf.tolist()
 	values['v'] = v.tolist()
 	values['d'] = d.tolist()
 	yaml.dump(values, f)
 	f.close()
-	
+
 def load(filename):
 	'''
-bf, v, d = load(filename)
+values = load(filename)
 
 Arguments:
 	- filename: Path to the YAML file where the shape of the ellipse has been saved by the "save" method
 		WARNING: this method doesn't check the integrity of the file
 
-Returns:
+Returns: A python dictionary containing:
 	- bf: np.array with the point in parameter space with the best fit
 	- v: np.matrix containing the orientation of the axes of the ellipsoid
-	- d: np.array containing the principal axes of the ellipsoid	
+	- d: np.array containing the principal axes of the ellipsoid
+	- L: Likelihood at the best fit
+	- [name: Name of the fit]
+	- [fit: scenario used in the fit]
 	'''
 	f = open(filename, 'rt')
 	values = yaml.load(f)
 	f.close()
-	bf = np.array(values['bf'])
-	v = np.matrix(values['v'])
-	d = np.array(values['d'])
-	return bf, v, d
+	values['bf'] = np.array(values['bf'])
+	values['v'] = np.matrix(values['v'])
+	values['d'] = np.array(values['d'])
+	return values
 
 def notablepoints(fin, fout, fit):
-	bf, v, d = load(fin)
+	dbf = load(fin)
+	bf = dbf['bf']
+	v = dbf['v']
+	d = dbf['d']
 	n = len(bf)
 	p = delta_chi2(1, n)
 	ex_p = []
@@ -163,16 +177,16 @@ def notablepoints(fin, fout, fit):
 		f.write(str(i+1) + ' & $+$ & ')
 		for j in range(0, n):
 			f.write(texnumber(ex_p[i][j]) + ' & ')
-		f.write(texnumber(chi2_ex_p[i]) + r'\\\hline' + '\n') 
+		f.write(texnumber(chi2_ex_p[i]) + r'\\\hline' + '\n')
 		f.write(str(i+1) + ' & $-$ & ')
 		for j in range(0, n):
 			f.write(texnumber(ex_m[i][j]) + ' & ')
-		f.write(texnumber(chi2_ex_m[i]) + r'\\\hline' + '\n') 
+		f.write(texnumber(chi2_ex_m[i]) + r'\\\hline' + '\n')
 	for i in range(0, n):
 		f.write( ' & $+$ & ')
 		for j in range(0, n):
 			f.write(texnumber(cross_p[i][j]) + ' & ')
-		f.write(texnumber(chi2_cross_p[i]) + r'\\\hline' + '\n') 
+		f.write(texnumber(chi2_cross_p[i]) + r'\\\hline' + '\n')
 		f.write( ' & $-$ & ')
 		for j in range(0, n):
 			f.write(texnumber(cross_m[i][j]) + ' & ')

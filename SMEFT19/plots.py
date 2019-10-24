@@ -26,14 +26,12 @@ def listpoint(x):
 	else:
 		return x
 
-def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout, locleg=0, n_sigma=(1,2), steps=55, hatched=False, threads=1, bf=None):
+def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout=None, locleg=0, n_sigma=(1,2), steps=55, hatched=False, threads=1, bf=None):
 	fitcodes = {'RK':'likelihood_lfu_fcnc.yaml', 'RD':'likelihood_rd_rds.yaml', 'EW':'likelihood_ewpt.yaml', 'LFV':'likelihood_lfv.yaml', 'ZLFV':'likelihood_zlfv.yaml', 'global':'global'}
 	labels = {'RK':r'$R_{K^{(*)}}$', 'RD':r'$R_{D^{(*)}}$', 'EW': 'EW precission', 'LFV':'LFV', 'ZLFV':r'$Z$ LFV',  'global':'Global'}
 	fig=plt.figure(figsize=(4,4))
 	plt.xlim([xmin,xmax])
 	plt.ylim([ymin,ymax])
-
-	i=0
 	colors = [0,1,2,4,5,6,7]
 	xmargin = 0.02*(xmax-xmin)
 	ymargin = 0.02*(ymax-ymin)
@@ -45,7 +43,7 @@ def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout, locleg=0
 		else:
 			GS.run_mp(threads, wfun)
 
-    
+
 	for i, f in enumerate(fits):
 		(x, y, z) = GS.meshdata(fitcodes[f])
 		chi = -2*(z-np.max(z))
@@ -56,7 +54,7 @@ def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout, locleg=0
 			levels = [delta_chi2(n, dof=2) for n in n_sigma]
 		hatch_contour(x=x, y=y, z=chi, levels=levels, col=colors[i], label=labels[f], interpolation_factor=5, hatched=hatched)
 
-	
+
 	if bf is not None:
 		for p in listpoint(bf):
 			plt.scatter(*p, marker='x', s=15, c='black')
@@ -70,7 +68,8 @@ def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout, locleg=0
 	ax.yaxis.set_ticks_position('both')
 	plt.legend(loc = locleg)
 	plt.tight_layout(pad=0.5)
-	texfig.savefig(fout)
+	if fout is not None:
+		texfig.savefig(fout)
 
 def hatch_contour(x, y, z, levels,
               interpolation_factor=1,
@@ -167,7 +166,7 @@ def error_plot(flist, plottype, fout):
 			leglabels.append(values['name'])
 		except:
 			leglabels.append(fin[:-5])
-		
+
 		o = 0
 		for obs in observables:
 			data[hyp][o][0] = values[str(obs)]['NP']['central']
@@ -178,7 +177,7 @@ def error_plot(flist, plottype, fout):
 			expdata[o][1] = values[str(obs)]['exp']['uncert']
 			o += 1
 		hyp += 1
-		
+
 	for o in range(0, nobs):
 		for i in range(0, nhyp):
 			if o==0:
@@ -186,22 +185,36 @@ def error_plot(flist, plottype, fout):
 			else:
 				plt.plot(o+(i+1)/(nhyp+1), data[i][o][0], marker=markers[i], color='b')
 			plt.errorbar(o+(i+1)/(nhyp+1), data[i][o][0], yerr=data[i][o][1], color='b')
-			
+
 		if o==0:
-			ax.add_patch(Rectangle( (o, smdata[o][0]-smdata[o][1]), 1, 2*smdata[o][1], color='orange', alpha=0.7, label='SM'))		
+			ax.add_patch(Rectangle( (o, smdata[o][0]-smdata[o][1]), 1, 2*smdata[o][1], color='orange', alpha=0.7, label='SM'))
 			ax.add_patch(Rectangle( (o, expdata[o][0]-expdata[o][1]), 1, 2*expdata[o][1], color='green', alpha=0.7, label='Experimental'))
 		else:
 			ax.add_patch(Rectangle( (o, expdata[o][0]-expdata[o][1]), 1, 2*expdata[o][1], color='green', alpha=0.7))
-			ax.add_patch(Rectangle( (o, smdata[o][0]-smdata[o][1]), 1, 2*smdata[o][1], color='orange', alpha=0.7))		
-			
-		
+			ax.add_patch(Rectangle( (o, smdata[o][0]-smdata[o][1]), 1, 2*smdata[o][1], color='orange', alpha=0.7))
+
+
 	ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs) )
 	ax.set_xticklabels(texlabels + [''])
 	plt.legend()
 	texfig.savefig(fout)
 
+def binerrorbox(binmin, binmax, central, error, centralline=False, **kwargs):
+	ax = plt.gca()
+	if isinstance(error, float):
+		errormin = error
+		errormax = error
+	else:
+		errormin = error[0]
+		errormax = error[1]
+
+	ax.add_patch(Rectangle((binmin, central-errormin), binmax-binmin, errormin+errormax, **kwargs))
+	if centralline:
+		plt.plot([binmin, binmax], [central, central], **kwargs)
+
 def compare_plot(wfun, fin, fout):
-	bf, v, d = load(fin)
+	dbf = load(fin)
+	bf = dbf['bf']
 
 	w = wfun(bf)
 	gl = SMEFTglob.gl
@@ -216,7 +229,7 @@ def compare_plot(wfun, fin, fout):
 	for obs in obscoll:
 		NP.append(float(obsNP.loc[[obs], 'pull exp.']))
 		SM.append(float(obsSM.loc[[obs], 'pull exp.']))
-			
+
 	plt.figure()
 	plt.plot(NP, label='New Physics')
 	plt.plot(SM, label='Standard Model')
@@ -225,11 +238,11 @@ def compare_plot(wfun, fin, fout):
 	for i in range(0, len(SM)):
 		if (NP[i]-SM[i]) > 1:
 			v = 0.3 + vertplus
-			vertplus += 0.1		
+			vertplus += 0.1
 			plt.annotate(str(i), xy=(i, NP[i]), xytext=(i, NP[i]+v), fontsize=6, horizontalalignment='right', arrowprops = dict(facecolor = 'black',  arrowstyle='->') )
 		elif (SM[i]-NP[i]) > 1:
 			v = 0.3 + vertminus
-			#vertminus += 0.1		
+			#vertminus += 0.1
 			plt.annotate(str(i), xy=(i, NP[i]), xytext=(i, NP[i]-v), fontsize=6, horizontalalignment='left', arrowprops = dict(facecolor = 'black',  arrowstyle='->') )
 	plt.xlabel('Observable')
 	plt.ylabel(r'$|$Pull$|$')
@@ -243,10 +256,10 @@ def evolution_plot(obscodes, wfun, fin, direction, fout):
 		ev = pullevolution(o, wfun, fin, direction)
 		plt.plot(np.linspace(-1, 1, 200), ev, label='Obs. ' + str(o))
 	if direction[:2] == 'ax':
-		i = direction[2:]	
+		i = direction[2:]
 		plt.xlabel('$\delta C_{' + i + '}/a_{' + i + '}$')
 	if direction[:2] == 'sm':
-		plt.xlabel(r'$C_\mathrm{SM}/a_\mathrm{SM}$')	
+		plt.xlabel(r'$C_\mathrm{SM}/a_\mathrm{SM}$')
 	plt.ylabel('Pull')
 	plt.axvline(0, color='black', linewidth=0.5)
 	ax = fig.gca()

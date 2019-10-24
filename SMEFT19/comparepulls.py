@@ -28,9 +28,10 @@ def texnumber(x, prec=3):
 		texn = '$' + match.group(1) + '\\times 10^{' + str(int(match.group(3))) + '}$'
 	return texn
 
-	
+
 def compare(wfun, fin, fout):
-	bf, v, d = load(fin)
+	dbf = load(fin)
+	bf = dbf['bf']
 
 	w = wfun(bf)
 	gl = SMEFTglob.gl
@@ -39,7 +40,7 @@ def compare(wfun, fin, fout):
 	obsSM = glSM.obstable()
 	obsNP = glNP.obstable()
 	obscoll = loadobslist()
-	
+
 	f = open(fout+'.tex', 'wt')
 	obsnum = 0
 	f.write('\\begin{longtable}{|c|c|c|c|c|}\\hline\n & Observable &\t NP prediction &\t NP pull & SM pull\\endhead\\hline\n')
@@ -60,7 +61,8 @@ def compare(wfun, fin, fout):
 
 
 def pointpull(x, wfun, fin, printlevel=1, numres=5):
-	bf, v, d = load(fin)
+	dbf = load(fin)
+	bf = dbf['bf']
 	w = wfun(bf)
 	wx = wfun(x)
 	gl = SMEFTglob.gl
@@ -87,7 +89,8 @@ def pointpull(x, wfun, fin, printlevel=1, numres=5):
 
 def notablepulls(wfun, fin, fout):
 	f = open(fout, 'wt')
-	bf, v, d = load(fin)
+	dbf = load(fin)
+	bf = dbf['bf']
 	n = len(bf)
 	p = delta_chi2(1, n)
 	a = np.sqrt(p/np.diag(d))
@@ -127,16 +130,17 @@ def pullevolution(obscode, wfun, fin, direction):
 	direction: string with the following format:
 		'wc' + str(i): for the i-th Wilson coefficient
 		'ax' + str(i): for the i-th principal axis of the ellipsoid
-		'sm': for the direction joining the bf and sm points 
+		'sm': for the direction joining the bf and sm points
 	'''
-	bf, v, d = load(fin)	
+	dbf = load(fin)
+	bf = dbf['bf']
 	n = len(bf)
 	p = delta_chi2(1, n)
 	a = np.sqrt(2*p/np.diag(d))
 	H = v @ d @ v.T
 	pull_list = []
 	obscoll = loadobslist()
-	obs = obscoll[obscode]	
+	obs = obscoll[obscode]
 	for c in np.linspace(-1, 1, 200):
 		if direction[:2] == 'wc':
 			i = int(direction[2:])-1

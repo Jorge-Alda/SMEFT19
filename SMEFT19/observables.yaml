@@ -1,6 +1,7 @@
 - !!python/tuple [<dBR/dq2>(Bs->phimumu), 1.0, 6.0]
 - a_mu
 - !!python/tuple [<P5p>(B0->K*mumu), 4, 6]
+- S_psiK
 - Rtaul(B->D*lnu)
 - epsp/eps
 - BR(W->taunu)
@@ -9,153 +10,156 @@
 - !!python/tuple [<Rmue>(B0->K*ll), 0.045, 1.1]
 - !!python/tuple [<Rmue>(B+->Kll), 1.1, 6.0]
 - !!python/tuple [<BR>/BR(B->D*taunu), 10.4, 10.93]
-- !!python/tuple [<P2>(B0->K*mumu), 4, 6]
-- !!python/tuple [<dBR/dq2>(B+->K*mumu), 15.0, 19.0]
 - BR(Bs->mumu)
+- eps_K
+- !!python/tuple [<dBR/dq2>(B+->K*mumu), 15.0, 19.0]
+- !!python/tuple [<P2>(B0->K*mumu), 4, 6]
 - A(Z->ee)
 - !!python/tuple [<dBR/dq2>(B0->K*mumu), 15.0, 19.0]
 - !!python/tuple [<dBR/dq2>(Bs->phimumu), 15.0, 19.0]
 - !!python/tuple [<dBR/dq2>(B+->K*mumu), 4.0, 6.0]
-- !!python/tuple [<AFBlh>(Lambdab->Lambdamumu), 15, 20]
 - Rtaumu(B->D*lnu)
-- eps_K
+- !!python/tuple [<AFBlh>(Lambdab->Lambdamumu), 15, 20]
 - BR(KL->ee)
 - BR(B+->Ktautau)
 - !!python/tuple [<dBR/dq2>(B+->Kmumu), 4.0, 5.0]
 - !!python/tuple [<BR>/BR(B->D*taunu), 5.07, 5.6]
 - BR(tau->mununu)
-- !!python/tuple [<dBR/dq2>(B0->Kmumu), 15.0, 22.0]
 - !!python/tuple [<dBR/dq2>(B0->Kmumu), 4.0, 6.0]
 - a_e
+- !!python/tuple [<dBR/dq2>(B0->Kmumu), 15.0, 22.0]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 7.73, 8.27]
 - !!python/tuple [<BR>/BR(B->D*taunu), 7.2, 7.73]
-- !!python/tuple [<dBR/dq2>(B+->Kmumu), 1.1, 2.0]
-- !!python/tuple [<dBR/dq2>(B+->Kmumu), 5.0, 6.0]
 - !!python/tuple [<P1>(B0->K*mumu), 4.3, 6]
+- !!python/tuple [<dBR/dq2>(B+->Kmumu), 5.0, 6.0]
+- !!python/tuple [<dBR/dq2>(B+->Kmumu), 1.1, 2.0]
 - FLtot(B0->D*taunu)
 - !!python/tuple [<dBR/dq2>(B0->K*mumu), 1.1, 2.5]
+- !!python/tuple [<dBR/dq2>(B0->Kmumu), 2.0, 4.0]
 - !!python/tuple [<dBR/dq2>(B0->K*mumu), 4.0, 6.0]
+- m_W
 - !!python/tuple [<dBR/dq2>(Lambdab->Lambdamumu), 15, 20]
 - !!python/tuple [<dBR/dq2>(B0->K*mumu), 4.3, 6]
-- m_W
-- !!python/tuple [<dBR/dq2>(B0->Kmumu), 2.0, 4.0]
+- ADeltaGamma(Bs->phigamma)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 9.0, 9.5]
 - !!python/tuple [<dBR/dq2>(B+->Kmumu), 15.0, 22.0]
 - !!python/tuple [<FL>(B0->K*mumu), 4, 6]
-- ADeltaGamma(Bs->phigamma)
 - R_mu
 - !!python/tuple [<Dmue_P5p>(B0->K*ll), 14.18, 19.0]
 - sigma_had
 - AFB(Z->tautau)
 - !!python/tuple [<dBR/dq2>(B+->Kmumu), 3.0, 4.0]
-- !!python/tuple [<S4>(Bs->phimumu), 15.0, 19.0]
-- !!python/tuple [<dBR/dq2>(B0->K*mumu), 2.5, 4.0]
 - BR(B+->pietau)
+- !!python/tuple [<dBR/dq2>(B0->K*mumu), 2.5, 4.0]
+- !!python/tuple [<S4>(Bs->phimumu), 15.0, 19.0]
 - BR(B+->Knunu)
 - BR(W->munu)
-- !!python/tuple [<BR>(B->Xsee), 14.2, 25.0]
 - !!python/tuple [<A9>(B0->K*mumu), 15, 19]
 - R_e
 - Remu(K+->lnu)
 - Rtaul(B->Dlnu)
-- !!python/tuple [<Dmue_P5p>(B0->K*ll), 1.0, 6.0]
+- BR(KS->mumu)
+- !!python/tuple [<BR>(B->Xsee), 14.2, 25.0]
 - S_phigamma
+- !!python/tuple [<Dmue_P5p>(B0->K*ll), 1.0, 6.0]
+- BR(KS->ee)
+- BR(B+->enu)
 - !!python/tuple [<BR>/BR(B->D*taunu), 6.0, 6.5]
 - !!python/tuple [<dBR/dq2>(B+->Kmumu), 0, 2]
-- BR(B+->enu)
-- !!python/tuple [<P4p>(B0->K*mumu), 2, 4]
 - BR(B0->rhonunu)
-- BR(KS->mumu)
-- !!python/tuple [<FL>(B0->K*mumu), 2, 4]
-- BR(KL->pinunu)
 - BR(B+->pitaue)
-- BR(KS->ee)
+- !!python/tuple [<P4p>(B0->K*mumu), 2, 4]
+- BR(KL->pinunu)
+- !!python/tuple [<Rmue>(B0->Kll), 4.0, 8.12]
+- !!python/tuple [<FL>(B0->K*mumu), 2, 4]
 - BR(B0->K*nunu)
-- !!python/tuple [<BR>/BR(B->D*taunu), 8.27, 8.8]
 - !!python/tuple [<P4p>(B0->K*mumu), 4, 6]
-- DeltaM_d
+- !!python/tuple [<BR>/BR(B->D*taunu), 8.27, 8.8]
 - BR(tau->Knu)
-- !!python/tuple [<BR>/BR(B->Dtaunu), 9.86, 10.4]
 - !!python/tuple [<P5p>(B0->K*mumu), 2.5, 4]
-- BR(B+->K*nunu)
+- !!python/tuple [<BR>/BR(B->Dtaunu), 9.86, 10.4]
 - a_tau
-- !!python/tuple [<dBR/dq2>(B0->K*mumu), 2, 4.3]
-- !!python/tuple [<P1>(B0->K*mumu), 15, 19]
+- BR(B+->K*nunu)
 - !!python/tuple [<P1>(B0->K*ee), 0.002, 1.12]
+- !!python/tuple [<P1>(B0->K*mumu), 15, 19]
+- !!python/tuple [<dBR/dq2>(B0->K*mumu), 2, 4.3]
+- Rmue(W->lnu)
 - !!python/tuple [<BR>/BR(B->D*taunu), 4.0, 4.5]
-- !!python/tuple [<FL>(B0->K*mumu), 1.1, 2.5]
 - DeltaM_s
+- !!python/tuple [<FL>(B0->K*mumu), 1.1, 2.5]
 - !!python/tuple [<dBR/dq2>(B+->Kmumu), 2.0, 3.0]
 - !!python/tuple [<BR>(B->Xsmumu), 1.0, 6.0]
-- !!python/tuple [<S3>(Bs->phimumu), 15.0, 19.0]
 - !!python/tuple [<P1>(B0->K*mumu), 2, 4]
+- !!python/tuple [<S3>(Bs->phimumu), 15.0, 19.0]
 - !!python/tuple [<P5p>(B0->K*mumu), 15, 19]
-- ACP(B->Xgamma)
-- !!python/tuple [<BR>/BR(B->D*taunu), 10.5, 11.0]
-- !!python/tuple [<A7>(B0->K*mumu), 1.1, 6]
-- BR(B0->pitaunu)
 - !!python/tuple [<P1>(B0->K*mumu), 4, 6]
+- !!python/tuple [<A7>(B0->K*mumu), 1.1, 6]
+- !!python/tuple [<BR>/BR(B->D*taunu), 10.5, 11.0]
+- ACP(B->Xgamma)
 - !!python/tuple [<BR>/BR(B->D*taunu), 7.73, 8.27]
 - !!python/tuple [<BR>(B->Xsmumu), 14.2, 25.0]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 6.67, 7.2]
 - !!python/tuple [<Dmue_P4p>(B0->K*ll), 1.0, 6.0]
 - A(Z->tautau)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 5.5, 6.0]
+- !!python/tuple [<S4>(Bs->phimumu), 2.0, 5.0]
+- !!python/tuple [<FL>(Bs->phimumu), 2.0, 5.0]
 - !!python/tuple [<A7>(B0->K*mumu), 15, 19]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 10.93, 11.47]
-- !!python/tuple [<S4>(Bs->phimumu), 2.0, 5.0]
+- BR(K+->pinunu)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 9.5, 10.0]
 - BR(B+->Ktaue)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 10.4, 10.93]
 - !!python/tuple [<FL>(B0->K*mumu), 1, 2]
-- !!python/tuple [<FL>(Bs->phimumu), 2.0, 5.0]
-- BR(tau->enunu)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 8.8, 9.33]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 7.2, 7.73]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 10.0, 10.5]
-- BR(B+->taunu)
-- S_psiK
 - AFB(Z->cc)
 - !!python/tuple [<A8>(B0->K*mumu), 1.1, 6]
 - !!python/tuple [<P1>(B0->K*mumu), 1.1, 2.5]
+- BR(tau->enunu)
 - BR(W->enu)
+- BR(Bs->phigamma)
 - !!python/tuple [<BR>/BR(B->D*taunu), 6.67, 7.2]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 6.0, 6.5]
-- BR(K+->pinunu)
 - !!python/tuple [<A9>(B0->K*mumu), 1.1, 6]
+- !!python/tuple [<FL>(B0->K*mumu), 0, 2]
 - !!python/tuple [<BR>/BR(B->D*taunu), 6.13, 6.67]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 6.13, 6.67]
-- !!python/tuple [<FL>(B0->K*mumu), 0, 2]
-- !!python/tuple [<AFB>(B0->K*mumu), 4.3, 6]
-- !!python/tuple [<AFBl>(Lambdab->Lambdamumu), 15, 20]
-- BR(Bs->phigamma)
 - !!python/tuple [<BR>/BR(B->D*taunu), 8.8, 9.33]
+- !!python/tuple [<AFBl>(Lambdab->Lambdamumu), 15, 20]
+- !!python/tuple [<AFB>(B0->K*mumu), 4.3, 6]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 7.5, 8.0]
+- !!python/tuple [<P1>(B0->K*mumu), 2, 4.3]
 - R_b
 - !!python/tuple [<FL>(Bs->phimumu), 15.0, 19.0]
 - !!python/tuple [<BR>/BR(B->D*taunu), 5.5, 6.0]
+- !!python/tuple [<AFB>(B0->K*mumu), 1, 2]
+- !!python/tuple [<FL>(B0->K*mumu), 2.5, 4]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 10.5, 11.0]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 8.5, 9.0]
-- !!python/tuple [<P1>(B0->K*mumu), 2, 4.3]
-- !!python/tuple [<AFB>(B0->K*mumu), 1, 2]
+- R_uc
 - !!python/tuple [<BR>/BR(B->Dtaunu), 4.0, 4.53]
 - AFB(Z->ee)
-- !!python/tuple [<FL>(B0->K*mumu), 2.5, 4]
 - BR(B+->pinunu)
-- !!python/tuple [<P5p>(B0->K*mumu), 1.1, 2.5]
 - BR(B+->rhonunu)
 - !!python/tuple [<P5p>(B0->K*mumu), 4.3, 6]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 4.0, 4.5]
 - !!python/tuple [<BR>/BR(B->D*taunu), 7.5, 8.0]
 - !!python/tuple [<AFB>(B0->K*mumu), 2, 4.3]
-- BR(B0->pinunu)
-- !!python/tuple [<ATIm>(B0->K*ee), 0.002, 1.12]
-- S_K*gamma
+- !!python/tuple [<P5p>(B0->K*mumu), 1.1, 2.5]
+- BR(B0->pitaunu)
+- Rtaue(W->lnu)
 - !!python/tuple [<P2>(B0->K*mumu), 2.5, 4]
-- !!python/tuple [<FL>(B0->K*mumu), 4.3, 6]
+- BR(B0->pinunu)
+- S_K*gamma
+- !!python/tuple [<ATIm>(B0->K*ee), 0.002, 1.12]
 - !!python/tuple [<AFB>(B0->K*mumu), 0, 2]
+- !!python/tuple [<FL>(B0->K*mumu), 4.3, 6]
+- BR(B0->mumu)
 - !!python/tuple [<Rmue>(B+->K*ll), 15.0, 19.0]
 - !!python/tuple [<BR>/BR(B->D*taunu), 4.5, 5.0]
+- !!python/tuple [<Rmue>(B+->Kll), 4.0, 8.12]
 - A(Z->bb)
 - BR(tau->emue)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 8.27, 8.8]
@@ -163,73 +167,78 @@
 - BR(B+->Kmutau)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 4.53, 5.07]
 - Rmue(B->D*lnu)
-- !!python/tuple [<P5p>(B0->K*mumu), 0.04, 2]
-- !!python/tuple [<P5p>(B0->K*mumu), 1, 2]
 - !!python/tuple [<BR>/BR(B->D*taunu), 4.53, 5.07]
-- BR(tau->pinu)
+- !!python/tuple [<Rmue>(B0->Kll), 14.18, 19.0]
 - AFB(Z->mumu)
 - !!python/tuple [<A8>(B0->K*mumu), 15, 19]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 11.5, 12.0]
 - BR(tau->muemu)
 - BR(pi+->enu)
+- !!python/tuple [<Rmue>(B0->Kll), 0.1, 4.0]
 - !!python/tuple [<dBR/dq2>(B+->K*mumu), 2.0, 4.0]
+- !!python/tuple [<P5p>(B0->K*mumu), 1, 2]
 - !!python/tuple [<dBR/dq2>(B0->K*mumu), 0, 2]
-- BR(KL->mumu)
 - BR(tau->muee)
-- !!python/tuple [<dBR/dq2>(B0->Kmumu), 0, 2]
+- !!python/tuple [<P5p>(B0->K*mumu), 0.04, 2]
 - BR(B0->Knunu)
-- !!python/tuple [<BR>(B->Xsee), 1.0, 6.0]
+- !!python/tuple [<dBR/dq2>(B0->Kmumu), 0, 2]
 - GammaZ
-- BR(Bc->taunu)
 - !!python/tuple [<BR>/BR(B->D*taunu), 7.0, 7.5]
-- !!python/tuple [<P4p>(B0->K*mumu), 15, 19]
+- BR(Bc->taunu)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 11.0, 11.5]
-- !!python/tuple [<P4p>(B0->K*mumu), 0.04, 2]
-- BR(B+->K*emu)
 - !!python/tuple [<P2>(B0->K*mumu), 1.1, 2.5]
+- A(Z->ss)
+- BR(B+->K*emu)
 - !!python/tuple [<FL>(B0->K*mumu), 0.04, 2]
+- !!python/tuple [<P4p>(B0->K*mumu), 0.04, 2]
+- !!python/tuple [<P4p>(B0->K*mumu), 15, 19]
+- !!python/tuple [<P4p>(B0->K*mumu), 2.5, 4]
 - !!python/tuple [<P4p>(B0->K*mumu), 1.1, 2.5]
 - !!python/tuple [<dBR/dq2>(B+->Kmumu), 2, 4.3]
-- !!python/tuple [<P4p>(B0->K*mumu), 2.5, 4]
+- !!python/tuple [<BR>(B->Xsee), 1.0, 6.0]
+- BR(KL->mumu)
 - !!python/tuple [<FL>(B0->K*mumu), 2, 4.3]
 - R_tau
 - !!python/tuple [<P2>(B0->K*mumu), 15, 19]
 - !!python/tuple [<Rmue>(B0->K*ll), 0.1, 8.0]
-- !!python/tuple [<dBR/dq2>(B0->Kmumu), 2, 4.3]
 - !!python/tuple [<Rmue>(B0->K*ll), 15.0, 19.0]
-- !!python/tuple [<AFBh>(Lambdab->Lambdamumu), 15, 20]
+- !!python/tuple [<dBR/dq2>(B0->Kmumu), 2, 4.3]
+- !!python/tuple [<P1>(B0->K*mumu), 2.5, 4]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 6.5, 7.0]
 - A(Z->mumu)
+- !!python/tuple [<P1>(B0->K*mumu), 0.04, 2]
 - !!python/tuple [<BR>/BR(B->D*taunu), 9.86, 10.4]
 - BR(Bs->tautau)
-- !!python/tuple [<P1>(B0->K*mumu), 2.5, 4]
-- !!python/tuple [<P1>(B0->K*mumu), 0.04, 2]
+- !!python/tuple [<AFBh>(Lambdab->Lambdamumu), 15, 20]
 - BR(B0->K*mue)
-- !!python/tuple [<BR>/BR(B->D*taunu), 8.5, 9.0]
-- BR(B+->Ktaumu)
-- !!python/tuple [<S3>(Bs->phimumu), 2.0, 5.0]
-- !!python/tuple [<BR>/BR(B->Dtaunu), 4.5, 5.0]
-- BR(B+->K*mue)
-- !!python/tuple [<dBR/dq2>(B+->K*mumu), 0, 2]
-- BR(B+->munu)
 - !!python/tuple [<P5p>(B0->K*mumu), 2, 4.3]
+- !!python/tuple [<BR>/BR(B->D*taunu), 8.5, 9.0]
+- !!python/tuple [<Rmue>(B+->Kll), 14.18, 19.0]
+- BR(B+->Ktaumu)
+- !!python/tuple [<Rmue>(B+->Kll), 0.1, 4.0]
+- !!python/tuple [<BR>/BR(B->Dtaunu), 4.5, 5.0]
+- S_psiphi
+- R(W->cX)
+- BR(B+->K*mue)
+- !!python/tuple [<S3>(Bs->phimumu), 2.0, 5.0]
+- !!python/tuple [<dBR/dq2>(B+->K*mumu), 0, 2]
+- x12Im_D
 - !!python/tuple [<BR>/BR(B->D*taunu), 6.5, 7.0]
 - !!python/tuple [<BR>/BR(B->D*taunu), 9.33, 9.86]
-- x12Im_D
 - !!python/tuple [<BR>/BR(B->Dtaunu), 11.47, 12.0]
 - BR(B+->Ketau)
-- !!python/tuple [<P5p>(B0->K*mumu), 2, 4]
-- !!python/tuple [<dBR/dq2>(B0->K*mumu), 1, 2]
 - BR(B+->pimutau)
+- BR(tau->pinu)
+- BR(B->Xsgamma)
+- !!python/tuple [<P5p>(B0->K*mumu), 2, 4]
 - BR(B0->K*gamma)
-- BR(B0->mumu)
+- !!python/tuple [<dBR/dq2>(B0->K*mumu), 1, 2]
 - !!python/tuple [<BR>/BR(B->D*taunu), 5.6, 6.13]
 - GammaW
 - !!python/tuple [<BR>/BR(B->D*taunu), 9.5, 10.0]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 7.0, 7.5]
-- S_psiphi
-- !!python/tuple [<BR>/BR(B->D*taunu), 8.0, 8.5]
 - !!python/tuple [<P1>(B0->K*mumu), 1, 2]
+- !!python/tuple [<BR>/BR(B->D*taunu), 8.0, 8.5]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 5.6, 6.13]
 - R_trident
 - !!python/tuple [<BR>/BR(B->Dtaunu), 8.0, 8.5]
@@ -238,17 +247,17 @@
 - !!python/tuple [<Rmue>(B+->K*ll), 0.1, 8.0]
 - BR(tau->eee)
 - A(Z->cc)
-- BR(B->Xsgamma)
-- !!python/tuple [<dBR/dq2>(Lambdab->Lambdamumu), 1.1, 6]
 - !!python/tuple [<Dmue_P4p>(B0->K*ll), 14.18, 19.0]
 - !!python/tuple [<BR>/BR(B->D*taunu), 4.0, 4.53]
 - !!python/tuple [<BR>/BR(B->Dtaunu), 5.07, 5.6]
+- !!python/tuple [<dBR/dq2>(Lambdab->Lambdamumu), 1.1, 6]
+- BR(B+->K*gamma)
 - !!python/tuple [<BR>/BR(B->Dtaunu), 9.33, 9.86]
 - R_c
-- BR(B+->K*gamma)
-- !!python/tuple [<dBR/dq2>(B+->K*mumu), 2, 4.3]
 - !!python/tuple [<BR>/BR(B->D*taunu), 9.0, 9.5]
+- !!python/tuple [<dBR/dq2>(B+->K*mumu), 2, 4.3]
 - !!python/tuple [<BR>/BR(B->D*taunu), 5.0, 5.5]
+- BR(B+->munu)
 - BR(B0->tautau)
 - BR(B0->K*emu)
 - BR(B+->Kemu)

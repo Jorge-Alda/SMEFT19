@@ -4,14 +4,13 @@ import numpy as np
 import smelli
 from math import isinf
 import warnings
+import yaml
 
-
-
-gl = smelli.GlobalLikelihood()		
+gl = smelli.GlobalLikelihood()
 
 def likelihood_fits(x, wfun):
 	res = dict()
-	with warnings.catch_warnings():	
+	with warnings.catch_warnings():
 		warnings.simplefilter('ignore')
 		glpp = gl.parameter_point(wfun(x))
 		gldict = glpp.log_likelihood_dict()
@@ -22,14 +21,17 @@ def likelihood_fits(x, wfun):
 					g = 0
 					for f2 in list(gldict.keys())[:-1]:
 						g += res[f2]
-				else: 
+				else:
 					g = -68
 			res[f] = g
 	return res
 
 
 def likelihood_global(x, wfun):
-	return likelihood_fits(x, wfun)['global']
+	with warnings.catch_warnings():
+		warnings.simplefilter('ignore')
+		glpp = gl.parameter_point(wfun(x))
+		return glpp.log_likelihood_global()
 
 def fastmeas(obs):
 	obsm = gl.obstable_sm[obs]
@@ -70,15 +72,12 @@ def pull_obs(x, obs, wfun):
 
 def loadobslist():
 	try:
-		fyaml = open('observables.yaml', 'rt')
-		obscoll = yaml.load(fyaml)
-		fyaml.close()
-	except:	
-		gl = SMEFTglob.gl
+		with open('observables.yaml', 'rt') as fyaml:
+			obscoll = yaml.load(fyaml)
+	except:
 		glSM = gl.parameter_point({}, scale=1000)
 		obsSM = glSM.obstable()
 		obscoll = list(obsSM['pull exp.'].keys())
-		fyaml = open('observables.yaml', 'wt')
-		yaml.dump(obscoll, fyaml)
-		fyaml.close()
+		with open('observables.yaml', 'wt') as fyaml:
+			yaml.dump(obscoll, fyaml)
 	return obscoll
