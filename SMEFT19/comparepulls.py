@@ -60,9 +60,7 @@ def compare(wfun, fin, fout):
 	f.close()
 
 
-def pointpull(x, wfun, fin, printlevel=1, numres=5):
-	dbf = load(fin)
-	bf = dbf['bf']
+def pointpull(x, wfun, bf, printlevel=1, numres=5):
 	w = wfun(bf)
 	wx = wfun(x)
 	gl = SMEFTglob.gl
@@ -91,6 +89,8 @@ def notablepulls(wfun, fin, fout):
 	f = open(fout, 'wt')
 	dbf = load(fin)
 	bf = dbf['bf']
+	v = dbf['v']
+	d = dbf['d']
 	n = len(bf)
 	p = delta_chi2(1, n)
 	a = np.sqrt(p/np.diag(d))
@@ -101,28 +101,28 @@ def notablepulls(wfun, fin, fout):
 		delta = np.zeros(n)
 		delta[i] = dC
 		f.write('Operator ' + str(i+1) + '+\n**********************\n')
-		f.write(pointpull(bf + delta, wfun, fin, 0))
+		f.write(pointpull(bf + delta, wfun, bf, 0))
 		f.write('\n\n')
 		f.write('Operator ' + str(i+1) + '-\n**********************\n')
-		f.write(pointpull(bf - delta, wfun, fin, 0))
+		f.write(pointpull(bf - delta, wfun, bf, 0))
 		f.write('\n\n')
 	for i in range(0,n):
 		#Moving along ellipsoid axes
 		delta = np.zeros(n)
 		delta[i] = 1
 		f.write('Axis ' + str(i+1) + '+\n**********************\n')
-		f.write(pointpull(parametrize(delta, bf, v, d), wfun, fin, 0))
+		f.write(pointpull(parametrize(delta, bf, v, d), wfun, bf, 0))
 		f.write('\n\n')
 		f.write('Axis ' + str(i+1) + '-\n**********************\n')
-		f.write(pointpull(parametrize(-delta, bf, v, d), wfun, fin, 0))
+		f.write(pointpull(parametrize(-delta, bf, v, d), wfun, bf, 0))
 		f.write('\n\n')
 	bfm = np.matrix(bf)
 	dSM = float(np.sqrt(p/(bfm @ H @ bfm.T ) ))
 	f.write('SM+\n**********************\n')
-	f.write(pointpull(bf*(1+dSM), wfun, fin, 0))
+	f.write(pointpull(bf*(1+dSM), wfun, bf, 0))
 	f.write('\n\n')
 	f.write('SM-\n**********************\n')
-	f.write(pointpull(bf*(1-dSM), wfun, fin, 0))
+	f.write(pointpull(bf*(1-dSM), wfun, bf, 0))
 	f.close()
 
 def pullevolution(obscode, wfun, fin, direction):
@@ -134,6 +134,8 @@ def pullevolution(obscode, wfun, fin, direction):
 	'''
 	dbf = load(fin)
 	bf = dbf['bf']
+	v = dbf['v']
+	d = dbf['d']
 	n = len(bf)
 	p = delta_chi2(1, n)
 	a = np.sqrt(2*p/np.diag(d))

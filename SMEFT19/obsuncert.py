@@ -1,4 +1,3 @@
-from . import obs_bctaunu
 from . import ellipse
 from wilson import Wilson
 import flavio
@@ -18,8 +17,9 @@ def distrsphere(dim):
 def _variance(x, obs, wfun, central):
 	return (prediction(x, obs, wfun)-central)**2
 
-def calculate(wfun, minx, maxx, fout, bf, num=50, cores=1):
-	values = dict() 
+def calculate(wfun, minx, maxx, fout, bf, name, num=50, cores=1):
+	values = dict
+	values['name'] = name
 	inf = float('Inf')
 	uncert = []
 	maxval = [-inf]*len(obslist)
@@ -58,7 +58,7 @@ def calculate(wfun, minx, maxx, fout, bf, num=50, cores=1):
 			var = MS.expectedvalue(_variance, obs, wfun, values[str(obs)]['NP']['central'])
 			values[str(obs)]['NP']['uncert'] = sqrt(uncert[obsnum]**2 + var )
 	else:
-		MS.run_mp(cores, wfun)		
+		MS.run_mp(cores, wfun)
 		for obsnum, obs in enumerate(obslist):
 			var = MS.expectedvalue_mp(_variance, cores, obs, wfun, values[str(obs)]['NP']['central'])
 			values[str(obs)]['NP']['uncert'] = sqrt(uncert[obsnum]**2 + var )

@@ -1,5 +1,6 @@
 from . import SMEFTglob
 from .SMEFTglob import likelihood_fits, loadobslist
+from .ellipse import load
 from .comparepulls import pullevolution
 import warnings
 import matplotlib.pyplot as plt
@@ -160,7 +161,7 @@ def error_plot(flist, plottype, fout):
 	hyp = 0
 	for fin in flist:
 		f = open(fin, 'rt')
-		values = yaml.load(f)
+		values = yaml.safe_load(f)
 		f.close()
 		try:
 			leglabels.append(values['name'])
@@ -257,7 +258,7 @@ def evolution_plot(obscodes, wfun, fin, direction, fout):
 		plt.plot(np.linspace(-1, 1, 200), ev, label='Obs. ' + str(o))
 	if direction[:2] == 'ax':
 		i = direction[2:]
-		plt.xlabel('$\delta C_{' + i + '}/a_{' + i + '}$')
+		plt.xlabel(r'$\delta C_{' + i + '}/a_{' + i + '}$')
 	if direction[:2] == 'sm':
 		plt.xlabel(r'$C_\mathrm{SM}/a_\mathrm{SM}$')
 	plt.ylabel('Pull')

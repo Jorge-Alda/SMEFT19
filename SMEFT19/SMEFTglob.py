@@ -46,12 +46,12 @@ def prediction(x, obs, wfun):
 		lh = gl.fast_likelihoods[lhname]
 		m = lh.pseudo_measurement
 		ml = lh.likelihood.measurement_likelihood
-		pred = ml.get_predictions_par(gl.par_dict, wc)
+		pred = ml.get_predictions_par(gl.par_dict_sm, wc)
 		return pred[obs]
 	else:
 		lh = gl.likelihoods[lhname]
 		ml = lh.measurement_likelihood
-		pred = ml.get_predictions_par(gl.par_dict, wc)
+		pred = ml.get_predictions_par(gl.par_dict_sm, wc)
 		return pred[obs]
 
 def pull_obs(x, obs, wfun):
@@ -73,7 +73,7 @@ def pull_obs(x, obs, wfun):
 def loadobslist():
 	try:
 		with open('observables.yaml', 'rt') as fyaml:
-			obscoll = yaml.load(fyaml)
+			obscoll = yaml.safe_load(fyaml)
 	except:
 		glSM = gl.parameter_point({}, scale=1000)
 		obsSM = glSM.obstable()

@@ -111,7 +111,7 @@ Returns: A python dictionary containing:
 	- [fit: scenario used in the fit]
 	'''
 	f = open(filename, 'rt')
-	values = yaml.load(f)
+	values = yaml.safe_load(f)
 	f.close()
 	values['bf'] = np.array(values['bf'])
 	values['v'] = np.matrix(values['v'])
@@ -165,7 +165,7 @@ def notablepoints(fin, fout, fit):
 	SM_m = bf*(1-dSM)
 	chi2_SM_p = 2*(fit(SM_p) - bestchi2)
 	chi2_SM_m = 2*(fit(SM_m) - bestchi2)
-	from comparepulls import texnumber
+	from .comparepulls import texnumber
 	f = open(fout, 'w')
 	f.write(r'\begin{tabular}{|' + 'c|'*(n+3) + r'}\hline' + '\n'  )
 	f.write(r'$j$ & $s$ & ' + ' & '*n + r'$\Delta \chi^2$\\\hline' + '\n' )
