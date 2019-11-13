@@ -1,3 +1,11 @@
+'''
+============
+obsuncert
+============
+
+Module used to compute the uncertainty of some observables using a MonteCarlo analysis.
+'''
+
 from . import ellipse
 from wilson import Wilson
 import flavio
@@ -18,6 +26,19 @@ def _variance(x, obs, wfun, central):
 	return (prediction(x, obs, wfun)-central)**2
 
 def calculate(wfun, minx, maxx, fout, bf, name, num=50, cores=1):
+	r'''
+Computes the central value and uncertainty of a selection of observables, using a MonteCarlo analysis. The observables are $R_{K^{(*)}}$ and $R_{D^{(*)}}$, and can be modified by editing the variable obsuncert.obslist.
+
+:Arguments:
+	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+	- minx\: Minimum of the search region. If the fit is multidimensional, `minx` is a list containing the minimum of the search region in each direction.
+	- minx\: Maximum of the search region. If the fit is multidimensional, `maxx` is a list containing the maximum of the search region in each direction.
+	- fout\: Path to the `.yaml` file where the statistical values will be saved.
+	- bf\: Coordinates of the best fit point.
+	- name\: Name of the fit.
+	- [num\: Number of MonteCarlo points used to compute the uncertainty. Default=50.]
+	- [cores\: number of cores used to parallel-compute the uncertainty. Default=1 (no parallelization).]
+	'''
 	values = dict
 	values['name'] = name
 	inf = float('Inf')

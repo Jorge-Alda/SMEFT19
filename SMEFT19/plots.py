@@ -1,3 +1,11 @@
+'''
+=========
+plots
+=========
+
+This module contains functions to plot the results of the fits.
+'''
+
 from . import SMEFTglob
 from .SMEFTglob import likelihood_fits, loadobslist
 from .ellipse import load
@@ -28,6 +36,35 @@ def listpoint(x):
 		return x
 
 def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout=None, locleg=0, n_sigma=(1,2), steps=55, hatched=False, threads=1, bf=None):
+	r'''
+Plots a contour plot of the log-likelihood of the fit.
+
+:Arguments:
+
+	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+	- xmin\: Minimum value of the `x` coordinate.
+	- xmax\: Maximum value of the `x` coordinate.
+	- ymin\: Minimum value of the `y` coordinate.
+	- ymax\: Maximum value of the `y` coordinate.
+	- fits\: List containing the fits, as defined by `smelli`, displayed in the plot. Valid values are\:
+
+		- 'RK'\: All LFUV b -> s l l decays.
+		- 'RD'\: All LFUV b -> c l nu decays.
+		- 'EW'\: All electroweak precission tests.
+		- 'LFV'\: All observables violating lepton flavour.
+		- 'ZLFV'\: All observables violating flavour in `Z` decays.
+		- 'global': All observables implemented by `smelli`.
+
+	- axlabels\: List containing two strings to label the `x` and `y` axes.
+	- [fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.]
+	- [locleg\: Position of the legend of the plot, using `matplotlib`'s syntaxis. Default=0 (best position).]
+	- [numsigma\: List containing the significance (in sigmas) of each contour. Default = (1,2).]
+	- [steps\: number of function calls calculated *in each* direction, that is, the total number of function calls is steps**2. Default=50.]
+	- [hatched\: Boolean that determines whether the area between contours will be hatched (True) or filled (False). Default: False.]
+	- [threads\: number of parallel threads used to compute the log-likelihood. Default: 1 (no parallelization).]
+	- [bf\: Coordinates of the best fit point(s). It can be `None` (no point marked), a list containing two floats (one point marked) or a list of lists of points (several points marked). Default: `None`.]
+	'''
+
 	fitcodes = {'RK':'likelihood_lfu_fcnc.yaml', 'RD':'likelihood_rd_rds.yaml', 'EW':'likelihood_ewpt.yaml', 'LFV':'likelihood_lfv.yaml', 'ZLFV':'likelihood_zlfv.yaml', 'global':'global'}
 	labels = {'RK':r'$R_{K^{(*)}}$', 'RD':r'$R_{D^{(*)}}$', 'EW': 'EW precission', 'LFV':'LFV', 'ZLFV':r'$Z$ LFV',  'global':'Global'}
 	fig=plt.figure(figsize=(4,4))
@@ -72,35 +109,26 @@ def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout=None, loc
 	if fout is not None:
 		texfig.savefig(fout)
 
-def hatch_contour(x, y, z, levels,
-              interpolation_factor=1,
-              interpolation_order=2,
-              col=0, label=None,
-              hatched=True,
-              contour_args={}, contourf_args={}):
-    r"""Plot coloured and hatched confidence contours (or bands) given numerical input
-    arrays. Based on the flavio function
+def hatch_contour(x, y, z, levels, interpolation_factor=1, interpolation_order=2, col=0, label=None, hatched=True, contour_args={}, contourf_args={}):
+    r"""
+Plots coloured and hatched confidence contours (or bands) given numerical input arrays. Based on the `flavio` function
 
-    Parameters:
+:Arguments:
 
-    - `x`, `y`: 2D arrays containg x and y values as returned by numpy.meshgrid
-    - `z` value of the function to plot. 2D array in the same shape as `x` and
-      `y`. The lowest value of the function should be 0 (i.e. the best fit
-      point).
-    - levels: list of function values where to draw the contours. They should
+    - x, y\: 2D arrays containg x and y values as returned by numpy.meshgrid
+    - z\: value of the function to plot. 2D array in the same shape as `x` and
+      `y`. The lowest value of the function should be 0 (i.e. the best fit point).
+    - levels\: list of function values where to draw the contours. They should
       be positive and in ascending order.
-    - `interpolation factor` (optional): in between the points on the grid,
+    - [interpolation factor\:: in between the points on the grid,
       the functioncan be interpolated to get smoother contours.
       This parameter sets the number of subdivisions (default: 1, i.e. no
-      interpolation). It should be larger than 1.
-    - `col` (optional): number between 0 and 9 to choose the color of the plot
-      from a predefined palette
-    - `label` (optional): label that will be added to a legend created with
-       maplotlib.pyplot.legend()
-    - `contour_args`: dictionary of additional options that will be passed
-       to matplotlib.pyplot.contour() (that draws the contour lines)
-    - `contourf_args`: dictionary of additional options that will be passed
-       to matplotlib.pyplot.contourf() (that paints the contour filling).
+      interpolation). It should be larger than 1.]
+    - [col\: number between 0 and 9 to choose the color of the plot
+      from a predefined palette.]
+    - [label\: label that will be added to a legend created with `maplotlib.pyplot.legend()`.]
+    - [contour_args\: dictionary of additional options that will be passed to `matplotlib.pyplot.contour()` (that draws the contour lines).]
+    - [contourf_args\: dictionary of additional options that will be passed to `matplotlib.pyplot.contourf()` (that paints the contour filling).]
     """
     if interpolation_factor > 1:
         x = scipy.ndimage.zoom(x, zoom=interpolation_factor, order=1)
@@ -138,6 +166,18 @@ def hatch_contour(x, y, z, levels,
 
 
 def error_plot(flist, plottype, fout):
+	r'''
+Plots the uncertainty intervals for several observables in NP scenarios, SM and experimental values.
+
+:Arguments:
+	- flist\: List of paths to files created by `obsuncert.calculate`.
+	- plottype\: Selects the observables to be plotted\:
+
+		- 'RK'\: Plots RK in the [1.1,6.0] bin and RK\* in the [0.045,1.1] and [1.1,6] bins.
+		- 'RD'\: Plots RD, and RD\* using only muons or muons+electrons.
+
+	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
+	'''
 	fig = texfig.figure()
 	if plottype == 'RD':
 		observables = ['Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
@@ -214,6 +254,15 @@ def binerrorbox(binmin, binmax, central, error, centralline=False, **kwargs):
 		plt.plot([binmin, binmax], [central, central], **kwargs)
 
 def compare_plot(wfun, fin, fout):
+	r'''
+Plots the pull of each observable in the SM and in the NP hypothesis.
+
+:Arguments:
+
+	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+	- fin\: Path to the `.yaml` file where the ellipsoid is saved.
+	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
+	'''
 	dbf = load(fin)
 	bf = dbf['bf']
 
@@ -252,6 +301,21 @@ def compare_plot(wfun, fin, fout):
 	texfig.savefig(fout)
 
 def evolution_plot(obscodes, wfun, fin, direction, fout):
+	r'''
+Plots the vairation of the pull of several observables along a line connecting two opposite  notable points of the ellipsoid.
+
+:Arguments:
+
+	- obscodes\: List of ID-Numbers of the observables, as returned by `comparepulls.pointpull`
+	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+	- fin\: Path to the `.yaml` file where the ellipsoid is saved.
+	- direction\: string with the following format\:
+
+			- 'ax' + str(i)\: for the i-th principal axis of the ellipsoid.
+			- 'sm'\: for the direction joining the bf and sm points.
+
+	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
+	'''
 	fig = plt.figure()
 	for o in obscodes:
 		ev = pullevolution(o, wfun, fin, direction)

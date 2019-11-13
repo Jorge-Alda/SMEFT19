@@ -1,3 +1,11 @@
+'''
+================
+comparepulls
+================
+
+This module contains several functions used to compare between different NP scenarios and the Standard Model.
+'''
+
 from .ellipse import load, parametrize
 from . import SMEFTglob
 from .SMEFTglob import loadobslist
@@ -30,6 +38,14 @@ def texnumber(x, prec=3):
 
 
 def compare(wfun, fin, fout):
+	r'''
+Lists the comparison between the pull of each observable in the NP hypothesis and the SM.
+
+:Arguments:
+	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+	- fin\: Path to the file `.yaml` where the ellipsoid is saved.
+	- fout\: Path to the `.tex` file where the comaparison table will be written. The observables are ordered by their SM pull, and are shaded in green if the NP improves this pull and in red otherwise.
+	'''
 	dbf = load(fin)
 	bf = dbf['bf']
 
@@ -61,6 +77,19 @@ def compare(wfun, fin, fout):
 
 
 def pointpull(x, wfun, bf, printlevel=1, numres=5):
+	r'''
+Determines the observable whose pull changes the most between two NP hypothesis.
+
+:Arguments:
+	- x\: Point in space parameter of the tested NP hypothesis.
+	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+	- bf\: Point in space parameter of the reference NP hypothesis (e.g. the best fit).
+	- [printlevel\: 0 for silent mode, 1 for verbose mode.]
+	- [numres\: Number of observables displayed. Default=5.]
+
+:Returns:
+	- A multi-line string. Each line contains the id number of the observable, its name and the squared difference of the pulls.
+	'''
 	w = wfun(bf)
 	wx = wfun(x)
 	gl = SMEFTglob.gl
@@ -86,6 +115,14 @@ def pointpull(x, wfun, bf, printlevel=1, numres=5):
 	return results
 
 def notablepulls(wfun, fin, fout):
+	r'''
+Determines the observables whose pull changes the most between the best fit and the notable points of the ellipsoid.
+
+:Arguments:
+	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+ 	- fin\: Path to the file `.yaml` where the ellipsoid is saved.
+	- fout\: Path to the `.tex` file where the comaparison table will be written.
+	'''
 	f = open(fout, 'wt')
 	dbf = load(fin)
 	bf = dbf['bf']
@@ -126,11 +163,18 @@ def notablepulls(wfun, fin, fout):
 	f.close()
 
 def pullevolution(obscode, wfun, fin, direction):
-	'''
-	direction: string with the following format:
-		'wc' + str(i): for the i-th Wilson coefficient
-		'ax' + str(i): for the i-th principal axis of the ellipsoid
-		'sm': for the direction joining the bf and sm points
+	r'''
+Calculates the variation of the pull along a line connecting two opposite notable points of the ellipsoid.
+
+:Arguments:
+	- obscode\: ID-Number of the observable, as returned by comparepulls.pointpull
+	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+ 	- fin\: Path to the file .yaml where the ellipsoid is saved.
+	- direction\: string with the following format\:
+
+		- 'wc' + str(i)\: for the i-th Wilson coefficient.
+		- 'ax' + str(i)\: for the i-th principal axis of the ellipsoid.
+		- 'sm'\: for the direction joining the bf and sm points.
 	'''
 	dbf = load(fin)
 	bf = dbf['bf']

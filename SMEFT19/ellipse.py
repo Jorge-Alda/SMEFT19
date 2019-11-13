@@ -1,4 +1,7 @@
 '''
+=========
+ellipse
+=========
 Assuming that the likelihood of the fit follows a gaussian distribution (Central Limit Theorem), and therefore the log-likelihood is characterized by a quadratic form around the minimum, this script finds this quadratic form, and parametrizes (ellipsoidal) sections of constant likelihood.
 
 '''
@@ -17,19 +20,18 @@ def roundsig(x, num=4):
 
 def minimum(fit, x0):
 
-	'''
-bf, v, d, Lmin = minimum(fit, x0)
+	r'''
+Finds the minimum of the fit function and approximates its neighbourhood by an ellipsoid.
 
-Arguments
-	- fit: function that takes one point in parameter space and returns its negative log-likelihhod
-		example: -SMEFTglob.likelihood_global(x, scenarios.scVI)
-	- x0: list or np.array containing an initial guess
+:Arguments:
+	- fit\: function that takes one point in parameter space and returns its negative log-likelihhod. Example\: `-SMEFTglob.likelihood_global(x, scenarios.scVI)`.
+	- x0\: list or `np.array` containing an initial guess.
 
-Return:
-	- bf: np.array with the point in parameter space with the best fit
-	- v: Unitary matrix containing the axes of the ellipse
-	- d: diagonal matrix containing the inverse of the squares of the semiaxes
-	- Lmin: value of fit(bf)
+:Returns:
+	- bf\: np.array with the point in parameter space with the best fit.
+	- v\: Unitary matrix containing the axes of the ellipse.
+	- d\: diagonal matrix containing the inverse of the squares of the semiaxes.
+	- Lmin\: Log-likelihood at the best fit point.
 	'''
 	global bf
 	global Lmin
@@ -50,17 +52,17 @@ Return:
 
 
 def parametrize(x, bf, v, d, nsigmas=1):
-	'''
-xe = parametrize(x, bf, v, d, nsigmas=1)
+	r'''
+Maps points on the unit hypersphere to points on the ellipsoid of constant likelihood.
 
-Arguments:
-	- x: np.array containing a point in the surface of the unit n-hypersphere
-	- bf: np.array with the point in parameter space with the best fit
-	- v: np.matrix containing the orientation of the axes of the ellipsoid
-	- d: np.array containing the principal axes of the ellipsoid
-	- nsigmas (optional): significance of the isoprobability hypersurface wrt the best fit
+:Arguments:
+	- x\: `np.array` containing a point in the surface of the unit `n`-hypersphere.
+	- bf\: `np.array` with the point in parameter space with the best fit.
+	- v\: `np.matrix` containing the orientation of the axes of the ellipsoid.
+	- d\: `np.array` containing the principal axes of the ellipsoid.
+	- [nsigmas\: significance of the isoprobability hypersurface with respect to the best fit.]
 
-Returns:
+:Returns:
 	- xe: Projection of the point xe in the ellipsoid of equal probability
 	'''
 	r = delta_chi2(nsigmas, len(bf))
@@ -69,19 +71,19 @@ Returns:
 	return np.array(xe).flatten()
 
 def save(bf, v, d, L, filename,  name=None, fit=None):
-	'''
-save(bf, v, d, L, filename, name, fit)
+	r'''
+Saves the results of the minimization in a `.yaml` file.
 
-Arguments:
-	- bf: np.array with the point in parameter space with the best fit
-	- v: np.matrix containing the orientation of the axes of the ellipsoid
-	- d: np.array containing the principal axes of the ellipsoid
-	- filename: Path to the YAML file where the shape of the ellipse will be saved
-	- L: likelihood at the best fits
-	- name: Descriptive name of the fit (optional)
-	- fit: scenario used to fit the data (optional)
+:Arguments:
+	- bf\: `np.array` with the point in parameter space with the best fit.
+	- v\: `np.matrix` containing the orientation of the axes of the ellipsoid.
+	- d\: `np.array` containing the principal axes of the ellipsoid
+	- filename\: Path to the `.yaml` file where the shape of the ellipse will be saved.
+	- L\: Log-likelihood at the best fit point.
+	- [name: Descriptive name of the fit.]
+	- [fit\: scenario used to fit the data.]
 	'''
-	f = open(filename, 'wt')
+
 	values = dict()
 	if name is not None:
 		values['name'] = name
@@ -91,34 +93,41 @@ Arguments:
 	values['bf'] = bf.tolist()
 	values['v'] = v.tolist()
 	values['d'] = d.tolist()
-	yaml.dump(values, f)
-	f.close()
+	with open(filename, 'wt') as f:
+		yaml.dump(values, f)
 
 def load(filename):
-	'''
-values = load(filename)
+	r'''
+Loads a ellipse saved in a `.yaml` file to a python dictionary.
 
-Arguments:
-	- filename: Path to the YAML file where the shape of the ellipse has been saved by the "save" method
-		WARNING: this method doesn't check the integrity of the file
+:Arguments:
+	- filename\: Path to the `.yaml` file where the shape of the ellipse has been saved by the `save` method.
 
-Returns: A python dictionary containing:
-	- bf: np.array with the point in parameter space with the best fit
-	- v: np.matrix containing the orientation of the axes of the ellipsoid
-	- d: np.array containing the principal axes of the ellipsoid
-	- L: Likelihood at the best fit
-	- [name: Name of the fit]
-	- [fit: scenario used in the fit]
+:Returns:
+A `python` dictionary containing:
+	- bf\: `np.array` with the point in parameter space with the best fit.
+	- v\: `np.matrix` containing the orientation of the axes of the ellipsoid.
+	- d\: `np.array` containing the principal axes of the ellipsoid.
+	- L\: Log-likelihood at the best fit point.
+	- [name\: Name of the fit.]
+	- [fit\: Scenario used in the fit.]
 	'''
-	f = open(filename, 'rt')
-	values = yaml.safe_load(f)
-	f.close()
+	with open(filename, 'rt') as f:
+		values = yaml.safe_load(f)
 	values['bf'] = np.array(values['bf'])
 	values['v'] = np.matrix(values['v'])
 	values['d'] = np.array(values['d'])
 	return values
 
 def notablepoints(fin, fout, fit):
+	r'''
+Finds the extrema of the ellipse, the intersection with the coordinate axis and the closest and furthest point from the origin.
+
+:Arguments:
+	- fin\: Path to `.yaml` file containing the information about the ellipse.
+	- fout\: Path to `.tex` file to save a table with the coordinates of the notable points.
+	- fit\: Function used in the minimization.
+	'''
 	dbf = load(fin)
 	bf = dbf['bf']
 	v = dbf['v']
@@ -166,38 +175,37 @@ def notablepoints(fin, fout, fit):
 	chi2_SM_p = 2*(fit(SM_p) - bestchi2)
 	chi2_SM_m = 2*(fit(SM_m) - bestchi2)
 	from .comparepulls import texnumber
-	f = open(fout, 'w')
-	f.write(r'\begin{tabular}{|' + 'c|'*(n+3) + r'}\hline' + '\n'  )
-	f.write(r'$j$ & $s$ & ' + ' & '*n + r'$\Delta \chi^2$\\\hline' + '\n' )
-	f.write(r'BF & & ')
-	for i in range(0, n):
-		f.write(texnumber(bf[i]) + ' & ')
-	f.write(r'\\\hline' + '\n')
-	for i in range(0, n):
-		f.write(str(i+1) + ' & $+$ & ')
-		for j in range(0, n):
-			f.write(texnumber(ex_p[i][j]) + ' & ')
-		f.write(texnumber(chi2_ex_p[i]) + r'\\\hline' + '\n')
-		f.write(str(i+1) + ' & $-$ & ')
-		for j in range(0, n):
-			f.write(texnumber(ex_m[i][j]) + ' & ')
-		f.write(texnumber(chi2_ex_m[i]) + r'\\\hline' + '\n')
-	for i in range(0, n):
-		f.write( ' & $+$ & ')
-		for j in range(0, n):
-			f.write(texnumber(cross_p[i][j]) + ' & ')
-		f.write(texnumber(chi2_cross_p[i]) + r'\\\hline' + '\n')
-		f.write( ' & $-$ & ')
-		for j in range(0, n):
-			f.write(texnumber(cross_m[i][j]) + ' & ')
-		f.write(texnumber(chi2_cross_m[i]) + r'\\\hline' + '\n')
-	f.write(r'SM & $+$ & ')
-	for i in range(0, n):
-		f.write(texnumber(SM_p[i]) + ' & ')
-	f.write(texnumber(chi2_SM_p) +  r' \\\hline' + '\n')
-	f.write(r'SM & $-$ & ')
-	for i in range(0, n):
-		f.write(texnumber(SM_m[i]) + ' & ')
-	f.write(texnumber(chi2_SM_m) +  r' \\\hline' + '\n')
-	f.write(r'\end{tabular}')
-	f.close()
+	with open(fout, 'w') as f:
+		f.write(r'\begin{tabular}{|' + 'c|'*(n+3) + r'}\hline' + '\n'  )
+		f.write(r'$j$ & $s$ & ' + ' & '*n + r'$\Delta \chi^2$\\\hline' + '\n' )
+		f.write(r'BF & & ')
+		for i in range(0, n):
+			f.write(texnumber(bf[i]) + ' & ')
+		f.write(r'\\\hline' + '\n')
+		for i in range(0, n):
+			f.write(str(i+1) + ' & $+$ & ')
+			for j in range(0, n):
+				f.write(texnumber(ex_p[i][j]) + ' & ')
+			f.write(texnumber(chi2_ex_p[i]) + r'\\\hline' + '\n')
+			f.write(str(i+1) + ' & $-$ & ')
+			for j in range(0, n):
+				f.write(texnumber(ex_m[i][j]) + ' & ')
+			f.write(texnumber(chi2_ex_m[i]) + r'\\\hline' + '\n')
+		for i in range(0, n):
+			f.write( ' & $+$ & ')
+			for j in range(0, n):
+				f.write(texnumber(cross_p[i][j]) + ' & ')
+			f.write(texnumber(chi2_cross_p[i]) + r'\\\hline' + '\n')
+			f.write( ' & $-$ & ')
+			for j in range(0, n):
+				f.write(texnumber(cross_m[i][j]) + ' & ')
+			f.write(texnumber(chi2_cross_m[i]) + r'\\\hline' + '\n')
+		f.write(r'SM & $+$ & ')
+		for i in range(0, n):
+			f.write(texnumber(SM_p[i]) + ' & ')
+		f.write(texnumber(chi2_SM_p) +  r' \\\hline' + '\n')
+		f.write(r'SM & $-$ & ')
+		for i in range(0, n):
+			f.write(texnumber(SM_m[i]) + ' & ')
+		f.write(texnumber(chi2_SM_m) +  r' \\\hline' + '\n')
+		f.write(r'\end{tabular}')
