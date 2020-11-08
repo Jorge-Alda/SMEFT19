@@ -18,7 +18,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pylint
         pip install flavio==1.5.0
-        pip install smelli==1.3.0
+        pip install smelli==1.3.1
         pip install wilson==2.0
         pip install numpy
         pip install scipy
