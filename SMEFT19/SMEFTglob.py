@@ -97,7 +97,7 @@ Interfaces `flavio` to compute the NP prediction of a given observable.
 
 def pull_obs(x, obs, wfun):
 	'''
-Calculates the pull, in sigmas, of the prediction of a given observable in NP wit respect to its experimental value.
+Calculates the pull, in sigmas, of the prediction of a given observable in NP with respect to its experimental value.
 
 :Arguments:
 	- x\: Point in parameter space to be evaluated.

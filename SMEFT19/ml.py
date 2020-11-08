@@ -105,8 +105,17 @@ Plots an histogram for the predicted and actual likelihoods, and compares them t
     
 def load_model(fmodel):
     r'''
-Loads a XGBoost model previously saved    
+Loads a XGBoost model previously saved  
+
+:Arguments:
+    
+    - fmodel\: Path to the file where the model was saved.
+    
+:Returns:
+    
+    - Machine Learning scan.          
     '''
+    
     model = XGBRegressor()
     model.load_model(fmodel)
     ML = MLScan(lh, list(df.min()[:5]), list(df.max()[:5]), 1000, bf)

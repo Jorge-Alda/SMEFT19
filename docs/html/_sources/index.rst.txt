@@ -16,6 +16,7 @@ Welcome to SMEFT19's documentation!
    comparepulls
    plots
    scenarios
+   ml
 
 
 Indices and tables
