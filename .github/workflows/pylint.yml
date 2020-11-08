@@ -29,8 +29,8 @@ jobs:
         pip install shap
         pip install xgboost
         pip install scikit-learn
-        pip install -e git+https://github.com/nilsleiffischer/texfig.git#egg=texfig
-        pip install -e git+https://github.com/Jorge-Alda/parscanning.git@v0.2#egg=parscanning
+        pip install git+https://github.com/Jorge-Alda/parscanning.git@1.0#egg=parscanning
+        pip install git+https://github.com/nilsleiffischer/texfig.git
     - name: Analysing the code with pylint
       run: |
         cd SMEFT19      
