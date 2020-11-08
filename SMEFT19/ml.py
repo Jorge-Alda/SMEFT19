@@ -12,6 +12,8 @@ from sklearn.metrics import mean_absolute_error, r2_score
 from xgboost import XGBRegressor
 from SMEFT19.SMEFTglob import likelihood_global
 from SMEFT19.scenarios import rotBII
+import shap
+import matplotlib.pyplot as plt
 
 bf = [-0.11995206352339435, -0.07715992292268066, -1.207419259815296e-06, -0.07618023346979363, 0.8027006412644478]
 
@@ -87,7 +89,7 @@ Plots an histogram for the predicted and actual likelihoods, and compares them t
     '''
     from scipy.stats import chi2
     
-    df = pd.read_csv('vpoints', sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+    df = pd.read_csv(vpoints, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
     df = df.loc[df['logL']>10]
     features =  ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
@@ -103,7 +105,7 @@ Plots an histogram for the predicted and actual likelihoods, and compares them t
     plt.legend()
     plt.tight_layout(pad=0.5)   
     
-def load_model(fmodel):
+def load_model(fmodel, vpoints):
     r'''
 Loads a XGBoost model previously saved  
 
@@ -115,9 +117,69 @@ Loads a XGBoost model previously saved
     
     - Machine Learning scan.          
     '''
-    
+        
+    df = pd.read_csv(vpoints, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+    df = df.loc[df['logL']>10]
     model = XGBRegressor()
     model.load_model(fmodel)
     ML = MLScan(lh, list(df.min()[:5]), list(df.max()[:5]), 1000, bf)
     ML.init_ML(model)   
     return ML
+    
+def SHAP_bf(fmodel):
+    r'''
+Computes the SHAP values of the best fit point
+
+:Arguments:
+
+    - fmodel\: Path to the file where the model was saved.    
+    '''    
+    
+    model = XGBRegressor()
+    model.load_model(fmodel)
+    explainer = shap.TreeExplainer(model)
+    print(f'Base value: {float(explainer.expected_value)}')
+    bfs = pd.Series(bf)
+    print(f'SHAP values: {explainer.shap_values(bfs)}')
+    print(f'Total prediction: {float(explainer.expected_value) + np.sum(explainer.shap_values(bfs))}')
+    
+def SHAP_summary(fmodel, points):
+    r'''
+Creates a summary plot of the average SHAP values on a dataset.
+
+:Arguments:
+
+    - fmodel\: Path to the file where the model was saved. 
+    - points\: Pandas Dataframe containing the dataset.    
+    '''    
+    
+    model = XGBRegressor()
+    model.load_model(fmodel)
+    explainer = shap.TreeExplainer(model)
+    df = pd.read_csv(points, sep='\t', names=['$C$', '$\\alpha^\\ell$', '$\\beta^\\ell$', '$\\alpha^q$', '$\\beta^q$', 'logL'])
+    features = ['$C$', '$\\alpha^\\ell$', '$\\beta^\\ell$', '$\\alpha^q$', '$\\beta^q$']
+    X = df[features]
+    sv = explainer.shap_values(X)
+    shap.summary_plot(sv, X, show=False)
+    plt.tight_layout(pad=0.5)
+    
+def SHAP_param(fmodel, points, param):
+    r'''
+Creates an scatter plot displaying how the SHAP values change as functions of each parameter of the fit.
+
+:Arguments:
+
+    - fmodel\: Path to the file where the model was saved. 
+    - points\: Pandas Dataframe containing the dataset.
+    - param\: Fit parameter. 0 = C, 1 = al, 2 = bl, 3 = aq, 4 = bq.     
+    '''    
+    
+    model = XGBRegressor()
+    model.load_model(fmodel)
+    explainer = shap.TreeExplainer(model)
+    df = pd.read_csv(points, sep='\t', names=['$C$', '$\\alpha^\\ell$', '$\\beta^\\ell$', '$\\alpha^q$', '$\\beta^q$', 'logL'])
+    features = ['$C$', '$\\alpha^\\ell$', '$\\beta^\\ell$', '$\\alpha^q$', '$\\beta^q$']
+    X = df[features]
+    sv = explainer.shap_values(X)
+    shap.dependence_plot(param, sv, X, show=False, interaction_index=None, dot_size=5)
+    plt.tight_layout(pad=0.5)    
