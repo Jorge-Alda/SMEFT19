@@ -30,7 +30,7 @@ jobs:
         pip install xgboost
         pip install scikit-learn
         pip install git+https://github.com/Jorge-Alda/parscanning.git@v1.0#egg=parscanning
-        pip install https://github.com/Jorge-Alda/texfig.git
+        pip install -e git+https://github.com/Jorge-Alda/texfig.git#egg=texfig
     - name: Analysing the code with pylint
       run: |
         cd SMEFT19      
