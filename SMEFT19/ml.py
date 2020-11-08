@@ -8,12 +8,14 @@ This module contains the functions needed to train a Machine Learning-based Mont
 
 from parscanning.mlscan import MLScan
 import pandas as pd
-from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.metrics import mean_absolute_error
 from xgboost import XGBRegressor
 from SMEFT19.SMEFTglob import likelihood_global
 from SMEFT19.scenarios import rotBII
 import shap
 import matplotlib.pyplot as plt
+from scipy.stats import pearsonr
+import numpy as np
 
 bf = [-0.11995206352339435, -0.07715992292268066, -1.207419259815296e-06, -0.07618023346979363, 0.8027006412644478]
 
@@ -32,9 +34,9 @@ Trains the Machine Learning algorithm with the previously computed Metropolis po
 
 :Returns:
 
-    - The Machine Learning scan module, already trained and ready to be used   
+    - The Machine Learning scan module, already trained and ready to be used
     '''
-    df = pd.read_csv(fname, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+    df = pd.read_csv(fMC, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
     df = df.loc[df['logL']>10]
     features =  ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
@@ -60,14 +62,14 @@ Plots the predicted likelihod vs the actual likelihood and computes their regres
 
     - A tuple containing the Perason r coefficient and the p-value of the regression
     '''
-    
-    df = pd.read_csv('vpoints', sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+
+    df = pd.read_csv(vpoints, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
     df = df.loc[df['logL']>10]
     features =  ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
     y = 2*df.logL
     pred = 2*np.array(list(map(ML.guess_lh, X.values)))
-    
+
     plt.figure(figsize =(5,5))
     plt.scatter(y, pred, s=0.7)
     plt.plot([20,50],[20,50], c='black', lw=1)
@@ -77,25 +79,25 @@ Plots the predicted likelihod vs the actual likelihood and computes their regres
     plt.ylabel(r'Predicted $\Delta \chi^2_\mathrm{SM}$')
     plt.tight_layout(pad=0.5)
     return pearsonr(y, pred)
-    
+
 def hist(ML, vpoints):
     r'''
-Plots an histogram for the predicted and actual likelihoods, and compares them to the chi-square distribution 
+Plots an histogram for the predicted and actual likelihoods, and compares them to the chi-square distribution
 
 :Arguments:
 
     - ML:\ The Machine Learning scan module.
-    - vpoints\: Path to the file containing the points in the validation dataset.  
+    - vpoints\: Path to the file containing the points in the validation dataset.
     '''
     from scipy.stats import chi2
-    
+
     df = pd.read_csv(vpoints, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
     df = df.loc[df['logL']>10]
     features =  ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
     y = 2*df.logL
     pred = 2*np.array(list(map(ML.guess_lh, X.values)))
-    
+
     plt.figure()
     plt.hist(2*max(pred)-2*np.array(pred), range=(0,25), bins=50, density=True, alpha=0.5, label='Predicted histogram')
     plt.hist(2*max(y)-2*np.array(y), range=(0,25), bins=50, density=True, alpha=0.5, label='Actual histogram')
@@ -103,38 +105,38 @@ Plots an histogram for the predicted and actual likelihoods, and compares them t
     plt.xlabel(r'$\chi^2_\mathrm{bf} - \chi^2$')
     plt.ylabel('Normalized frequency')
     plt.legend()
-    plt.tight_layout(pad=0.5)   
-    
+    plt.tight_layout(pad=0.5)
+
 def load_model(fmodel, vpoints):
     r'''
-Loads a XGBoost model previously saved  
+Loads a XGBoost model previously saved
 
 :Arguments:
-    
+
     - fmodel\: Path to the file where the model was saved.
-    
+
 :Returns:
-    
-    - Machine Learning scan.          
+
+    - Machine Learning scan.
     '''
-        
+
     df = pd.read_csv(vpoints, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
     df = df.loc[df['logL']>10]
     model = XGBRegressor()
     model.load_model(fmodel)
     ML = MLScan(lh, list(df.min()[:5]), list(df.max()[:5]), 1000, bf)
-    ML.init_ML(model)   
+    ML.init_ML(model)
     return ML
-    
+
 def SHAP_bf(fmodel):
     r'''
 Computes the SHAP values of the best fit point
 
 :Arguments:
 
-    - fmodel\: Path to the file where the model was saved.    
-    '''    
-    
+    - fmodel\: Path to the file where the model was saved.
+    '''
+
     model = XGBRegressor()
     model.load_model(fmodel)
     explainer = shap.TreeExplainer(model)
@@ -142,17 +144,17 @@ Computes the SHAP values of the best fit point
     bfs = pd.Series(bf)
     print(f'SHAP values: {explainer.shap_values(bfs)}')
     print(f'Total prediction: {float(explainer.expected_value) + np.sum(explainer.shap_values(bfs))}')
-    
+
 def SHAP_summary(fmodel, points):
     r'''
 Creates a summary plot of the average SHAP values on a dataset.
 
 :Arguments:
 
-    - fmodel\: Path to the file where the model was saved. 
-    - points\: Pandas Dataframe containing the dataset.    
-    '''    
-    
+    - fmodel\: Path to the file where the model was saved.
+    - points\: Pandas Dataframe containing the dataset.
+    '''
+
     model = XGBRegressor()
     model.load_model(fmodel)
     explainer = shap.TreeExplainer(model)
@@ -162,18 +164,18 @@ Creates a summary plot of the average SHAP values on a dataset.
     sv = explainer.shap_values(X)
     shap.summary_plot(sv, X, show=False)
     plt.tight_layout(pad=0.5)
-    
+
 def SHAP_param(fmodel, points, param):
     r'''
 Creates an scatter plot displaying how the SHAP values change as functions of each parameter of the fit.
 
 :Arguments:
 
-    - fmodel\: Path to the file where the model was saved. 
+    - fmodel\: Path to the file where the model was saved.
     - points\: Pandas Dataframe containing the dataset.
-    - param\: Fit parameter. 0 = C, 1 = al, 2 = bl, 3 = aq, 4 = bq.     
-    '''    
-    
+    - param\: Fit parameter. 0 = C, 1 = al, 2 = bl, 3 = aq, 4 = bq.
+    '''
+
     model = XGBRegressor()
     model.load_model(fmodel)
     explainer = shap.TreeExplainer(model)
@@ -182,4 +184,4 @@ Creates an scatter plot displaying how the SHAP values change as functions of ea
     X = df[features]
     sv = explainer.shap_values(X)
     shap.dependence_plot(param, sv, X, show=False, interaction_index=None, dot_size=5)
-    plt.tight_layout(pad=0.5)    
+    plt.tight_layout(pad=0.5)

@@ -19,4 +19,5 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint `ls -R|grep .py$|xargs`
+        cd SMEFT19      
+        pylint --disable C0103,W0312,W1401,C0301,C0326,R,C0200,C0411 `ls -R|grep .py$|xargs`

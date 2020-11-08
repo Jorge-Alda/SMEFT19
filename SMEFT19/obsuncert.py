@@ -6,8 +6,6 @@ obsuncert
 Module used to compute the uncertainty of some observables using a MonteCarlo analysis.
 '''
 
-from . import ellipse
-from wilson import Wilson
 import flavio
 from math import sqrt
 import numpy as np
@@ -39,12 +37,9 @@ Computes the central value and uncertainty of a selection of observables, using 
 	- [num\: Number of MonteCarlo points used to compute the uncertainty. Default=50.]
 	- [cores\: number of cores used to parallel-compute the uncertainty. Default=1 (no parallelization).]
 	'''
-	values = dict
+	values = dict()
 	values['name'] = name
-	inf = float('Inf')
 	uncert = []
-	maxval = [-inf]*len(obslist)
-	minval = [inf]*len(obslist)
 
 	w = wfun(bf)
 	for obs in obslist:

@@ -47,7 +47,7 @@
 <span class="c1">#import texfig # https://github.com/knly/texfig</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;hatch.color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>
 <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Rectangle</span>
-<span class="kn">from</span> <span class="nn">flavio.statistics.functions</span> <span class="k">import</span> <span class="n">delta_chi2</span><span class="p">,</span> <span class="n">confidence_level</span>
+<span class="kn">from</span> <span class="nn">flavio.statistics.functions</span> <span class="k">import</span> <span class="n">delta_chi2</span>
 <span class="kn">import</span> <span class="nn">flavio.plots.colors</span>
 <span class="kn">import</span> <span class="nn">scipy.interpolate</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -210,7 +210,7 @@
 
 <span class="sd">	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">texfig</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+	<span class="n">texfig</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 	<span class="k">if</span> <span class="n">plottype</span> <span class="o">==</span> <span class="s1">&#39;RD&#39;</span><span class="p">:</span>
 		<span class="n">observables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Rtaul(B-&gt;Dlnu)&#39;</span><span class="p">,</span> <span class="s1">&#39;Rtaul(B-&gt;D*lnu)&#39;</span><span class="p">,</span> <span class="s1">&#39;Rtaumu(B-&gt;D*lnu)&#39;</span><span class="p">]</span>
 		<span class="n">texlabels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$R_D^\ell$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$R_{D^*}^\ell$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$R_{D^*}^\mu$&#39;</span><span class="p">]</span>

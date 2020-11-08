@@ -9,12 +9,10 @@ This module contains several functions used to compare between different NP scen
 from .ellipse import load, parametrize
 from . import SMEFTglob
 from .SMEFTglob import loadobslist
-from wilson import Wilson
 import flavio
 import re
 import numpy as np
-import yaml
-from flavio.statistics.functions import delta_chi2, pull
+from flavio.statistics.functions import delta_chi2
 
 def sign(x, y):
 	if float(x) < float(y):
@@ -95,16 +93,15 @@ Determines the observable whose pull changes the most between two NP hypothesis.
 	gl = SMEFTglob.gl
 	glNP = gl.parameter_point(w)
 	glx = gl.parameter_point(wx)
-	obsSM = gl.obstable_sm
 	obsNP = glNP.obstable()
 	obsx = glx.obstable()
 	obscoll = loadobslist()
 	dicpull = dict()
 	i = 0
 	for obs in obscoll:
-		pull = float(obsNP.loc[[obs], 'pull exp.'])*sign(obsNP.loc[[obs], 'theory'], obsNP.loc[[obs], 'experiment'] )
+		pull0 = float(obsNP.loc[[obs], 'pull exp.'])*sign(obsNP.loc[[obs], 'theory'], obsNP.loc[[obs], 'experiment'] )
 		pullx = float(obsx.loc[[obs], 'pull exp.'])*sign(obsx.loc[[obs], 'theory'], obsx.loc[[obs], 'experiment'] )
-		dicpull[i] = (pullx-pull)**2
+		dicpull[i] = (pullx-pull0)**2
 		i += 1
 	sortdict = sorted(dicpull, key=dicpull.get, reverse=True)[0:numres]
 	results = ''
@@ -130,7 +127,6 @@ Determines the observables whose pull changes the most between the best fit and 
 	d = dbf['d']
 	n = len(bf)
 	p = delta_chi2(1, n)
-	a = np.sqrt(p/np.diag(d))
 	H = v @ d @ v.T
 	for i in range(0,n):
 		# Moving along operator axes
@@ -182,7 +178,6 @@ Calculates the variation of the pull along a line connecting two opposite notabl
 	d = dbf['d']
 	n = len(bf)
 	p = delta_chi2(1, n)
-	a = np.sqrt(2*p/np.diag(d))
 	H = v @ d @ v.T
 	pull_list = []
 	obscoll = loadobslist()

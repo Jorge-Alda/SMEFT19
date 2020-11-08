@@ -33,9 +33,7 @@ Finds the minimum of the fit function and approximates its neighbourhood by an e
 	- d\: diagonal matrix containing the inverse of the squares of the semiaxes.
 	- Lmin\: Log-likelihood at the best fit point.
 	'''
-	global bf
-	global Lmin
-	global dim
+
 	print('Minimizing...')
 	m = Minuit.from_array_func(fit, x0, error=0.01, errordef=0.5, print_level=0)
 	m.migrad()
@@ -46,7 +44,7 @@ Finds the minimum of the fit function and approximates its neighbourhood by an e
 	L0 = fit(np.zeros(dim))
 	p = pull(2*abs(Lmin-L0), dim)
 	print('Pull: ' + str(p) + ' sigma')
-	v, d, vt = svd(m.np_matrix())
+	v, d, _ = svd(m.np_matrix())
 	d_ellipse = np.diag(1/d)
 	return bf, v, d_ellipse, Lmin
 
@@ -138,7 +136,6 @@ Finds the extrema of the ellipse, the intersection with the coordinate axis and 
 	ex_m = []
 	chi2_ex_p = []
 	chi2_ex_m = []
-	a = np.sqrt(p/np.diag(d))
 	bestchi2 = fit(bf)
 	H = v @ d @ v.T
 	cross_p = []

@@ -6,9 +6,7 @@ SMEFTglob
 Common functions used to calculate likelihood values and pulls of the fits.
 '''
 
-import flavio
 from flavio.statistics.functions import pull
-import numpy as np
 import smelli
 from math import isinf
 import warnings
@@ -85,14 +83,13 @@ Interfaces `flavio` to compute the NP prediction of a given observable.
 	wc = wfun(x)
 	if fastmeas(obs):
 		lh = gl.fast_likelihoods[lhname]
-		m = lh.pseudo_measurement
 		ml = lh.likelihood.measurement_likelihood
-		pred = ml.get_predictions_par(gl.par_dict_sm, wc)
+		pred = ml.get_predictions_par(gl.par_dict, wc)
 		return pred[obs]
 	else:
 		lh = gl.likelihoods[lhname]
 		ml = lh.measurement_likelihood
-		pred = ml.get_predictions_par(gl.par_dict_sm, wc)
+		pred = ml.get_predictions_par(gl.par_dict, wc)
 		return pred[obs]
 
 def pull_obs(x, obs, wfun):
@@ -109,7 +106,6 @@ Calculates the pull, in sigmas, of the prediction of a given observable in NP wi
 	'''
 	obsm = gl.obstable_sm[obs]
 	lhname = obsm['lh_name']
-	wc = wfun(x)
 	pred = prediction(x, obs, wfun)
 	ll_central = obsm['ll_central']
 	if fastmeas(obs):

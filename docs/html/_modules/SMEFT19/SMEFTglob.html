@@ -38,9 +38,7 @@
 <span class="sd">Common functions used to calculate likelihood values and pulls of the fits.</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">from</span> <span class="nn">flavio.statistics.functions</span> <span class="k">import</span> <span class="n">pull</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">smelli</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">isinf</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -117,14 +115,13 @@
 	<span class="n">wc</span> <span class="o">=</span> <span class="n">wfun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 	<span class="k">if</span> <span class="n">fastmeas</span><span class="p">(</span><span class="n">obs</span><span class="p">):</span>
 		<span class="n">lh</span> <span class="o">=</span> <span class="n">gl</span><span class="o">.</span><span class="n">fast_likelihoods</span><span class="p">[</span><span class="n">lhname</span><span class="p">]</span>
-		<span class="n">m</span> <span class="o">=</span> <span class="n">lh</span><span class="o">.</span><span class="n">pseudo_measurement</span>
 		<span class="n">ml</span> <span class="o">=</span> <span class="n">lh</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">measurement_likelihood</span>
-		<span class="n">pred</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">get_predictions_par</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">par_dict_sm</span><span class="p">,</span> <span class="n">wc</span><span class="p">)</span>
+		<span class="n">pred</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">get_predictions_par</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">pred</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">lh</span> <span class="o">=</span> <span class="n">gl</span><span class="o">.</span><span class="n">likelihoods</span><span class="p">[</span><span class="n">lhname</span><span class="p">]</span>
 		<span class="n">ml</span> <span class="o">=</span> <span class="n">lh</span><span class="o">.</span><span class="n">measurement_likelihood</span>
-		<span class="n">pred</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">get_predictions_par</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">par_dict_sm</span><span class="p">,</span> <span class="n">wc</span><span class="p">)</span>
+		<span class="n">pred</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">get_predictions_par</span><span class="p">(</span><span class="n">gl</span><span class="o">.</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">pred</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="pull_obs"><a class="viewcode-back" href="../../SMEFTglob.html#SMEFT19.SMEFTglob.pull_obs">[docs]</a><span class="k">def</span> <span class="nf">pull_obs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">wfun</span><span class="p">):</span>
@@ -141,7 +138,6 @@
 <span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">obsm</span> <span class="o">=</span> <span class="n">gl</span><span class="o">.</span><span class="n">obstable_sm</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
 	<span class="n">lhname</span> <span class="o">=</span> <span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;lh_name&#39;</span><span class="p">]</span>
-	<span class="n">wc</span> <span class="o">=</span> <span class="n">wfun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 	<span class="n">pred</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">wfun</span><span class="p">)</span>
 	<span class="n">ll_central</span> <span class="o">=</span> <span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;ll_central&#39;</span><span class="p">]</span>
 	<span class="k">if</span> <span class="n">fastmeas</span><span class="p">(</span><span class="n">obs</span><span class="p">):</span>

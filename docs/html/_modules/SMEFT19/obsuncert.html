@@ -38,8 +38,6 @@
 <span class="sd">Module used to compute the uncertainty of some observables using a MonteCarlo analysis.</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ellipse</span>
-<span class="kn">from</span> <span class="nn">wilson</span> <span class="k">import</span> <span class="n">Wilson</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">sqrt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -71,12 +69,9 @@
 <span class="sd">	- [num\: Number of MonteCarlo points used to compute the uncertainty. Default=50.]</span>
 <span class="sd">	- [cores\: number of cores used to parallel-compute the uncertainty. Default=1 (no parallelization).]</span>
 <span class="sd">	&#39;&#39;&#39;</span>
-	<span class="n">values</span> <span class="o">=</span> <span class="nb">dict</span>
+	<span class="n">values</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 	<span class="n">values</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
-	<span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;Inf&#39;</span><span class="p">)</span>
 	<span class="n">uncert</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="n">maxval</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">obslist</span><span class="p">)</span>
-	<span class="n">minval</span> <span class="o">=</span> <span class="p">[</span><span class="n">inf</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">obslist</span><span class="p">)</span>
 
 	<span class="n">w</span> <span class="o">=</span> <span class="n">wfun</span><span class="p">(</span><span class="n">bf</span><span class="p">)</span>
 	<span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obslist</span><span class="p">:</span>

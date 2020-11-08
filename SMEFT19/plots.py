@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import texfig # https://github.com/knly/texfig
 plt.rcParams['hatch.color'] = 'w'
 from matplotlib.patches import Rectangle
-from flavio.statistics.functions import delta_chi2, confidence_level
+from flavio.statistics.functions import delta_chi2
 import flavio.plots.colors
 import scipy.interpolate
 import numpy as np
@@ -178,7 +178,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 
 	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
 	'''
-	fig = texfig.figure()
+	texfig.figure()
 	if plottype == 'RD':
 		observables = ['Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
 		texlabels = [r'$R_D^\ell$', r'$R_{D^*}^\ell$', r'$R_{D^*}^\mu$']
