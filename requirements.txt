@@ -7,3 +7,6 @@ matplotlib
 -e git+https://github.com/nilsleiffischer/texfig.git#egg=texfig
 scipy
 PyYAML
+sklearn
+xgboost
+shap
