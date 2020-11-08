@@ -1,0 +1,114 @@
+'''
+=================
+ml
+=================
+
+This module contains the functions needed to train a Machine Learning-based Montecarlo scan, and to assess its performance.
+'''
+
+from parscanning.mlscan import MLScan
+import pandas as pd
+from sklearn.metrics import mean_absolute_error, r2_score
+from xgboost import XGBRegressor
+from SMEFT19.SMEFTglob import likelihood_global
+from SMEFT19.scenarios import rotBII
+
+bf = [-0.11995206352339435, -0.07715992292268066, -1.207419259815296e-06, -0.07618023346979363, 0.8027006412644478]
+
+def lh(x):
+    return likelihood_global(x, rotBII)
+
+def train(fMC, fval, fmodel):
+    r'''
+Trains the Machine Learning algorithm with the previously computed Metropolis points
+
+:Arguments:
+
+    - fMC\: Path to the file containing the Montecarlo pre-computed points.
+    - fval\: Path to the file where the validation points will be saved.
+    - fmodel\: Path to the file where the XGBoost model will be saved.
+
+:Returns:
+
+    - The Machine Learning scan module, already trained and ready to be used   
+    '''
+    df = pd.read_csv(fname, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+    df = df.loc[df['logL']>10]
+    features =  ['C', 'al', 'bl', 'aq', 'bq']
+    X = df[features]
+    y = df.logL
+    model = XGBRegressor(n_estimators=1000, early_stopping_rounds=5, n_jobs=4, learning_rate=0.05)
+    ML = MLScan(lh, list(df.min()[:5]), list(df.max()[:5]), 1000, bf)
+    ML.init_ML(model)
+    ML.train_pred(X, y, mean_absolute_error)
+    model.save_model(fmodel)
+    ML.save_validation(fval)
+    return ML
+
+def regr(ML, vpoints):
+    r'''
+Plots the predicted likelihod vs the actual likelihood and computes their regression coefficient
+
+:Arguments:
+
+    - ML:\ The Machine Learning scan module.
+    - vpoints\: Path to the file containing the points in the validation dataset.
+
+:Returns:
+
+    - A tuple containing the Perason r coefficient and the p-value of the regression
+    '''
+    
+    df = pd.read_csv('vpoints', sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+    df = df.loc[df['logL']>10]
+    features =  ['C', 'al', 'bl', 'aq', 'bq']
+    X = df[features]
+    y = 2*df.logL
+    pred = 2*np.array(list(map(ML.guess_lh, X.values)))
+    
+    plt.figure(figsize =(5,5))
+    plt.scatter(y, pred, s=0.7)
+    plt.plot([20,50],[20,50], c='black', lw=1)
+    plt.xlim([20, 50])
+    plt.ylim([20, 50])
+    plt.xlabel(r'Actual $\Delta \chi^2_\mathrm{SM}$')
+    plt.ylabel(r'Predicted $\Delta \chi^2_\mathrm{SM}$')
+    plt.tight_layout(pad=0.5)
+    return pearsonr(y, pred)
+    
+def hist(ML, vpoints):
+    r'''
+Plots an histogram for the predicted and actual likelihoods, and compares them to the chi-square distribution 
+
+:Arguments:
+
+    - ML:\ The Machine Learning scan module.
+    - vpoints\: Path to the file containing the points in the validation dataset.  
+    '''
+    from scipy.stats import chi2
+    
+    df = pd.read_csv('vpoints', sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+    df = df.loc[df['logL']>10]
+    features =  ['C', 'al', 'bl', 'aq', 'bq']
+    X = df[features]
+    y = 2*df.logL
+    pred = 2*np.array(list(map(ML.guess_lh, X.values)))
+    
+    plt.figure()
+    plt.hist(2*max(pred)-2*np.array(pred), range=(0,25), bins=50, density=True, alpha=0.5, label='Predicted histogram')
+    plt.hist(2*max(y)-2*np.array(y), range=(0,25), bins=50, density=True, alpha=0.5, label='Actual histogram')
+    plt.plot(np.linspace(0,25,51), chi2(5).pdf(np.linspace(0,25,51)), lw=1.5, color='red', label=r'$\chi^2$ distribution' )
+    plt.xlabel(r'$\chi^2_\mathrm{bf} - \chi^2$')
+    plt.ylabel('Normalized frequency')
+    plt.legend()
+    plt.tight_layout(pad=0.5)   
+    
+def load_model(fmodel):
+    r'''
+Loads a XGBoost model previously saved    
+    '''
+    model = XGBRegressor()
+    model.load_model(fmodel)
+    ML = MLScan(lh, list(df.min()[:5]), list(df.max()[:5]), 1000, bf)
+    ML.init_ML(model)   
+    return ML
