@@ -184,4 +184,5 @@ Creates an scatter plot displaying how the SHAP values change as functions of ea
     X = df[features]
     sv = explainer.shap_values(X)
     shap.dependence_plot(param, sv, X, show=False, interaction_index=None, dot_size=5)
+    plt.ylim([-6,3])
     plt.tight_layout(pad=0.5)

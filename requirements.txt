@@ -3,10 +3,13 @@ wilson>=1.7
 smelli>=1.3.0
 -e git+https://github.com/Jorge-Alda/parscanning.git@v0.2#egg=parscanning
 numpy
+scipy
 matplotlib
--e git+https://github.com/nilsleiffischer/texfig.git#egg=texfig
+iminuit
+pandas
+-e git+https://github.com/Jorge-Alda/texfig.git#egg=texfig
 scipy
 PyYAML
-sklearn
+scikit-learn
 xgboost
 shap
