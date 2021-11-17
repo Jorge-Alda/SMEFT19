@@ -12,15 +12,15 @@ from .ellipse import load
 from .comparepulls import pullevolution
 import warnings
 import matplotlib.pyplot as plt
-import texfig # https://github.com/knly/texfig
+plt.rcParams.update({'pgf.texsystem':'pdflatex'})
 plt.rcParams['hatch.color'] = 'w'
 from matplotlib.patches import Rectangle
+import matplotlib.colors
 from flavio.statistics.functions import delta_chi2
 import flavio.plots.colors
 import scipy.interpolate
 import numpy as np
 import yaml
-from parscanning import GridScan
 
 
 hatches = ['/', '\\', '|', '-', '+', 'x', 'o', 'O', '.', '*']
@@ -35,80 +35,76 @@ def listpoint(x):
 	else:
 		return x
 
-def likelihood_plot(wfun, xmin, xmax, ymin, ymax, fits, axlabels, fout=None, locleg=0, n_sigma=(1,2), steps=55, hatched=False, threads=1, bf=None):
+def likelihood_plot(grid, xmin, xmax, ymin, ymax, axlabels, fout=None, locleg=0, n_sigma=(1,2), colors=None, styles=None, widths=None, ticks=0.5, bf=None):
 	r'''
 Plots a contour plot of the log-likelihood of the fit.
 
 :Arguments:
 
-	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+	- grid\: List containing the x coordinates, y corrdinates and a dictionary for the likelihood values in the grid. 
 	- xmin\: Minimum value of the `x` coordinate.
 	- xmax\: Maximum value of the `x` coordinate.
 	- ymin\: Minimum value of the `y` coordinate.
 	- ymax\: Maximum value of the `y` coordinate.
-	- fits\: List containing the fits, as defined by `smelli`, displayed in the plot. Valid values are\:
-
-		- 'RK'\: All LFUV b -> s l l decays.
-		- 'RD'\: All LFUV b -> c l nu decays.
-		- 'EW'\: All electroweak precission tests.
-		- 'LFV'\: All observables violating lepton flavour.
-		- 'ZLFV'\: All observables violating flavour in `Z` decays.
-		- 'global': All observables implemented by `smelli`.
-
 	- axlabels\: List containing two strings to label the `x` and `y` axes.
 	- [fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.]
 	- [locleg\: Position of the legend of the plot, using `matplotlib`'s syntaxis. Default=0 (best position).]
-	- [numsigma\: List containing the significance (in sigmas) of each contour. Default = (1,2).]
-	- [steps\: number of function calls calculated *in each* direction, that is, the total number of function calls is steps**2. Default=50.]
-	- [hatched\: Boolean that determines whether the area between contours will be hatched (True) or filled (False). Default: False.]
-	- [threads\: number of parallel threads used to compute the log-likelihood. Default: 1 (no parallelization).]
-	- [bf\: Coordinates of the best fit point(s). It can be `None` (no point marked), a list containing two floats (one point marked) or a list of lists of points (several points marked). Default: `None`.]
+	- [n_sigma\: List containing the significance (in sigmas) of each contour. Default = (1,2).]
+	- [colors\: List with the colors of each contour. Default: flavio palette.]	
+	- [styles\: List with the linestyles of each contour. Default: All solid.]
+	- [widths\: List with the linewidths of each contour. Default: All 1pt.]	
+	- [ticks\: Interval between ticks in both axes. Default:0.5]
+	- [bf\: Coordinates of the best fit point(s). It can be `None` (no point marked) or a list containing two floats (one point marked). Default: `None`.]
 	'''
 
-	fitcodes = {'RK':'likelihood_lfu_fcnc.yaml', 'RD':'likelihood_rd_rds.yaml', 'EW':'likelihood_ewpt.yaml', 'LFV':'likelihood_lfv.yaml', 'ZLFV':'likelihood_zlfv.yaml', 'global':'global'}
-	labels = {'RK':r'$R_{K^{(*)}}$', 'RD':r'$R_{D^{(*)}}$', 'EW': 'EW precission', 'LFV':'LFV', 'ZLFV':r'$Z$ LFV',  'global':'Global'}
-	fig=plt.figure(figsize=(4,4))
+	fig=plt.figure(figsize=(6,6))
 	plt.xlim([xmin,xmax])
 	plt.ylim([ymin,ymax])
-	colors = [0,1,2,4,5,6,7]
+	nfits = len(grid[2])
+	if colors is None:
+	    _cols = [i%9 for i in range(nfits)]
+	else:    
+	    _cols = colors
+	if styles is None:    
+	    lstyle = ['solid',]*nfits
+	else:
+	    lstyle = styles
+	if widths is None:        
+	    lwidths = [1,]*nfits
+	else:
+	    lwidths = widths    
 	xmargin = 0.02*(xmax-xmin)
 	ymargin = 0.02*(ymax-ymin)
-	GS = GridScan(likelihood_fits, [xmin-xmargin, ymin-ymargin], [xmax+xmargin, ymax+ymargin], steps)
-	with warnings.catch_warnings():
-		warnings.simplefilter('ignore')
-		if threads == 1:
-			GS.run(wfun)
-		else:
-			GS.run_mp(threads, wfun)
-
-
-	for i, f in enumerate(fits):
-		(x, y, z) = GS.meshdata(fitcodes[f])
-		chi = -2*(z-np.max(z))
+	x = grid[0]
+	y = grid[1]
+	zl = grid[2]
+	for i, z in enumerate(zl.values()):
+		chi = -2*(z.T-np.max(z))
 		# get the correct values for 2D confidence/credibility contours for n sigma
 		if isinstance(n_sigma, float) or isinstance(n_sigma, int):
 			levels = [delta_chi2(n_sigma, dof=2)]
 		else:
 			levels = [delta_chi2(n, dof=2) for n in n_sigma]
-		hatch_contour(x=x, y=y, z=chi, levels=levels, col=colors[i], label=labels[f], interpolation_factor=5, hatched=hatched)
-
-
-	if bf is not None:
-		for p in listpoint(bf):
-			plt.scatter(*p, marker='x', s=15, c='black')
-
-	plt.xlabel(axlabels[0])
-	plt.ylabel(axlabels[1])
+		hatch_contour(x=x, y=y, z=chi, levels=levels, col=_cols[i], label=list(zl.keys())[i], interpolation_factor=5, hatched=False, contour_args={'linestyles':lstyle[i], 'linewidths':lwidths[i]})
+		if bf is not None:
+			plt.scatter(*bf, marker='x', color='black')    
+	plt.xlabel(axlabels[0], fontsize=18)
+	plt.ylabel(axlabels[1], fontsize=18)
 	plt.axhline(0, color='black', linewidth=0.5)
 	plt.axvline(0, color='black', linewidth=0.5)
 	ax = fig.gca()
 	ax.xaxis.set_ticks_position('both')
 	ax.yaxis.set_ticks_position('both')
-	plt.legend(loc = locleg)
+	ax.xaxis.set_ticks(np.arange(xmin, xmax+1e-5, ticks))
+	ax.yaxis.set_ticks(np.arange(ymin, ymax+1e-5, ticks))
+	plt.xticks(fontsize=16)
+	plt.yticks(fontsize=16)    
+	plt.legend(loc = locleg, fontsize=16)
 	plt.tight_layout(pad=0.5)
 	if fout is not None:
-		texfig.savefig(fout)
-
+		fig.savefig(fout+'.pdf')
+		fig.savefig(fout+'.pgf')
+		
 def hatch_contour(x, y, z, levels, interpolation_factor=1, interpolation_order=2, col=0, label=None, hatched=True, contour_args={}, contourf_args={}):
     r"""
 Plots coloured and hatched confidence contours (or bands) given numerical input arrays. Based on the `flavio` function
@@ -134,18 +130,21 @@ Plots coloured and hatched confidence contours (or bands) given numerical input 
         x = scipy.ndimage.zoom(x, zoom=interpolation_factor, order=1)
         y = scipy.ndimage.zoom(y, zoom=interpolation_factor, order=1)
         z = scipy.ndimage.zoom(z, zoom=interpolation_factor, order=interpolation_order)
-    if not isinstance(col, int):
-        _col = 0
+    if isinstance(col, int):
+        _contour_args = {}
+        _contourf_args = {}
+        _contour_args['colors'] = [flavio.plots.colors.set1[col]]
+        _contour_args['linewidths'] = 1.2
+        N = len(levels)
+        _contourf_args['colors'] = [flavio.plots.colors.pastel[col] + (max(1-n/(N+1), 0),) for n in range(1,N+1)]
     else:
-        _col = col
-    _contour_args = {}
-    _contourf_args = {}
-    _contour_args['colors'] = [flavio.plots.colors.set1[_col]]
-    _contour_args['linewidths'] = 1.2
-    N = len(levels)
-    _contourf_args['colors'] = [flavio.plots.colors.pastel[_col] # RGB
-                                       + (max(1-n/(N+1), 0),) # alpha, decreasing for contours
-                                       for n in range(1,N+1)]
+        _contour_args = {}
+        _contourf_args = {}
+        _contour_args['colors'] = [darken_color(matplotlib.colors.to_rgb(col),0.7)]
+        _contour_args['linewidths'] = 1.2
+        N = len(levels)
+        _contourf_args['colors'] = [matplotlib.colors.to_rgb(col) + (max(1-n/(N+1), 0),) for n in range(1,N+1)]    
+                                       
     if hatched:
         hl = []
         for i in range(0, N):
@@ -178,7 +177,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 
 	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
 	'''
-	texfig.figure()
+	fig = plt.figure()
 	if plottype == 'RD':
 		observables = ['Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
 		texlabels = [r'$R_D^\ell$', r'$R_{D^*}^\ell$', r'$R_{D^*}^\mu$']
@@ -194,9 +193,12 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 	#plt.ylim([-0.055, 0.015])
 	markers = ['o', '^', 's', '*', 'D']
 
-	data = np.zeros([nhyp, nobs,2])
-	smdata = np.zeros([nobs,2])
-	expdata = np.zeros([nobs,2])
+	#data = np.zeros([nhyp, nobs,2])
+	#smdata = np.zeros([nobs,2])
+	#expdata = np.zeros([nobs,2])
+	data =  [ [{'central':0, 'uncert':0} for i in range(nobs)] for j in range(nhyp)]
+	smdata = [{'central': 0, 'uncert': 0} for i in range(nobs)]
+	expdata = [{'central': 0, 'uncert': 0} for i in range(nobs)]
 	leglabels = []
 	hyp = 0
 	for fin in flist:
@@ -210,35 +212,49 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 
 		o = 0
 		for obs in observables:
-			data[hyp][o][0] = values[str(obs)]['NP']['central']
-			data[hyp][o][1] = values[str(obs)]['NP']['uncert']
-			smdata[o][0] = values[str(obs)]['SM']['central']
-			smdata[o][1] = values[str(obs)]['SM']['uncert']
-			expdata[o][0] = values[str(obs)]['exp']['central']
-			expdata[o][1] = values[str(obs)]['exp']['uncert']
+			data[hyp][o]['central'] = values[str(obs)]['NP']['central']
+			data[hyp][o]['uncert'] = values[str(obs)]['NP']['uncert']
+			smdata[o]['central'] = values[str(obs)]['SM']['central']
+			smdata[o]['uncert'] = values[str(obs)]['SM']['uncert']
+			expdata[o]['central'] = values[str(obs)]['exp']['central']
+			expdata[o]['uncert'] = values[str(obs)]['exp']['uncert']
 			o += 1
 		hyp += 1
 
 	for o in range(0, nobs):
 		for i in range(0, nhyp):
 			if o==0:
-				plt.plot(o+(i+1)/(nhyp+1), data[i][o][0], marker=markers[i], color='b', label=leglabels[i])
+				plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'], marker=markers[i], color='b', label=leglabels[i])
 			else:
-				plt.plot(o+(i+1)/(nhyp+1), data[i][o][0], marker=markers[i], color='b')
-			plt.errorbar(o+(i+1)/(nhyp+1), data[i][o][0], yerr=data[i][o][1], color='b')
-
-		if o==0:
-			ax.add_patch(Rectangle( (o, smdata[o][0]-smdata[o][1]), 1, 2*smdata[o][1], color='orange', alpha=0.7, label='SM'))
-			ax.add_patch(Rectangle( (o, expdata[o][0]-expdata[o][1]), 1, 2*expdata[o][1], color='green', alpha=0.7, label='Experimental'))
+				plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'], marker=markers[i], color='b')
+			plt.errorbar(o+(i+1)/(nhyp+1), data[i][o]['central'], yerr=data[i][o]['uncert'], color='b')
+		if isinstance(smdata[o]['uncert'], list):
+			smleft = smdata[o]['uncert'][0]
+			smrange = smdata[o]['uncert'][0] + smdata[o]['uncert'][1]
 		else:
-			ax.add_patch(Rectangle( (o, expdata[o][0]-expdata[o][1]), 1, 2*expdata[o][1], color='green', alpha=0.7))
-			ax.add_patch(Rectangle( (o, smdata[o][0]-smdata[o][1]), 1, 2*smdata[o][1], color='orange', alpha=0.7))
+			smleft = smdata[o]['uncert']
+			smrange = 2*smdata[o]['uncert']
+		if isinstance(expdata[o]['uncert'], list):
+			expleft = expdata[o]['uncert'][0]
+			exprange = expdata[o]['uncert'][0] + expdata[o]['uncert'][1]
+		else:
+			expleft = expdata[o]['uncert']
+			exprange = 2*expdata[o]['uncert']
+		if o==0:
+			ax.add_patch(Rectangle( (o, smdata[o]['central']-smleft), 1, smrange, color='orange', alpha=0.7, label='SM'))
+			ax.add_patch(Rectangle( (o, expdata[o]['central']-expleft), 1, exprange, color='green', alpha=0.7, label='Experimental'))
+		else:
+			ax.add_patch(Rectangle( (o, expdata[o]['central']-expleft), 1, exprange, color='green', alpha=0.7))
+			ax.add_patch(Rectangle( (o, smdata[o]['central']-smleft), 1, smrange, color='orange', alpha=0.7))
 
 
 	ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs) )
+	plt.xticks(fontsize=16)
+	plt.yticks(fontsize=16)
 	ax.set_xticklabels(texlabels + [''])
-	plt.legend()
-	texfig.savefig(fout)
+	plt.legend(fontsize=14)
+	fig.savefig(fout + '.pdf')
+	fig.savefig(fout + '.pgf')
 
 def binerrorbox(binmin, binmax, central, error, centralline=False, **kwargs):
 	ax = plt.gca()
@@ -253,7 +269,7 @@ def binerrorbox(binmin, binmax, central, error, centralline=False, **kwargs):
 	if centralline:
 		plt.plot([binmin, binmax], [central, central], **kwargs)
 
-def compare_plot(wfun, fin, fout):
+def compare_plot(wfun, fin, fout, sigmas = 1):
 	r'''
 Plots the pull of each observable in the SM and in the NP hypothesis.
 
@@ -280,17 +296,17 @@ Plots the pull of each observable in the SM and in the NP hypothesis.
 		NP.append(float(obsNP.loc[[obs], 'pull exp.']))
 		SM.append(float(obsSM.loc[[obs], 'pull exp.']))
 
-	plt.figure()
+	fig = plt.figure()
 	plt.plot(NP, label='New Physics')
 	plt.plot(SM, label='Standard Model')
 	vertplus = 0
 	vertminus = 0
 	for i in range(0, len(SM)):
-		if (NP[i]-SM[i]) > 1:
+		if (NP[i]-SM[i]) > sigmas:
 			v = 0.3 + vertplus
 			vertplus += 0.1
 			plt.annotate(str(i), xy=(i, NP[i]), xytext=(i, NP[i]+v), fontsize=6, horizontalalignment='right', arrowprops = dict(facecolor = 'black',  arrowstyle='->') )
-		elif (SM[i]-NP[i]) > 1:
+		elif (SM[i]-NP[i]) > sigmas:
 			v = 0.3 + vertminus
 			#vertminus += 0.1
 			plt.annotate(str(i), xy=(i, NP[i]), xytext=(i, NP[i]-v), fontsize=6, horizontalalignment='left', arrowprops = dict(facecolor = 'black',  arrowstyle='->') )
@@ -298,9 +314,10 @@ Plots the pull of each observable in the SM and in the NP hypothesis.
 	plt.ylabel(r'$|$Pull$|$')
 	plt.legend(loc=1)
 	plt.tight_layout(pad=0.5)
-	texfig.savefig(fout)
+	fig.savefig(fout+'.pdf')
+	fig.savefig(fout+'.pgf')
 
-def evolution_plot(obscodes, wfun, fin, direction, fout):
+def evolution_plot(obscodes, wfun, fin, direction, fout, obsnames=None):
 	r'''
 Plots the vairation of the pull of several observables along a line connecting two opposite  notable points of the ellipsoid.
 
@@ -317,9 +334,15 @@ Plots the vairation of the pull of several observables along a line connecting t
 	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
 	'''
 	fig = plt.figure()
+	j=0
 	for o in obscodes:
 		ev = pullevolution(o, wfun, fin, direction)
-		plt.plot(np.linspace(-1, 1, 200), ev, label='Obs. ' + str(o))
+		if obsnames is None:
+			n = ''
+		else:
+			n = '\t' + obsnames[j]
+			j+=1
+		plt.plot(np.linspace(-1, 1, 200), ev, label='Obs. ' + str(o)+n)
 	if direction[:2] == 'ax':
 		i = direction[2:]
 		plt.xlabel(r'$\delta C_{' + i + '}/a_{' + i + '}$')
@@ -332,4 +355,23 @@ Plots the vairation of the pull of several observables along a line connecting t
 	ax.yaxis.set_ticks_position('both')
 	plt.legend()
 	plt.tight_layout(pad=0.5)
-	texfig.savefig(fout)
+	fig.savefig(fout+'.pdf')
+	fig.savefig(fout+'.pgf')
+	
+def darken_color(color, amount=0.5):
+    """
+    Darkens the given color by multiplying luminosity by the given amount.
+    Input can be matplotlib color string, hex string, or RGB tuple.
+    Examples:
+    >> lighten_color('g', 0.3)
+    >> lighten_color('#F034A3', 0.6)
+    >> lighten_color((.3,.55,.1), 0.5)
+    """
+    import matplotlib.colors as mc
+    import colorsys
+    try:
+        c = mc.cnames[color]
+    except:
+        c = color
+    c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+    return colorsys.hls_to_rgb(c[0], amount * c[1], c[2])	
