@@ -18,40 +18,40 @@ from .ellipse import load
 obslist = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1), ('<Rmue>(B0->K*ll)', 1.1, 6.0), 'Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
 
 def distrsphere(dim):
-    '''
+	'''
 Returns a random vector with norm 1.
 
 :Arguments:
-    - dim\: Dimension of the vector    
-    '''
+	- dim\: Dimension of the vector    
+	'''
 	vect = np.random.randn(dim)
 	return vect/np.linalg.norm(vect)
 
 def _residual(x, obs, wfun, central):
-    '''
+	'''
 Computes the residual between the NP prediction and the central value
 
 :Arguments:
-    - x\: Parameter point.
-    - obs\: Observable.
-    - wfun\: NP scenario.
-    - central\: Central value.    
-    '''
+	- x\: Parameter point.
+	- obs\: Observable.
+	- wfun\: NP scenario.
+	- central\: Central value.    
+	'''
 	return (prediction(x, obs, wfun)-central)**2
 	
 def _hessapprox(x, arg):
-    '''
+	'''
 Hessian approximation of the likelihood for a point.
 
 :Arguments:
-    - x\: Parameter point.
-    - arg\: List containing the hessian matrix, best fit point and its likelihood.    
-    '''
-    H = arg[0]
-    bf = arg[1]
-    L = arg[2]
-    delta = x - bf
-    return -L-delta @ H @ delta
+	- x\: Parameter point.
+	- arg\: List containing the hessian matrix, best fit point and its likelihood.    
+	'''
+	H = arg[0]
+	bf = arg[1]
+	L = arg[2]
+	delta = x - bf
+	return -L-delta @ H @ delta
 
 def calculate(wfun, minx, maxx, fout, fin, name, num=50, cores=1, mode='exact'):
 	r'''
