@@ -176,7 +176,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 		- 'RD'\: Plots RD, and RD\* using only muons or muons+electrons.	
 	- flist\: List of paths to files created by `obsuncert.calculate`.
 	- flist2\: Additional list of paths to files created by `obsuncert.calculate`.
-	- legend\: 0 for legend inside the plot, 1 for legend next to the plot and 2 for plot without legend.	
+	- legend\: 0 for no legend, 1 for legend next to the plot and 2 for legend inside the plot.	
 	'''
 	if legend<2:    
 		fig = plt.figure(figsize=(5.7+2.3*legend,5))
@@ -280,6 +280,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 
 	ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs) )
 	plt.xticks(fontsize=16)
+	plt.yticks(fontsize=16)
 	ax.set_xticklabels(texlabels + [''])
 	if legend==1:
 		plt.legend(fontsize=14, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
@@ -287,6 +288,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 		plt.legend(fontsize=14)        
 	plt.tight_layout(pad=0.5)    
 	fig.savefig(fout + '.pdf')
+	fig.savefig(fout + '.pgf')
 
 def binerrorbox(binmin, binmax, central, error, centralline=False, **kwargs):
 	ax = plt.gca()
