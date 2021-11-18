@@ -12,18 +12,48 @@ import numpy as np
 import yaml
 from parscanning import MontecarloScan
 from .SMEFTglob import likelihood_global, prediction
+from .ellipse import load
 
 
 obslist = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1), ('<Rmue>(B0->K*ll)', 1.1, 6.0), 'Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
 
 def distrsphere(dim):
+    '''
+Returns a random vector with norm 1.
+
+:Arguments:
+    - dim\: Dimension of the vector    
+    '''
 	vect = np.random.randn(dim)
 	return vect/np.linalg.norm(vect)
 
-def _variance(x, obs, wfun, central):
-	return (prediction(x, obs, wfun)-central)**2
+def _residual(x, obs, wfun, central):
+    '''
+Computes the residual between the NP prediction and the central value
 
-def calculate(wfun, minx, maxx, fout, bf, name, num=50, cores=1):
+:Arguments:
+    - x\: Parameter point.
+    - obs\: Observable.
+    - wfun\: NP scenario.
+    - central\: Central value.    
+    '''
+	return (prediction(x, obs, wfun)-central)**2
+	
+def _hessapprox(x, arg):
+    '''
+Hessian approximation of the likelihood for a point.
+
+:Arguments:
+    - x\: Parameter point.
+    - arg\: List containing the hessian matrix, best fit point and its likelihood.    
+    '''
+    H = arg[0]
+    bf = arg[1]
+    L = arg[2]
+    delta = x - bf
+    return -L-delta @ H @ delta
+
+def calculate(wfun, minx, maxx, fout, fin, name, num=50, cores=1, mode='exact'):
 	r'''
 Computes the central value and uncertainty of a selection of observables, using a MonteCarlo analysis. The observables are $R_{K^{(*)}}$ and $R_{D^{(*)}}$, and can be modified by editing the variable obsuncert.obslist.
 
@@ -40,7 +70,8 @@ Computes the central value and uncertainty of a selection of observables, using 
 	values = dict()
 	values['name'] = name
 	uncert = []
-
+	dellipse = load(fin)
+	bf = dellipse['bf']
 	w = wfun(bf)
 	for obs in obslist:
 		values[str(obs)] = dict()
@@ -67,17 +98,25 @@ Computes the central value and uncertainty of a selection of observables, using 
 			values[str(obs)]['exp']['central'] = float(dist.central_value)
 			values[str(obs)]['exp']['uncert'] = float((dist.error_left + dist.error_right)/2)
 
-	MS = MontecarloScan(likelihood_global, minx, maxx, num, bf, 0.1, wfun)
-	if cores==1:
-		MS.run(wfun)
-		for obsnum, obs in enumerate(obslist):
-			var = MS.expectedvalue(_variance, obs, wfun, values[str(obs)]['NP']['central'])
-			values[str(obs)]['NP']['uncert'] = sqrt(uncert[obsnum]**2 + var )
+	if mode == 'exact':
+		arg = wfun
+		MS = MontecarloScan(likelihood_global, minx, maxx, num, bf, 0.1, arg)
 	else:
-		MS.run_mp(cores, wfun)
+		H = dellipse['v'] @ dellipse['d'] @ dellipse['v'].T
+		arg = (H, bf, dellipse['L'])
+		MS = MontecarloScan(_hessapprox, minx, maxx, num, bf, 0.1, arg)
+	if cores==1:
+		MS.run(arg)
 		for obsnum, obs in enumerate(obslist):
-			var = MS.expectedvalue_mp(_variance, cores, obs, wfun, values[str(obs)]['NP']['central'])
-			values[str(obs)]['NP']['uncert'] = sqrt(uncert[obsnum]**2 + var )
+			var = MS.expectedvalue(_residual, obs, wfun, values[str(obs)]['NP']['central'])
+			values[str(obs)]['NP']['uncert'] = sqrt(uncert[obsnum]**2 + float(var) )
+			values[str(obs)]['NP']['uStat'] = sqrt(float(var))
+	else:
+		MS.run_mp(cores, arg)
+		for obsnum, obs in enumerate(obslist):
+			var = MS.expectedvalue_mp(_residual, cores, obs, wfun, values[str(obs)]['NP']['central'])
+			values[str(obs)]['NP']['uncert'] = sqrt(uncert[obsnum]**2 + float(var) )
+			values[str(obs)]['NP']['uStat'] = sqrt(float(var))
 
 	with open(fout, 'wt') as f:
 		yaml.dump(values, f)
