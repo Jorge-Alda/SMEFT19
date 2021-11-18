@@ -164,20 +164,24 @@ Plots coloured and hatched confidence contours (or bands) given numerical input 
     return (CS, CF)
 
 
-def error_plot(flist, plottype, fout):
+def error_plot(fout, plottype, flist, flist2 = None, legend=0):
 	r'''
 Plots the uncertainty intervals for several observables in NP scenarios, SM and experimental values.
 
 :Arguments:
-	- flist\: List of paths to files created by `obsuncert.calculate`.
+	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
 	- plottype\: Selects the observables to be plotted\:
 
 		- 'RK'\: Plots RK in the [1.1,6.0] bin and RK\* in the [0.045,1.1] and [1.1,6] bins.
-		- 'RD'\: Plots RD, and RD\* using only muons or muons+electrons.
-
-	- fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
+		- 'RD'\: Plots RD, and RD\* using only muons or muons+electrons.	
+	- flist\: List of paths to files created by `obsuncert.calculate`.
+	- flist2\: Additional list of paths to files created by `obsuncert.calculate`.
+	- legend\: 0 for legend inside the plot, 1 for legend next to the plot and 2 for plot without legend.	
 	'''
-	fig = plt.figure()
+	if legend<2:    
+		fig = plt.figure(figsize=(5.7+2.3*legend,5))
+	else:
+		fig = plt.figure()        
 	if plottype == 'RD':
 		observables = ['Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
 		texlabels = [r'$R_D^\ell$', r'$R_{D^*}^\ell$', r'$R_{D^*}^\mu$']
@@ -197,9 +201,11 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 	#smdata = np.zeros([nobs,2])
 	#expdata = np.zeros([nobs,2])
 	data =  [ [{'central':0, 'uncert':0} for i in range(nobs)] for j in range(nhyp)]
+	data2 =  [ [{'central':0, 'uncert':0} for i in range(nobs)] for j in range(nhyp)]
 	smdata = [{'central': 0, 'uncert': 0} for i in range(nobs)]
 	expdata = [{'central': 0, 'uncert': 0} for i in range(nobs)]
 	leglabels = []
+	leglabels2 = []    
 	hyp = 0
 	for fin in flist:
 		f = open(fin, 'rt')
@@ -220,14 +226,36 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 			expdata[o]['uncert'] = values[str(obs)]['exp']['uncert']
 			o += 1
 		hyp += 1
-
+	hyp = 0
+	if flist2 is not None:    
+		for fin in flist2:
+			f = open(fin, 'rt')
+			values = yaml.safe_load(f)
+			f.close()
+			try:
+				leglabels2.append(values['name'])
+			except:
+				leglabels2.append(fin[:-5])
+			o = 0
+			for obs in observables:
+				data2[hyp][o]['central'] = values[str(obs)]['NP']['central']
+				data2[hyp][o]['uncert'] = values[str(obs)]['NP']['uncert']
+				o += 1
+			hyp += 1
+            
 	for o in range(0, nobs):
 		for i in range(0, nhyp):
 			if o==0:
-				plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'], marker=markers[i], color='b', label=leglabels[i])
+				plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'], marker=markers[i], color='b', label=leglabels[i], zorder=3)
 			else:
-				plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'], marker=markers[i], color='b')
-			plt.errorbar(o+(i+1)/(nhyp+1), data[i][o]['central'], yerr=data[i][o]['uncert'], color='b')
+				plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'], marker=markers[i], color='b', zorder=3)
+			plt.errorbar(o+(i+1)/(nhyp+1), data[i][o]['central'], yerr=data[i][o]['uncert'], color='b', zorder=3)
+			if flist2 is not None:
+				if o==0:
+					plt.plot(o+(i+1.5)/(nhyp+1), data2[i][o]['central'], marker=markers[i], color='r', label=leglabels2[i], zorder=3)
+				else:
+					plt.plot(o+(i+1.5)/(nhyp+1), data2[i][o]['central'], marker=markers[i], color='r', zorder=3)
+				plt.errorbar(o+(i+1.5)/(nhyp+1), data2[i][o]['central'], yerr=data2[i][o]['uncert'], color='r', zorder=3)                
 		if isinstance(smdata[o]['uncert'], list):
 			smleft = smdata[o]['uncert'][0]
 			smrange = smdata[o]['uncert'][0] + smdata[o]['uncert'][1]
@@ -241,20 +269,24 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 			expleft = expdata[o]['uncert']
 			exprange = 2*expdata[o]['uncert']
 		if o==0:
-			ax.add_patch(Rectangle( (o, smdata[o]['central']-smleft), 1, smrange, color='orange', alpha=0.7, label='SM'))
-			ax.add_patch(Rectangle( (o, expdata[o]['central']-expleft), 1, exprange, color='green', alpha=0.7, label='Experimental'))
+			ax.add_patch(Rectangle( (o+0.05, smdata[o]['central']-smleft), 0.9, smrange, color='orange', alpha=0.5, label='SM', lw=0))
+			ax.add_patch(Rectangle( (o+0.05, expdata[o]['central']-expleft), 0.9, exprange, color='green', alpha=0.5, label='Experimental', lw=0))            
 		else:
-			ax.add_patch(Rectangle( (o, expdata[o]['central']-expleft), 1, exprange, color='green', alpha=0.7))
-			ax.add_patch(Rectangle( (o, smdata[o]['central']-smleft), 1, smrange, color='orange', alpha=0.7))
+			ax.add_patch(Rectangle( (o+0.05, expdata[o]['central']-expleft), 0.9, exprange, color='green', alpha=0.5, lw=0))
+			ax.add_patch(Rectangle( (o+0.05, smdata[o]['central']-smleft), 0.9, smrange, color='orange', alpha=0.5, lw=0))
+		plt.plot([o+0.05,o+0.95], [smdata[o]['central'], smdata[o]['central']], lw=1, color='orange', ls='dashed')
+		plt.plot([o+0.05,o+0.95], [expdata[o]['central'], expdata[o]['central']], lw=1, color='green', ls='dashed')
 
 
 	ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs) )
 	plt.xticks(fontsize=16)
-	plt.yticks(fontsize=16)
 	ax.set_xticklabels(texlabels + [''])
-	plt.legend(fontsize=14)
+	if legend==1:
+		plt.legend(fontsize=14, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+	elif legend>1:
+		plt.legend(fontsize=14)        
+	plt.tight_layout(pad=0.5)    
 	fig.savefig(fout + '.pdf')
-	fig.savefig(fout + '.pgf')
 
 def binerrorbox(binmin, binmax, central, error, centralline=False, **kwargs):
 	ax = plt.gca()
