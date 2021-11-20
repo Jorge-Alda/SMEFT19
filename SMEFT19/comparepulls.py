@@ -24,7 +24,7 @@ def tex(obs):
 	if isinstance(obs, str):
 		text = flavio.Observable[obs].tex
 	else:
-		text = flavio.Observable[obs[0]].tex[:-1] + '^{[' + str(obs[1:]).replace(',', ',\\ ') + ']}$'
+		text = flavio.Observable[obs[0]].tex[:-1] + '^{' + str(list(obs[1:])).replace(',', ',\\ ') + '}$'
 	return text.replace('text', 'mathrm')
 
 def texnumber(x, prec=3):
