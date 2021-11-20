@@ -111,16 +111,14 @@ Determines the observable whose pull changes the most between two NP hypothesis.
 		print(results)
 	return results
 
-def notablepulls(wfun, fin, fout):
+def notablepulls(wfun, fin):
 	r'''
 Determines the observables whose pull changes the most between the best fit and the notable points of the ellipsoid.
 
 :Arguments:
 	- wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
  	- fin\: Path to the file `.yaml` where the ellipsoid is saved.
-	- fout\: Path to the `.tex` file where the comaparison table will be written.
 	'''
-	f = open(fout, 'wt')
 	dbf = load(fin)
 	bf = dbf['bf']
 	v = dbf['v']
@@ -133,30 +131,29 @@ Determines the observables whose pull changes the most between the best fit and 
 		dC = float(np.sqrt(p/H[i,i]))
 		delta = np.zeros(n)
 		delta[i] = dC
-		f.write('Operator ' + str(i+1) + '+\n**********************\n')
-		f.write(pointpull(bf + delta, wfun, bf, 0))
-		f.write('\n\n')
-		f.write('Operator ' + str(i+1) + '-\n**********************\n')
-		f.write(pointpull(bf - delta, wfun, bf, 0))
-		f.write('\n\n')
+		print('Operator ' + str(i+1) + '+\n**********************\n')
+		print(pointpull(bf + delta, wfun, bf, 0))
+		print('\n\n')
+		print('Operator ' + str(i+1) + '-\n**********************\n')
+		print(pointpull(bf - delta, wfun, bf, 0))
+		print('\n\n')
 	for i in range(0,n):
 		#Moving along ellipsoid axes
 		delta = np.zeros(n)
 		delta[i] = 1
-		f.write('Axis ' + str(i+1) + '+\n**********************\n')
-		f.write(pointpull(parametrize(delta, bf, v, d), wfun, bf, 0))
-		f.write('\n\n')
-		f.write('Axis ' + str(i+1) + '-\n**********************\n')
-		f.write(pointpull(parametrize(-delta, bf, v, d), wfun, bf, 0))
-		f.write('\n\n')
+		print('Axis ' + str(i+1) + '+\n**********************\n')
+		print(pointpull(parametrize(delta, bf, v, d), wfun, bf, 0))
+		print('\n\n')
+		print('Axis ' + str(i+1) + '-\n**********************\n')
+		print(pointpull(parametrize(-delta, bf, v, d), wfun, bf, 0))
+		print('\n\n')
 	bfm = np.matrix(bf)
 	dSM = float(np.sqrt(p/(bfm @ H @ bfm.T ) ))
-	f.write('SM+\n**********************\n')
-	f.write(pointpull(bf*(1+dSM), wfun, bf, 0))
-	f.write('\n\n')
-	f.write('SM-\n**********************\n')
-	f.write(pointpull(bf*(1-dSM), wfun, bf, 0))
-	f.close()
+	print('SM+\n**********************\n')
+	print(pointpull(bf*(1+dSM), wfun, bf, 0))
+	print('\n\n')
+	print('SM-\n**********************\n')
+	print(pointpull(bf*(1-dSM), wfun, bf, 0))
 
 def pullevolution(obscode, wfun, fin, direction):
 	r'''
