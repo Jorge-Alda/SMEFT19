@@ -13,6 +13,7 @@ from numpy import sqrt
 import yaml
 from flavio.statistics.functions import pull, delta_chi2
 from iminuit import Minuit
+from .comparepulls import texnumber
 
 def roundsig(x, num=4):
 	l = int(np.log10(abs(x)))
@@ -171,7 +172,7 @@ Finds the extrema of the ellipse, the intersection with the coordinate axis and 
 	SM_m = bf*(1-dSM)
 	chi2_SM_p = 2*(fit(SM_p) - bestchi2)
 	chi2_SM_m = 2*(fit(SM_m) - bestchi2)
-	from .comparepulls import texnumber
+
 	with open(fout, 'w') as f:
 		f.write(r'\begin{tabular}{|' + 'c|'*(n+3) + r'}\hline' + '\n'  )
 		f.write(r'$j$ & $s$ & ' + ' & '*n + r'$\Delta \chi^2$\\\hline' + '\n' )

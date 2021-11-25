@@ -22,7 +22,7 @@ def distrsphere(dim):
 Returns a random vector with norm 1.
 
 :Arguments:
-	- dim\: Dimension of the vector    
+	- dim\: Dimension of the vector
 	'''
 	vect = np.random.randn(dim)
 	return vect/np.linalg.norm(vect)
@@ -35,17 +35,17 @@ Computes the residual between the NP prediction and the central value
 	- x\: Parameter point.
 	- obs\: Observable.
 	- wfun\: NP scenario.
-	- central\: Central value.    
+	- central\: Central value.
 	'''
 	return (prediction(x, obs, wfun)-central)**2
-	
+
 def _hessapprox(x, arg):
 	'''
 Hessian approximation of the likelihood for a point.
 
 :Arguments:
 	- x\: Parameter point.
-	- arg\: List containing the hessian matrix, best fit point and its likelihood.    
+	- arg\: List containing the hessian matrix, best fit point and its likelihood.
 	'''
 	H = arg[0]
 	bf = arg[1]

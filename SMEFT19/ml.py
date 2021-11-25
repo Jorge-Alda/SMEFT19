@@ -14,7 +14,7 @@ from SMEFT19.SMEFTglob import likelihood_global
 from SMEFT19.scenarios import rotBII
 import shap
 import matplotlib.pyplot as plt
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, chi2
 import numpy as np
 
 bf = [-0.11995206352339435, -0.07715992292268066, -1.207419259815296e-06, -0.07618023346979363, 0.8027006412644478]
@@ -89,7 +89,6 @@ Plots an histogram for the predicted and actual likelihoods, and compares them t
     - ML:\ The Machine Learning scan module.
     - vpoints\: Path to the file containing the points in the validation dataset.
     '''
-    from scipy.stats import chi2
 
     df = pd.read_csv(vpoints, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
     df = df.loc[df['logL']>10]
