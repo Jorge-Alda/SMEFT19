@@ -34,4 +34,4 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         cd SMEFT19      
-        pylint --disable C0103,W0312,W1401,C0301,C0326,R,C0200,C0411,W0311 `ls -R|grep .py$|xargs`
+        pylint --rcfile='.pylintrc' `ls -R|grep .py$|xargs`
