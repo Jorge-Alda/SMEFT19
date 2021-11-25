@@ -1,3 +1,8 @@
+'''
+SMEFT19 Python Package
+'''
+
+
 from SMEFT19 import SMEFTglob
 from SMEFT19 import scenarios
 from SMEFT19 import ellipse

@@ -16,7 +16,7 @@ from numpy import sqrt
 import yaml
 from flavio.statistics.functions import pull, delta_chi2
 from iminuit import Minuit
-from SMEFT19.utils import texnumber, roundsig
+from SMEFT19.utils import texnumber
 
 
 def minimum(fit, x0):

@@ -8,12 +8,11 @@ different NP scenarios and the Standard Model.
 '''
 
 import numpy as np
-import flavio
 from flavio.statistics.functions import delta_chi2
 from SMEFT19.ellipse import load, parametrize
 from SMEFT19 import SMEFTglob
 from SMEFT19.SMEFTglob import loadobslist
-from SMEFT19.util import sign, tex, texnumber
+from SMEFT19.utils import sign, tex, texnumber
 
 
 def compare(wfun, fin, fout):

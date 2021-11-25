@@ -8,12 +8,10 @@ Module used to compute the uncertainty of some observables using a MonteCarlo an
 
 from math import sqrt
 import flavio
-import numpy as np
 import yaml
 from parscanning import MontecarloScan
 from SMEFT19.SMEFTglob import likelihood_global, prediction
 from SMEFT19.ellipse import load
-from SMEFT19.utils import distrsphere
 
 
 obslist = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1),

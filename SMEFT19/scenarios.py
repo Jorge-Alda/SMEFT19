@@ -165,6 +165,9 @@ Creates an idempotent hermitic 3x3 matrix using to parameters.
                       [np.conj(a), np.conj(b), 1]])/(1+ abs(a)**2 + abs(b)**2)
 
 def matrixwc(num, C, ll, lq):
+    r'''
+Returns the Wilson coefficients for Clq1 or Clq3 given the parameters of the idemp matrix.
+    '''
     wc = dict()
     for il in range(0, 3):
         for jl in range(0, il+1):

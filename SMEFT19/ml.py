@@ -20,6 +20,9 @@ from SMEFT19.scenarios import rotBII
 
 
 def lh(x):
+    '''
+Pickle-able function for the likelihood in scenario BII.
+    '''
     return likelihood_global(x, rotBII)
 
 def train(fMC, fval, fmodel, bf):

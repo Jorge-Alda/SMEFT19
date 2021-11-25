@@ -64,6 +64,9 @@ Calculates the global log-likelihood of a NP hypothesis.
         return glpp.log_likelihood_global()
 
 def fastmeas(obs):
+    '''
+Checks if the observable is part of a <<fast-measurement>> in smelli.
+    '''
     obsm = gl.obstable_sm[obs]
     lhname = obsm['lh_name']
     return lhname[:4] == 'fast'

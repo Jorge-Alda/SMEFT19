@@ -19,7 +19,6 @@ from SMEFT19 import SMEFTglob
 from SMEFT19.SMEFTglob import loadobslist
 from SMEFT19.ellipse import load
 from SMEFT19.comparepulls import pullevolution
-from SMEFT19.utils import listpoint
 
 plt.rcParams.update({'pgf.texsystem':'pdflatex'})
 plt.rcParams['hatch.color'] = 'w'
@@ -311,18 +310,6 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     fig.savefig(fout + '.pdf')
     fig.savefig(fout + '.pgf')
 
-def binerrorbox(binmin, binmax, central, error, centralline=False, **kwargs):
-    ax = plt.gca()
-    if isinstance(error, float):
-        errormin = error
-        errormax = error
-    else:
-        errormin = error[0]
-        errormax = error[1]
-
-    ax.add_patch(Rectangle((binmin, central-errormin), binmax-binmin, errormin+errormax, **kwargs))
-    if centralline:
-        plt.plot([binmin, binmax], [central, central], **kwargs)
 
 def compare_plot(wfun, fin, fout, sigmas=1):
     r'''
