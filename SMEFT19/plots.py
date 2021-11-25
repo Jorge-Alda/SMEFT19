@@ -6,19 +6,19 @@ plots
 This module contains functions to plot the results of the fits.
 '''
 
+import colorsys
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
+import matplotlib.colors
+import scipy.interpolate
+import numpy as np
+import yaml
+from flavio.statistics.functions import delta_chi2
+import flavio.plots.colors
 from . import SMEFTglob
 from .SMEFTglob import loadobslist
 from .ellipse import load
 from .comparepulls import pullevolution
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
-import matplotlib.colors
-import colorsys
-from flavio.statistics.functions import delta_chi2
-import flavio.plots.colors
-import scipy.interpolate
-import numpy as np
-import yaml
 
 
 plt.rcParams.update({'pgf.texsystem':'pdflatex'})
@@ -36,31 +36,37 @@ def listpoint(x):
     else:
         return x
 
-def likelihood_plot(grid, xmin, xmax, ymin, ymax, axlabels, fout=None, locleg=0, n_sigma=(1,2), colors=None, styles=None, widths=None, ticks=0.5, bf=None):
+def likelihood_plot(grid, xmin, xmax, ymin, ymax, axlabels, fout=None, locleg=0, n_sigma=(1, 2),
+                    colors=None, styles=None, widths=None, ticks=0.5, bf=None):
     r'''
 Plots a contour plot of the log-likelihood of the fit.
 
 :Arguments:
 
-    - grid\: List containing the x coordinates, y corrdinates and a dictionary for the likelihood values in the grid.
+    - grid\: List containing the x coordinates, y corrdinates
+             and a dictionary for the likelihood values in the grid.
     - xmin\: Minimum value of the `x` coordinate.
     - xmax\: Maximum value of the `x` coordinate.
     - ymin\: Minimum value of the `y` coordinate.
     - ymax\: Maximum value of the `y` coordinate.
     - axlabels\: List containing two strings to label the `x` and `y` axes.
-    - [fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.]
-    - [locleg\: Position of the legend of the plot, using `matplotlib`'s syntaxis. Default=0 (best position).]
+    - [fout\: Path to the files where the plots will be saved.
+              Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
+              Extensions are added automatically.]
+    - [locleg\: Position of the legend of the plot, using `matplotlib`'s syntaxis.
+                Default=0 (best position).]
     - [n_sigma\: List containing the significance (in sigmas) of each contour. Default = (1,2).]
     - [colors\: List with the colors of each contour. Default: flavio palette.]
     - [styles\: List with the linestyles of each contour. Default: All solid.]
     - [widths\: List with the linewidths of each contour. Default: All 1pt.]
     - [ticks\: Interval between ticks in both axes. Default:0.5]
-    - [bf\: Coordinates of the best fit point(s). It can be `None` (no point marked) or a list containing two floats (one point marked). Default: `None`.]
+    - [bf\: Coordinates of the best fit point(s). It can be `None` (no point marked)
+            or a list containing two floats (one point marked). Default: `None`.]
     '''
 
-    fig=plt.figure(figsize=(6,6))
-    plt.xlim([xmin,xmax])
-    plt.ylim([ymin,ymax])
+    fig = plt.figure(figsize=(6, 6))
+    plt.xlim([xmin, xmax])
+    plt.ylim([ymin, ymax])
     nfits = len(grid[2])
     if colors is None:
         _cols = [i%9 for i in range(nfits)]
@@ -84,7 +90,9 @@ Plots a contour plot of the log-likelihood of the fit.
             levels = [delta_chi2(n_sigma, dof=2)]
         else:
             levels = [delta_chi2(n, dof=2) for n in n_sigma]
-        hatch_contour(x=x, y=y, z=chi, levels=levels, col=_cols[i], label=list(zl.keys())[i], interpolation_factor=5, hatched=False, contour_args={'linestyles':lstyle[i], 'linewidths':lwidths[i]})
+        hatch_contour(x=x, y=y, z=chi, levels=levels, col=_cols[i], label=list(zl.keys())[i],
+                      interpolation_factor=5, hatched=False,
+                      contour_args={'linestyles':lstyle[i], 'linewidths':lwidths[i]})
         if bf is not None:
             plt.scatter(*bf, marker='x', color='black')
     plt.xlabel(axlabels[0], fontsize=18)
@@ -98,15 +106,17 @@ Plots a contour plot of the log-likelihood of the fit.
     ax.yaxis.set_ticks(np.arange(ymin, ymax+1e-5, ticks))
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
-    plt.legend(loc = locleg, fontsize=16)
+    plt.legend(loc=locleg, fontsize=16)
     plt.tight_layout(pad=0.5)
     if fout is not None:
         fig.savefig(fout+'.pdf')
         fig.savefig(fout+'.pgf')
 
-def hatch_contour(x, y, z, levels, interpolation_factor=1, interpolation_order=2, col=0, label=None, hatched=True, contour_args=None, contourf_args=None):
+def hatch_contour(x, y, z, levels, interpolation_factor=1, interpolation_order=2, col=0,
+                  label=None, hatched=True, contour_args=None, contourf_args=None):
     r"""
-Plots coloured and hatched confidence contours (or bands) given numerical input arrays. Based on the `flavio` function
+Plots coloured and hatched confidence contours (or bands) given numerical
+input arrays.Based on the `flavio` function
 
 :Arguments:
 
@@ -122,8 +132,10 @@ Plots coloured and hatched confidence contours (or bands) given numerical input 
     - [col\: number between 0 and 9 to choose the color of the plot
       from a predefined palette.]
     - [label\: label that will be added to a legend created with `maplotlib.pyplot.legend()`.]
-    - [contour_args\: dictionary of additional options that will be passed to `matplotlib.pyplot.contour()` (that draws the contour lines).]
-    - [contourf_args\: dictionary of additional options that will be passed to `matplotlib.pyplot.contourf()` (that paints the contour filling).]
+    - [contour_args\: dictionary of additional options that will be passed to
+                      `matplotlib.pyplot.contour()` (that draws the contour lines).]
+    - [contourf_args\: dictionary of additional options that will be passed to
+                       `matplotlib.pyplot.contourf()` (that paints the contour filling).]
     """
     contour_args = contour_args or {}
     contourf_args = contour_args or {}
@@ -137,14 +149,16 @@ Plots coloured and hatched confidence contours (or bands) given numerical input 
         _contour_args['colors'] = [flavio.plots.colors.set1[col]]
         _contour_args['linewidths'] = 1.2
         N = len(levels)
-        _contourf_args['colors'] = [flavio.plots.colors.pastel[col] + (max(1-n/(N+1), 0),) for n in range(1,N+1)]
+        _contourf_args['colors'] = [flavio.plots.colors.pastel[col] +
+                                    (max(1-n/(N+1), 0),) for n in range(1, N+1)]
     else:
         _contour_args = {}
         _contourf_args = {}
-        _contour_args['colors'] = [darken_color(matplotlib.colors.to_rgb(col),0.7)]
+        _contour_args['colors'] = [darken_color(matplotlib.colors.to_rgb(col), 0.7)]
         _contour_args['linewidths'] = 1.2
         N = len(levels)
-        _contourf_args['colors'] = [matplotlib.colors.to_rgb(col) + (max(1-n/(N+1), 0),) for n in range(1,N+1)]
+        _contourf_args['colors'] = [matplotlib.colors.to_rgb(col) +
+                                    (max(1-n/(N+1), 0),) for n in range(1, N+1)]
 
     if hatched:
         hl = []
@@ -165,12 +179,14 @@ Plots coloured and hatched confidence contours (or bands) given numerical input 
     return (CS, CF)
 
 
-def error_plot(fout, plottype, flist, flist2 = None, legend=0):
+def error_plot(fout, plottype, flist, flist2=None, legend=0):
     r'''
 Plots the uncertainty intervals for several observables in NP scenarios, SM and experimental values.
 
 :Arguments:
-    - fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
+    - fout\: Path to the files where the plots will be saved.
+             Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
+             Extensions are added automatically.
     - plottype\: Selects the observables to be plotted\:
 
         - 'RK'\: Plots RK in the [1.1,6.0] bin and RK\* in the [0.045,1.1] and [1.1,6] bins.
@@ -179,8 +195,8 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     - flist2\: Additional list of paths to files created by `obsuncert.calculate`.
     - legend\: 0 for no legend, 1 for legend next to the plot and 2 for legend inside the plot.
     '''
-    if legend<2:
-        fig = plt.figure(figsize=(5.7+2.3*legend,5))
+    if legend < 2:
+        fig = plt.figure(figsize=(5.7+2.3*legend, 5))
     else:
         fig = plt.figure()
     if plottype == 'RD':
@@ -188,12 +204,13 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
         texlabels = [r'$R_D^\ell$', r'$R_{D^*}^\ell$', r'$R_{D^*}^\mu$']
         #legloc = 1
     elif plottype == 'RK':
-        observables = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1), ('<Rmue>(B0->K*ll)', 1.1, 6.0)]
+        observables = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1),
+                       ('<Rmue>(B0->K*ll)', 1.1, 6.0)]
         texlabels = [r'$R_K^{[1.1,6]}$', r'$R_{K^*}^{[0.045, 1.1]}$', r'$R_{K^*}^{[1.1, 6]}$']
         #legloc = 3
     nobs = len(texlabels)
     nhyp = len(flist)
-    ax=plt.gca()
+    ax = plt.gca()
     plt.xlim([0, nobs])
     #plt.ylim([-0.055, 0.015])
     markers = ['o', '^', 's', '*', 'D']
@@ -201,8 +218,8 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     #data = np.zeros([nhyp, nobs,2])
     #smdata = np.zeros([nobs,2])
     #expdata = np.zeros([nobs,2])
-    data =  [ [{'central':0, 'uncert':0} for i in range(nobs)] for j in range(nhyp)]
-    data2 =  [ [{'central':0, 'uncert':0} for i in range(nobs)] for j in range(nhyp)]
+    data = [[{'central':0, 'uncert':0} for i in range(nobs)] for j in range(nhyp)]
+    data2 = [[{'central':0, 'uncert':0} for i in range(nobs)] for j in range(nhyp)]
     smdata = [{'central': 0, 'uncert': 0} for i in range(nobs)]
     expdata = [{'central': 0, 'uncert': 0} for i in range(nobs)]
     leglabels = []
@@ -246,17 +263,23 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 
     for o in range(0, nobs):
         for i in range(0, nhyp):
-            if o==0:
-                plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'], marker=markers[i], color='b', label=leglabels[i], zorder=3)
+            if o == 0:
+                plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'],
+                         marker=markers[i], color='b', label=leglabels[i], zorder=3)
             else:
-                plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'], marker=markers[i], color='b', zorder=3)
-            plt.errorbar(o+(i+1)/(nhyp+1), data[i][o]['central'], yerr=data[i][o]['uncert'], color='b', zorder=3)
+                plt.plot(o+(i+1)/(nhyp+1), data[i][o]['central'],
+                         marker=markers[i], color='b', zorder=3)
+            plt.errorbar(o+(i+1)/(nhyp+1), data[i][o]['central'],
+                         yerr=data[i][o]['uncert'], color='b', zorder=3)
             if flist2 is not None:
-                if o==0:
-                    plt.plot(o+(i+1.5)/(nhyp+1), data2[i][o]['central'], marker=markers[i], color='r', label=leglabels2[i], zorder=3)
+                if o == 0:
+                    plt.plot(o+(i+1.5)/(nhyp+1), data2[i][o]['central'],
+                             marker=markers[i], color='r', label=leglabels2[i], zorder=3)
                 else:
-                    plt.plot(o+(i+1.5)/(nhyp+1), data2[i][o]['central'], marker=markers[i], color='r', zorder=3)
-                plt.errorbar(o+(i+1.5)/(nhyp+1), data2[i][o]['central'], yerr=data2[i][o]['uncert'], color='r', zorder=3)
+                    plt.plot(o+(i+1.5)/(nhyp+1), data2[i][o]['central'],
+                             marker=markers[i], color='r', zorder=3)
+                plt.errorbar(o+(i+1.5)/(nhyp+1), data2[i][o]['central'],
+                             yerr=data2[i][o]['uncert'], color='r', zorder=3)
         if isinstance(smdata[o]['uncert'], list):
             smleft = smdata[o]['uncert'][0]
             smrange = smdata[o]['uncert'][0] + smdata[o]['uncert'][1]
@@ -269,23 +292,29 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
         else:
             expleft = expdata[o]['uncert']
             exprange = 2*expdata[o]['uncert']
-        if o==0:
-            ax.add_patch(Rectangle( (o+0.05, smdata[o]['central']-smleft), 0.9, smrange, color='orange', alpha=0.5, label='SM', lw=0))
-            ax.add_patch(Rectangle( (o+0.05, expdata[o]['central']-expleft), 0.9, exprange, color='green', alpha=0.5, label='Experimental', lw=0))
+        if o == 0:
+            ax.add_patch(Rectangle((o+0.05, smdata[o]['central']-smleft), 0.9,
+                                   smrange, color='orange', alpha=0.5, label='SM', lw=0))
+            ax.add_patch(Rectangle((o+0.05, expdata[o]['central']-expleft), 0.9,
+                                   exprange, color='green', alpha=0.5, label='Experimental', lw=0))
         else:
-            ax.add_patch(Rectangle( (o+0.05, expdata[o]['central']-expleft), 0.9, exprange, color='green', alpha=0.5, lw=0))
-            ax.add_patch(Rectangle( (o+0.05, smdata[o]['central']-smleft), 0.9, smrange, color='orange', alpha=0.5, lw=0))
-        plt.plot([o+0.05,o+0.95], [smdata[o]['central'], smdata[o]['central']], lw=1, color='orange', ls='dashed')
-        plt.plot([o+0.05,o+0.95], [expdata[o]['central'], expdata[o]['central']], lw=1, color='green', ls='dashed')
+            ax.add_patch(Rectangle((o+0.05, expdata[o]['central']-expleft), 0.9,
+                                   exprange, color='green', alpha=0.5, lw=0))
+            ax.add_patch(Rectangle((o+0.05, smdata[o]['central']-smleft), 0.9,
+                                   smrange, color='orange', alpha=0.5, lw=0))
+        plt.plot([o+0.05, o+0.95], [smdata[o]['central'], smdata[o]['central']],
+                 lw=1, color='orange', ls='dashed')
+        plt.plot([o+0.05, o+0.95], [expdata[o]['central'], expdata[o]['central']],
+                 lw=1, color='green', ls='dashed')
 
 
-    ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs) )
+    ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs))
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
     ax.set_xticklabels(texlabels + [''])
-    if legend==1:
+    if legend == 1:
         plt.legend(fontsize=14, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
-    elif legend>1:
+    elif legend > 1:
         plt.legend(fontsize=14)
     plt.tight_layout(pad=0.5)
     fig.savefig(fout + '.pdf')
@@ -304,15 +333,18 @@ def binerrorbox(binmin, binmax, central, error, centralline=False, **kwargs):
     if centralline:
         plt.plot([binmin, binmax], [central, central], **kwargs)
 
-def compare_plot(wfun, fin, fout, sigmas = 1):
+def compare_plot(wfun, fin, fout, sigmas=1):
     r'''
 Plots the pull of each observable in the SM and in the NP hypothesis.
 
 :Arguments:
 
-    - wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+    - wfun\: Function that takes a point in parameter space
+             and returns a dictionary of Wilson coefficents.
     - fin\: Path to the `.yaml` file where the ellipsoid is saved.
-    - fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
+    - fout\: Path to the files where the plots will be saved.
+             Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
+             Extensions are added automatically.
     '''
     dbf = load(fin)
     bf = dbf['bf']
@@ -336,15 +368,19 @@ Plots the pull of each observable in the SM and in the NP hypothesis.
     plt.plot(SM, label='Standard Model')
     vertplus = 0
     vertminus = 0
-    for i in range(0, len(SM)):
-        if (NP[i]-SM[i]) > sigmas:
+    for i, (SMi, NPi) in enumerate(zip(SM, NP)):
+        if (NPi-SMi) > sigmas:
             v = 0.3 + vertplus
             vertplus += 0.1
-            plt.annotate(str(i), xy=(i, NP[i]), xytext=(i, NP[i]+v), fontsize=6, horizontalalignment='right', arrowprops = dict(facecolor = 'black',  arrowstyle='->') )
-        elif (SM[i]-NP[i]) > sigmas:
+            plt.annotate(str(i), xy=(i, NPi), xytext=(i, NPi+v), fontsize=6,
+                         horizontalalignment='right',
+                         arrowprops=dict(facecolor='black', arrowstyle='->'))
+        elif (SMi-NPi) > sigmas:
             v = 0.3 + vertminus
             #vertminus += 0.1
-            plt.annotate(str(i), xy=(i, NP[i]), xytext=(i, NP[i]-v), fontsize=6, horizontalalignment='left', arrowprops = dict(facecolor = 'black',  arrowstyle='->') )
+            plt.annotate(str(i), xy=(i, NPi), xytext=(i, NPi-v), fontsize=6,
+                         horizontalalignment='left',
+                         arrowprops=dict(facecolor='black', arrowstyle='->'))
     plt.xlabel('Observable')
     plt.ylabel(r'$|$Pull$|$')
     plt.legend(loc=1)
@@ -354,29 +390,33 @@ Plots the pull of each observable in the SM and in the NP hypothesis.
 
 def evolution_plot(obscodes, wfun, fin, direction, fout, obsnames=None):
     r'''
-Plots the vairation of the pull of several observables along a line connecting two opposite  notable points of the ellipsoid.
+Plots the vairation of the pull of several observables along a line
+connecting two opposite  notable points of the ellipsoid.
 
 :Arguments:
 
     - obscodes\: List of ID-Numbers of the observables, as returned by `comparepulls.pointpull`
-    - wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+    - wfun\: Function that takes a point in parameter space
+             and returns a dictionary of Wilson coefficents.
     - fin\: Path to the `.yaml` file where the ellipsoid is saved.
     - direction\: string with the following format\:
 
             - 'ax' + str(i)\: for the i-th principal axis of the ellipsoid.
             - 'sm'\: for the direction joining the bf and sm points.
 
-    - fout\: Path to the files where the plots will be saved. Two files are created, one `.pdf` and one `.pgf` (to use in TeX). Extensions are added automatically.
+    - fout\: Path to the files where the plots will be saved.
+             Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
+             Extensions are added automatically.
     '''
     fig = plt.figure()
-    j=0
+    j = 0
     for o in obscodes:
         ev = pullevolution(o, wfun, fin, direction)
         if obsnames is None:
             n = ''
         else:
             n = '\t' + obsnames[j]
-            j+=1
+            j += 1
         plt.plot(np.linspace(-1, 1, 200), ev, label='Obs. ' + str(o)+n)
     if direction[:2] == 'ax':
         i = direction[2:]

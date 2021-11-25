@@ -6,10 +6,10 @@ SMEFTglob
 Common functions used to calculate likelihood values and pulls of the fits.
 '''
 
-from flavio.statistics.functions import pull
-import smelli
 from math import isinf
 import warnings
+from flavio.statistics.functions import pull
+import smelli
 import yaml
 
 gl = smelli.GlobalLikelihood()
@@ -20,7 +20,8 @@ Calculates the log-likelihood of a NP hypothesis for several classes of observab
 
 :Arguments:
     - x\: Point in parameter space to be evaluated.
-    - wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+    - wfun\: Function that takes a point in parameter space and
+             returns a dictionary of Wilson coefficents.
 
 :Returns:
     - A dictionary of log-likelihoods, for each of the classes of observables defined by `smelli`.
@@ -50,7 +51,8 @@ Calculates the global log-likelihood of a NP hypothesis.
 
 :Arguments:
     - x\: Point in parameter space to be evaluated.
-    - wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+    - wfun\: Function that takes a point in parameter space
+             and returns a dictionary of Wilson coefficents.
 
 :Returns:
     - The global log-likelihood.
@@ -64,7 +66,7 @@ Calculates the global log-likelihood of a NP hypothesis.
 def fastmeas(obs):
     obsm = gl.obstable_sm[obs]
     lhname = obsm['lh_name']
-    return lhname[:4]=='fast'
+    return lhname[:4] == 'fast'
 
 def prediction(x, obs, wfun):
     '''
@@ -72,8 +74,12 @@ Interfaces `flavio` to compute the NP prediction of a given observable.
 
 :Arguments:
     - x\: Point in parameter space to be evaluated.
-    - obs\: observable, as defined by flavio, whose prediction will be computed. If the observable does not depend on any parameter, obs is a string. If the observable depends on numerical parameters (such as q2), obs is a list containing a string and one or more floats.
-    - wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+    - obs\: observable, as defined by flavio, whose prediction will be computed.
+            If the observable does not depend on any parameter, obs is a string.
+            If the observable depends on numerical parameters (such as q2), obs is
+            a list containing a string and one or more floats.
+    - wfun\: Function that takes a point in parameter space and
+             returns a dictionary of Wilson coefficents.
 
 :Returns:
     - The prediction of the observable.
@@ -94,12 +100,17 @@ Interfaces `flavio` to compute the NP prediction of a given observable.
 
 def pull_obs(x, obs, wfun):
     '''
-Calculates the pull, in sigmas, of the prediction of a given observable in NP with respect to its experimental value.
+Calculates the pull, in sigmas, of the prediction of a given observable
+in NP with respect to its experimental value.
 
 :Arguments:
     - x\: Point in parameter space to be evaluated.
-    - obs\: observable, as defined by `flavio`, whose prediction will be computed. If the observable does not depend on any parameter, obs is a string. If the observable depends on numerical parameters (such as q2), obs is a list containing a string and one or more floats.
-    - wfun\: Function that takes a point in parameter space and returns a dictionary of Wilson coefficents.
+    - obs\: observable, as defined by `flavio`, whose prediction will be computed.
+            If the observable does not depend on any parameter, obs is a string.
+            If the observable depends on numerical parameters (such as q2), obs is
+            a list containing a string and one or more floats.
+    - wfun\: Function that takes a point in parameter space and
+             returns a dictionary of Wilson coefficents.
 
 :Returns:
     - The pull of the observable.
@@ -125,15 +136,16 @@ Creates a `.yaml` file with a list of all observables available, ordered by thei
     glSM = gl.parameter_point({}, scale=1000)
     obsSM = glSM.obstable()
     obscoll = list(obsSM['pull exp.'].keys())
-    for i in range(len(obscoll)):
-        if isinstance(obscoll[i], tuple):
-            obscoll[i] = list(obscoll[i])
+    for o in obscoll:
+        if isinstance(o, tuple):
+            o = list(o)
     with open(__path__[0] + '/observables.yaml', 'wt') as fyaml:
         yaml.dump(obscoll, fyaml)
 
 def loadobslist(new=False):
     '''
-Loads from a `.yaml` file a list of all observables available, ordered by their pull in the SM. If the file does not exist, this functions creates it.
+Loads from a `.yaml` file a list of all observables available, ordered by their pull in the SM.
+If the file does not exist, this functions creates it.
 
 :Returns:
     - A list with all observables available.
@@ -146,9 +158,9 @@ Loads from a `.yaml` file a list of all observables available, ordered by their 
                 obscoll = yaml.safe_load(fyaml)
         except (OSError, IOError):
             newlist()
-    with open( __path__[0] + '/observables.yaml', 'rt') as fyaml:
+    with open(__path__[0] + '/observables.yaml', 'rt') as fyaml:
         obscoll = yaml.safe_load(fyaml)
-        for i in range(len(obscoll)):
-            if isinstance(obscoll[i], list):
-                obscoll[i] = tuple(obscoll[i])
+        for o in obscoll:
+            if isinstance(o, list):
+                o = tuple(o)
     return obscoll
