@@ -60,7 +60,7 @@ Lists the comparison between the pull of each observable in the NP hypothesis an
     obsNP = glNP.obstable()
     obscoll = loadobslist()
 
-    f = open(fout+'.tex', 'wt')
+    f = open(fout+'.tex', 'wt', encoding='utf-8')
     obsnum = 0
     f.write('\\begin{longtable}{|c|c|c|c|c|}\\hline\n & Observable &\t NP prediction '+
             '&\t NP pull & SM pull\\endhead\\hline\n')

@@ -226,7 +226,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     leglabels2 = []
     hyp = 0
     for fin in flist:
-        f = open(fin, 'rt')
+        f = open(fin, 'rt', encoding='utf-8')
         values = yaml.safe_load(f)
         f.close()
         try:
@@ -247,7 +247,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     hyp = 0
     if flist2 is not None:
         for fin in flist2:
-            f = open(fin, 'rt')
+            f = open(fin, 'rt', encoding='utf-8')
             values = yaml.safe_load(f)
             f.close()
             try:

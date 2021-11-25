@@ -129,5 +129,5 @@ and can be modified by editing the variable obsuncert.obslist.
             values[str(obs)]['NP']['uncert'] = sqrt(uncert[obsnum]**2 + float(var))
             values[str(obs)]['NP']['uStat'] = sqrt(float(var))
 
-    with open(fout, 'wt') as f:
+    with open(fout, 'wt', encoding='utf-8') as f:
         yaml.dump(values, f)

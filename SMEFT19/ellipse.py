@@ -97,7 +97,7 @@ Saves the results of the minimization in a `.yaml` file.
     values['bf'] = bf.tolist()
     values['v'] = v.tolist()
     values['d'] = d.tolist()
-    with open(filename, 'wt') as f:
+    with open(filename, 'wt', encoding='utf-8') as f:
         yaml.dump(values, f)
 
 def load(filename):
@@ -117,7 +117,7 @@ A `python` dictionary containing:
     - [name\: Name of the fit.]
     - [fit\: Scenario used in the fit.]
     '''
-    with open(filename, 'rt') as f:
+    with open(filename, 'rt', encoding='utf-8') as f:
         values = yaml.safe_load(f)
     values['bf'] = np.array(values['bf'])
     values['v'] = np.matrix(values['v'])
@@ -180,7 +180,7 @@ and the closest and furthest point from the origin.
     chi2_SM_p = 2*(fit(SM_p) - bestchi2)
     chi2_SM_m = 2*(fit(SM_m) - bestchi2)
 
-    with open(fout, 'w') as f:
+    with open(fout, 'w', encoding='utf-8') as f:
         f.write(r'\begin{tabular}{|' + 'c|'*(n+3) + r'}\hline' + '\n')
         f.write(r'$j$ & $s$ & ' + ' & '*n + r'$\Delta \chi^2$\\\hline' + '\n')
         f.write(r'BF & & ')
