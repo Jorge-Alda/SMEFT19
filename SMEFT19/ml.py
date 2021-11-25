@@ -14,9 +14,9 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error
 from xgboost import XGBRegressor
 import shap
+from parscanning.mlscan import MLScan
 from SMEFT19.SMEFTglob import likelihood_global
 from SMEFT19.scenarios import rotBII
-from parscanning.mlscan import MLScan
 
 
 def lh(x):

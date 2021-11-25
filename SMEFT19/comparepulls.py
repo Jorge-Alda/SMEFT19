@@ -7,34 +7,13 @@ This module contains several functions used to compare between
 different NP scenarios and the Standard Model.
 '''
 
-import re
 import numpy as np
 import flavio
 from flavio.statistics.functions import delta_chi2
-from .ellipse import load, parametrize
-from . import SMEFTglob
-from .SMEFTglob import loadobslist
-
-def sign(x, y):
-    if float(x) < float(y):
-        return -1
-    else:
-        return 1
-
-def tex(obs):
-    if isinstance(obs, str):
-        text = flavio.Observable[obs].tex
-    else:
-        text = (flavio.Observable[obs[0]].tex[:-1] + '^{' +
-                str(list(obs[1:])).replace(',', ',\\ ') + '}$')
-    return text.replace('text', 'mathrm')
-
-def texnumber(x, prec=3):
-    texn = ('{:.'+str(prec)+'g}').format(float(x))
-    match = re.match(r'(-?[0-9]+(\.[0-9]+)?)e(.[0-9]+)', texn)
-    if match:
-        texn = '$' + match.group(1) + '\\times 10^{' + str(int(match.group(3))) + '}$'
-    return texn
+from SMEFT19.ellipse import load, parametrize
+from SMEFT19 import SMEFTglob
+from SMEFT19.SMEFTglob import loadobslist
+from SMEFT19.util import sign, tex, texnumber
 
 
 def compare(wfun, fin, fout):
@@ -60,7 +39,7 @@ Lists the comparison between the pull of each observable in the NP hypothesis an
     obsNP = glNP.obstable()
     obscoll = loadobslist()
 
-    f = open(fout+'.tex', 'wt')
+    f = open(fout+'.tex', 'wt', encoding='utf-8')
     obsnum = 0
     f.write('\\begin{longtable}{|c|c|c|c|c|}\\hline\n & Observable &\t NP prediction '+
             '&\t NP pull & SM pull\\endhead\\hline\n')

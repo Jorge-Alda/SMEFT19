@@ -11,23 +11,15 @@ import flavio
 import numpy as np
 import yaml
 from parscanning import MontecarloScan
-from .SMEFTglob import likelihood_global, prediction
-from .ellipse import load
+from SMEFT19.SMEFTglob import likelihood_global, prediction
+from SMEFT19.ellipse import load
+from SMEFT19.utils import distrsphere
 
 
 obslist = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1),
            ('<Rmue>(B0->K*ll)', 1.1, 6.0), 'Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)',
            'Rtaumu(B->D*lnu)']
 
-def distrsphere(dim):
-    '''
-Returns a random vector with norm 1.
-
-:Arguments:
-    - dim\: Dimension of the vector
-    '''
-    vect = np.random.randn(dim)
-    return vect/np.linalg.norm(vect)
 
 def _residual(x, obs, wfun, central):
     '''
@@ -129,5 +121,5 @@ and can be modified by editing the variable obsuncert.obslist.
             values[str(obs)]['NP']['uncert'] = sqrt(uncert[obsnum]**2 + float(var))
             values[str(obs)]['NP']['uStat'] = sqrt(float(var))
 
-    with open(fout, 'wt') as f:
+    with open(fout, 'wt', encoding='utf-8') as f:
         yaml.dump(values, f)

@@ -15,26 +15,17 @@ import numpy as np
 import yaml
 from flavio.statistics.functions import delta_chi2
 import flavio.plots.colors
-from . import SMEFTglob
-from .SMEFTglob import loadobslist
-from .ellipse import load
-from .comparepulls import pullevolution
-
+from SMEFT19 import SMEFTglob
+from SMEFT19.SMEFTglob import loadobslist
+from SMEFT19.ellipse import load
+from SMEFT19.comparepulls import pullevolution
+from SMEFT19.utils import listpoint
 
 plt.rcParams.update({'pgf.texsystem':'pdflatex'})
 plt.rcParams['hatch.color'] = 'w'
 
 hatches = ['/', '\\', '|', '-', '+', 'x', 'o', 'O', '.', '*']
 
-
-def listpoint(x):
-    if len(x) == 2:
-        if len(np.array(x).flat) == 2:
-            return [x,]
-        else:
-            return x
-    else:
-        return x
 
 def likelihood_plot(grid, xmin, xmax, ymin, ymax, axlabels, fout=None, locleg=0, n_sigma=(1, 2),
                     colors=None, styles=None, widths=None, ticks=0.5, bf=None):
@@ -226,7 +217,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     leglabels2 = []
     hyp = 0
     for fin in flist:
-        f = open(fin, 'rt')
+        f = open(fin, 'rt', encoding='utf-8')
         values = yaml.safe_load(f)
         f.close()
         try:
@@ -247,7 +238,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     hyp = 0
     if flist2 is not None:
         for fin in flist2:
-            f = open(fin, 'rt')
+            f = open(fin, 'rt', encoding='utf-8')
             values = yaml.safe_load(f)
             f.close()
             try:

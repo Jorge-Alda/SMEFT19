@@ -139,7 +139,7 @@ Creates a `.yaml` file with a list of all observables available, ordered by thei
     for o in obscoll:
         if isinstance(o, tuple):
             o = list(o)
-    with open(__path__[0] + '/observables.yaml', 'wt') as fyaml:
+    with open(__path__[0] + '/observables.yaml', 'wt', encoding='utf-8') as fyaml:
         yaml.dump(obscoll, fyaml)
 
 def loadobslist(new=False):
@@ -154,11 +154,11 @@ If the file does not exist, this functions creates it.
         newlist()
     else:
         try:
-            with open(__path__[0] + '/observables.yaml', 'rt') as fyaml:
+            with open(__path__[0] + '/observables.yaml', 'rt', encoding='utf-8') as fyaml:
                 obscoll = yaml.safe_load(fyaml)
         except (OSError, IOError):
             newlist()
-    with open(__path__[0] + '/observables.yaml', 'rt') as fyaml:
+    with open(__path__[0] + '/observables.yaml', 'rt', encoding='utf-8') as fyaml:
         obscoll = yaml.safe_load(fyaml)
         for o in obscoll:
             if isinstance(o, list):
