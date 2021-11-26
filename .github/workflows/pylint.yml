@@ -17,20 +17,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
-        pip install flavio==2.3.1
-        pip install smelli==2.3.1
-        pip install wilson==2.0
-        pip install numpy
-        pip install scipy
-        pip install matplotlib
-        pip install iminuit==1.3.10
-        pip install pandas
-        pip install PyYAML
-        pip install shap
-        pip install xgboost
-        pip install scikit-learn
-        pip install git+https://github.com/Jorge-Alda/parscanning.git@v1.0#egg=parscanning
-        pip install -e git+https://github.com/Jorge-Alda/texfig.git#egg=texfig
+        pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
         cd SMEFT19
