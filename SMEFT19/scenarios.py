@@ -148,6 +148,39 @@ Scenario IX\: NP affects to electrons and taus equally, and to muons by an oppos
                    'lq3_2233': -x[0]*1e-6, 'lq1_3333': x[0]*1e-6, 'lq3_3333': x[0]*1e-6},
                   eft='SMEFT', basis='Warsaw', scale=1e3)
 
+def scX(x):
+    r'''
+Scenario X\: NP affects to electrons and muons by an opposite ammount.
+
+:Arguments:
+
+    - x\: Coordinates in the parameter space of the fit.
+
+:Returns:
+
+    - A dictionary containing the SMEFT Wilson Coefficients of the fit.
+    '''
+    return Wilson({'lq1_1133': x[0]*1e-6, 'lq3_1133': x[0]*1e-6,
+                   'lq1_2233': -x[0]*1e-6, 'lq3_2233': -x[0]*1e-6},
+                  eft='SMEFT', basis='Warsaw', scale=1e3)
+
+def scXI(x):
+    r'''
+Scenario XI\: NP affects to electrons and to muons by an opposite ammount,
+              and to taus independently.
+
+:Arguments:
+
+    - x\: Coordinates in the parameter space of the fit.
+
+:Returns:
+
+    - A dictionary containing the SMEFT Wilson Coefficients of the fit.
+    '''
+    return Wilson({'lq1_1133': x[0]*1e-6, 'lq3_1133': x[0]*1e-6, 'lq1_2233': -x[0]*1e-6,
+                   'lq3_2233': -x[0]*1e-6, 'lq1_3333': x[1]*1e-6, 'lq3_3333': x[1]*1e-6},
+                  eft='SMEFT', basis='Warsaw', scale=1e3)
+
 def idemp(a, b):
     r'''
 Creates an idempotent hermitic 3x3 matrix using to parameters.

@@ -20,7 +20,7 @@ Re-starts smelli's Global Likelihood with new parameters.
 
 :Arguments:
     - [include_likelihoods]\: If not None, only the specified likelihoods will be included.
-    - [custom_measurements]\: Adds more experimental measurements not included by smelli.    
+    - [custom_measurements]\: Adds more experimental measurements not included by smelli.
     '''
     global gl
     gl = smelli.GlobalLikelihood(include_likelihoods=include_likelihoods,
