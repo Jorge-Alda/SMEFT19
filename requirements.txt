@@ -1,6 +1,6 @@
 flavio>=2.3.1
 wilson>=1.7
-smelli>=2.3.1
+-e git+https://github.com/Jorge-Alda/smelli.git@custom_measurements#egg=smelli
 -e git+https://github.com/Jorge-Alda/parscanning.git@v0.2#egg=parscanning
 numpy
 scipy
