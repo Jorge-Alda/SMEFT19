@@ -270,33 +270,20 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
                              marker=markers[i], color='r', zorder=3)
                 plt.errorbar(o+(i+1.5)/(nhyp+1), data2[i][o]['central'],
                              yerr=data2[i][o]['uncert'], color='r', zorder=3)
-        if isinstance(smdata[o]['uncert'], list):
-            smleft = smdata[o]['uncert'][0]
-            smrange = smdata[o]['uncert'][0] + smdata[o]['uncert'][1]
-        else:
-            smleft = smdata[o]['uncert']
-            smrange = 2*smdata[o]['uncert']
-        if isinstance(expdata[o]['uncert'], list):
-            expleft = expdata[o]['uncert'][0]
-            exprange = expdata[o]['uncert'][0] + expdata[o]['uncert'][1]
-        else:
-            expleft = expdata[o]['uncert']
-            exprange = 2*expdata[o]['uncert']
         if o == 0:
-            ax.add_patch(Rectangle((o+0.05, smdata[o]['central']-smleft), 0.9,
-                                   smrange, color='orange', alpha=0.5, label='SM', lw=0))
-            ax.add_patch(Rectangle((o+0.05, expdata[o]['central']-expleft), 0.9,
-                                   exprange, color='green', alpha=0.5, label='Experimental', lw=0))
+            binerrorbox(o+0.05, o+0.95, smdata[o]['central'], smdata[o]['uncert'], True,
+                        {'color':'orange', 'alpha':0.5, 'lw':0, 'label':'SM'},
+                        {'color':'orange', 'ls':'dashed', 'lw':1})
+            binerrorbox(o+0.05, o+0.95, expdata[o]['central'], expdata[o]['uncert'], True,
+                        {'color':'green', 'alpha':0.5, 'lw':0, 'label':'Experimental'},
+                        {'color':'green', 'ls':'dashed', 'lw':1})
         else:
-            ax.add_patch(Rectangle((o+0.05, expdata[o]['central']-expleft), 0.9,
-                                   exprange, color='green', alpha=0.5, lw=0))
-            ax.add_patch(Rectangle((o+0.05, smdata[o]['central']-smleft), 0.9,
-                                   smrange, color='orange', alpha=0.5, lw=0))
-        plt.plot([o+0.05, o+0.95], [smdata[o]['central'], smdata[o]['central']],
-                 lw=1, color='orange', ls='dashed')
-        plt.plot([o+0.05, o+0.95], [expdata[o]['central'], expdata[o]['central']],
-                 lw=1, color='green', ls='dashed')
-
+            binerrorbox(o+0.05, o+0.95, smdata[o]['central'], smdata[o]['uncert'], True,
+                        {'color':'orange', 'alpha':0.5, 'lw':0},
+                        {'color':'orange', 'ls':'dashed', 'lw':1})
+            binerrorbox(o+0.05, o+0.95, expdata[o]['central'], expdata[o]['uncert'], True,
+                        {'color':'green', 'alpha':0.5, 'lw':0},
+                        {'color':'green', 'ls':'dashed', 'lw':1})
 
     ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs))
     plt.xticks(fontsize=16)
@@ -310,6 +297,36 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     fig.savefig(fout + '.pdf')
     fig.savefig(fout + '.pgf')
 
+def binerrorbox(binmin, binmax, central, error, centralline=False, rect_args=None, line_args=None):
+    '''
+Plots an error box.
+
+:Arguments:
+
+    - binmin\: Minimum `x` value of the error box.
+    - binmax\: Maximum `x` value of the error box.
+    - central\: Central `y`value.
+    - error\: Error in the `y` direction.
+              `error` must be a float if the error is symmetric,
+              or a tuple (`error_inf`, `error_sup`) if the error is not symmetric.
+    - centralline\: True to plot a horizontal line for the central value.
+                    Default: False.
+    - rect_args\: Optional arguments passed to plot the box.
+    - line_args\: Optional arguments passed to plot the central line.
+    '''
+    rect_args = rect_args or {}
+    line_args = line_args or {}
+    ax = plt.gca()
+    if isinstance(error, float):
+        errormin = error
+        errormax = error
+    else:
+        errormin = error[0]
+        errormax = error[1]
+    ax.add_patch(Rectangle((binmin, central-errormin), binmax-binmin,
+                            errormin+errormax, **rect_args))
+    if centralline:
+        plt.plot([binmin, binmax], [central, central], **line_args)
 
 def compare_plot(wfun, fin, fout, sigmas=1):
     r'''
