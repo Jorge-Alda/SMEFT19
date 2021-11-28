@@ -14,17 +14,20 @@ import yaml
 
 gl = smelli.GlobalLikelihood()
 
-def restart_smelli(include_likelihoods=None, custom_measurements=None):
+def restart_smelli(include_likelihoods=None, custom_measurements=None,
+                   custom_likelihoods=None):
     '''
 Re-starts smelli's Global Likelihood with new parameters.
 
 :Arguments:
     - [include_likelihoods]\: If not None, only the specified likelihoods will be included.
     - [custom_measurements]\: Adds more experimental measurements not included by smelli.
+    - [custom_likelihoods]\: Adds new likelihoods.
     '''
     global gl
     gl = smelli.GlobalLikelihood(include_likelihoods=include_likelihoods,
-                                 custom_measurements=custom_measurements)
+                                 custom_measurements=custom_measurements,
+                                 custom_likelihoods=custom_likelihoods)
 
 def likelihood_fits(x, wfun):
     '''
