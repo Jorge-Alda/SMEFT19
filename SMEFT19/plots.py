@@ -19,6 +19,7 @@ from SMEFT19 import SMEFTglob
 from SMEFT19.SMEFTglob import loadobslist
 from SMEFT19.ellipse import load
 from SMEFT19.comparepulls import pullevolution
+from SMEFT19.utils import listpoint
 
 plt.rcParams.update({'pgf.texsystem':'pdflatex'})
 plt.rcParams['hatch.color'] = 'w'
@@ -84,7 +85,8 @@ Plots a contour plot of the log-likelihood of the fit.
                       interpolation_factor=5, hatched=False,
                       contour_args={'linestyles':lstyle[i], 'linewidths':lwidths[i]})
         if bf is not None:
-            plt.scatter(*bf, marker='x', color='black')
+            for p in listpoint(bf):
+                plt.scatter(*p, marker='x', color='black')
     plt.xlabel(axlabels[0], fontsize=18)
     plt.ylabel(axlabels[1], fontsize=18)
     plt.axhline(0, color='black', linewidth=0.5)
