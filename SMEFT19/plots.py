@@ -92,8 +92,14 @@ Plots a contour plot of the log-likelihood of the fit.
     ax = fig.gca()
     ax.xaxis.set_ticks_position('both')
     ax.yaxis.set_ticks_position('both')
-    ax.xaxis.set_ticks(np.arange(xmin, xmax+1e-5, ticks))
-    ax.yaxis.set_ticks(np.arange(ymin, ymax+1e-5, ticks))
+    if isinstance(ticks, float):
+        xticks = ticks
+        yticks = ticks
+    else:
+        xticks = ticks[0]
+        yticks = ticks[1]
+    ax.xaxis.set_ticks(np.arange(xmin, xmax+1e-5, xticks))
+    ax.yaxis.set_ticks(np.arange(ymin, ymax+1e-5, yticks))
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
     plt.legend(loc=locleg, fontsize=16)
