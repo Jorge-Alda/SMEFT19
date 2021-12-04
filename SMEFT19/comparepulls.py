@@ -43,6 +43,8 @@ Lists the comparison between the pull of each observable in the NP hypothesis an
     f.write('\\begin{longtable}{|c|c|c|c|c|}\\hline\n & Observable &\t NP prediction '+
             '&\t NP pull & SM pull\\endhead\\hline\n')
     for obs in obscoll:
+        if isinstance(obs, list):
+            obs = tuple(obs)
         NPpull = float(obsNP.loc[[obs], 'pull exp.'])
         SMpull = float(obsSM.loc[[obs], 'pull exp.'])
         if NPpull > SMpull:

@@ -11,6 +11,7 @@ import warnings
 from flavio.statistics.functions import pull
 import smelli
 import yaml
+import SMEFT19
 
 gl = smelli.GlobalLikelihood()
 
@@ -18,7 +19,6 @@ def restart_smelli(include_likelihoods=None, add_measurements=None,
                    remove_measurements=None, custom_likelihoods=None):
     '''
 Re-starts smelli's Global Likelihood with new parameters.
-
 :Arguments:
     - [include_likelihoods]\: If not None, only the specified likelihoods will be included.
     - [add_measurements]\: Adds more experimental measurements not included by smelli.
@@ -159,7 +159,7 @@ Creates a `.yaml` file with a list of all observables available, ordered by thei
     for o in obscoll:
         if isinstance(o, tuple):
             o = list(o)
-    with open(__path__[0] + '/observables.yaml', 'wt', encoding='utf-8') as fyaml:
+    with open(SMEFT19.__path__[0] + '/observables.yaml', 'wt', encoding='utf-8') as fyaml:
         yaml.dump(obscoll, fyaml)
 
 def loadobslist(new=False):
@@ -174,11 +174,11 @@ If the file does not exist, this functions creates it.
         newlist()
     else:
         try:
-            with open(__path__[0] + '/observables.yaml', 'rt', encoding='utf-8') as fyaml:
+            with open(SMEFT19.__path__[0] + '/observables.yaml', 'rt', encoding='utf-8') as fyaml:
                 obscoll = yaml.safe_load(fyaml)
         except (OSError, IOError):
             newlist()
-    with open(__path__[0] + '/observables.yaml', 'rt', encoding='utf-8') as fyaml:
+    with open(SMEFT19.__path__[0] + '/observables.yaml', 'rt', encoding='utf-8') as fyaml:
         obscoll = yaml.safe_load(fyaml)
         for o in obscoll:
             if isinstance(o, list):
