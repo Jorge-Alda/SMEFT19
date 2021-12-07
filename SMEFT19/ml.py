@@ -18,6 +18,8 @@ from parscanning.mlscan import MLScan
 from SMEFT19.SMEFTglob import likelihood_global
 from SMEFT19.scenarios import rotBII
 
+plt.rcParams.update({'pgf.texsystem':'pdflatex'})
+
 
 def lh(x):
     '''
@@ -101,7 +103,7 @@ Plots the predicted likelihod vs the actual likelihood and computes their regres
     plt.savefig(fout + '.pdf')
     return pearsonr(y, pred)
 
-def hist(ML, vpoints):
+def hist(ML, vpoints, fout):
     r'''
 Plots an histogram for the predicted and actual likelihoods,
 and compares them to the chi-square distribution
@@ -110,6 +112,7 @@ and compares them to the chi-square distribution
 
     - ML:\ The Machine Learning scan module.
     - vpoints\: Path to the file containing the points in the validation dataset.
+    - fout\: Path to save the histogram.
     '''
 
     df = pd.read_csv(vpoints, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
@@ -117,19 +120,23 @@ and compares them to the chi-square distribution
     features = ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
     y = 2*df.logL
-    pred = 2*np.array(list(map(ML.guess_lh, X.values)))
+    pred = 2*ML.model.predict(X)
 
     plt.figure()
-    plt.hist(2*max(pred)-2*np.array(pred), range=(0, 25), bins=50,
+    plt.hist(max(pred)-np.array(pred), range=(0, 25), bins=50,
              density=True, alpha=0.5, label='Predicted histogram')
-    plt.hist(2*max(y)-2*np.array(y), range=(0, 25), bins=50,
+    plt.hist(max(y)-np.array(y), range=(0, 25), bins=50,
              density=True, alpha=0.5, label='Actual histogram')
     plt.plot(np.linspace(0, 25, 51), chi2(5).pdf(np.linspace(0, 25, 51)),
              lw=1.5, color='red', label=r'$\chi^2$ distribution')
-    plt.xlabel(r'$\chi^2_\mathrm{bf} - \chi^2$')
-    plt.ylabel('Normalized frequency')
-    plt.legend()
+    plt.xlabel(r'$\chi^2_\mathrm{bf} - \chi^2$', fontsize=18)
+    plt.ylabel('Normalized frequency', fontsize=18)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.legend(fontsize=16)
     plt.tight_layout(pad=0.5)
+    plt.savefig(fout+'.pdf')
+    plt.savefig(fout+'.pgf')
 
 def load_model(fmodel, vpoints, bf):
     r'''
