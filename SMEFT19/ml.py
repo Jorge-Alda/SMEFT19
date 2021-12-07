@@ -45,7 +45,6 @@ Trains the Machine Learning algorithm with the previously computed Metropolis po
         df = pd.concat(dfs, ignore_index=True)
     else:
         df = pd.read_csv(fMC, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
-    df = pd.read_csv(fMC, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
     df = df.loc[df['logL'] > 10]
     features = ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
