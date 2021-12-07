@@ -25,26 +25,35 @@ Pickle-able function for the likelihood in scenario BII.
     '''
     return likelihood_global(x, rotBII)
 
-def train(fMC, fval, fmodel, bf):
+def train(dataset, fval, fmodel, bf, headers=None):
     r'''
 Trains the Machine Learning algorithm with the previously computed Metropolis points
 
 :Arguments:
 
-    - fMC\: Path to the file or list of files containing the Montecarlo pre-computed points.
+    - dataset\: Path to the file or list of files containing the Montecarlo pre-computed points.
     - fval\: Path to the file where the validation points will be saved.
     - fmodel\: Path to the file where the XGBoost model will be saved.
     - bf\: Best fit point.
+    - headers\: Header lines in the dataset files.
+                None if there is no header, 0 if the first line contains the header.
+                Admits list if using several dataset files.
 
 :Returns:
 
     - The Machine Learning scan module, already trained and ready to be used
     '''
-    if isinstance(fMC, list) or isinstance(fMC, tuple):
-        dfs = [pd.read_csv(f, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL']) for f in fMC]
+    if isinstance(dataset, list) or isinstance(dataset, tuple):
+        if headers == None:
+            headers = [None,]*len(dataset)
+        if isinstance(headers, int):
+            headers = [headers,]*len(dataset)
+        dfs = [pd.read_csv(f, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'],
+                           header=headers[i]) for i, f in enumerate(dataset)]
         df = pd.concat(dfs, ignore_index=True)
     else:
-        df = pd.read_csv(fMC, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+        df = pd.read_csv(dataset, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'],
+                         header=headers)
     df = df.loc[df['logL'] > 10]
     features = ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
