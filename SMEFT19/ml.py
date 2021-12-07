@@ -44,7 +44,7 @@ Trains the Machine Learning algorithm with the previously computed Metropolis po
     - The Machine Learning scan module, already trained and ready to be used
     '''
     if isinstance(dataset, list) or isinstance(dataset, tuple):
-        if headers == None:
+        if headers is None:
             headers = [None,]*len(dataset)
         if isinstance(headers, int):
             headers = [headers,]*len(dataset)
@@ -66,7 +66,7 @@ Trains the Machine Learning algorithm with the previously computed Metropolis po
     ML.save_validation(fval)
     return ML
 
-def regr(ML, vpoints):
+def regr(ML, vpoints, fout):
     r'''
 Plots the predicted likelihod vs the actual likelihood and computes their regression coefficient
 
@@ -74,6 +74,7 @@ Plots the predicted likelihod vs the actual likelihood and computes their regres
 
     - ML:\ The Machine Learning scan module.
     - vpoints\: Path to the file containing the points in the validation dataset.
+    - fout\: Path to the output regression plot (pdf only).
 
 :Returns:
 
@@ -85,16 +86,19 @@ Plots the predicted likelihod vs the actual likelihood and computes their regres
     features = ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
     y = 2*df.logL
-    pred = 2*np.array(list(map(ML.guess_lh, X.values)))
+    pred = 2*ML.model.predict(X)
 
     plt.figure(figsize=(5, 5))
     plt.scatter(y, pred, s=0.7)
     plt.plot([20, 50], [20, 50], c='black', lw=1)
     plt.xlim([20, 50])
     plt.ylim([20, 50])
-    plt.xlabel(r'Actual $\Delta \chi^2_\mathrm{SM}$')
-    plt.ylabel(r'Predicted $\Delta \chi^2_\mathrm{SM}$')
+    plt.xlabel(r'Actual $\Delta \chi^2_\mathrm{SM}$', fontsize=16)
+    plt.ylabel(r'Predicted $\Delta \chi^2_\mathrm{SM}$', fontsize=16)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
     plt.tight_layout(pad=0.5)
+    plt.savefig(fout + '.pdf')
     return pearsonr(y, pred)
 
 def hist(ML, vpoints):
