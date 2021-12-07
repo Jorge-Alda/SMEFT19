@@ -31,7 +31,7 @@ Trains the Machine Learning algorithm with the previously computed Metropolis po
 
 :Arguments:
 
-    - fMC\: Path to the file containing the Montecarlo pre-computed points.
+    - fMC\: Path to the file or list of files containing the Montecarlo pre-computed points.
     - fval\: Path to the file where the validation points will be saved.
     - fmodel\: Path to the file where the XGBoost model will be saved.
     - bf\: Best fit point.
@@ -40,7 +40,11 @@ Trains the Machine Learning algorithm with the previously computed Metropolis po
 
     - The Machine Learning scan module, already trained and ready to be used
     '''
-    df = pd.read_csv(fMC, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
+    if isinstance(fMC, list) or isinstance(fMC, tuple):
+        dfs = [pd.read_csv(f, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL']) for f in fMC]
+        df = pd.concat(dfs, ignore_index=True)
+    else:
+        df = pd.read_csv(fMC, sep='\t', names=['C', 'al', 'bl', 'aq', 'bq', 'logL'])
     df = df.loc[df['logL'] > 10]
     features = ['C', 'al', 'bl', 'aq', 'bq']
     X = df[features]
