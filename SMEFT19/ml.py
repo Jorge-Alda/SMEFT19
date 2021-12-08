@@ -179,7 +179,7 @@ Computes the SHAP values of the best fit point
     total = float(explainer.expected_value)+np.sum(explainer.shap_values(bfs))
     print(f'Total prediction: {total}')
 
-def SHAP_summary(fmodel, points):
+def SHAP_summary(fmodel, points, fout, header=None):
     r'''
 Creates a summary plot of the average SHAP values on a dataset.
 
@@ -187,6 +187,8 @@ Creates a summary plot of the average SHAP values on a dataset.
 
     - fmodel\: Path to the file where the model was saved.
     - points\: Pandas Dataframe containing the dataset.
+    - fout\: Path to save the plot (pdf only).
+    - header\: If the data file contains headers in the first row, 0.
     '''
 
     model = XGBRegressor()
@@ -194,14 +196,16 @@ Creates a summary plot of the average SHAP values on a dataset.
     explainer = shap.TreeExplainer(model)
     df = pd.read_csv(points, sep='\t', names=['$C$', '$\\alpha^\\ell$',
                                               '$\\beta^\\ell$', '$\\alpha^q$',
-                                              '$\\beta^q$', 'logL'])
+                                              '$\\beta^q$', 'logL'], header=header)
     features = ['$C$', '$\\alpha^\\ell$', '$\\beta^\\ell$', '$\\alpha^q$', '$\\beta^q$']
     X = df[features]
     sv = explainer.shap_values(X)
     shap.summary_plot(sv, X, show=False)
+    plt.xticks(fontsize=16)
     plt.tight_layout(pad=0.5)
+    plt.savefig(fout+'.pdf')
 
-def SHAP_param(fmodel, points, param):
+def SHAP_param(fmodel, points, param, header=None):
     r'''
 Creates an scatter plot displaying how the SHAP values change
 as functions of each parameter of the fit.
@@ -211,6 +215,7 @@ as functions of each parameter of the fit.
     - fmodel\: Path to the file where the model was saved.
     - points\: Pandas Dataframe containing the dataset.
     - param\: Fit parameter. 0 = C, 1 = al, 2 = bl, 3 = aq, 4 = bq.
+    - header\: If the data file contains headers in the first row, 0.
     '''
 
     model = XGBRegressor()
@@ -218,7 +223,7 @@ as functions of each parameter of the fit.
     explainer = shap.TreeExplainer(model)
     df = pd.read_csv(points, sep='\t', names=['$C$', '$\\alpha^\\ell$',
                                               '$\\beta^\\ell$', '$\\alpha^q$',
-                                              '$\\beta^q$', 'logL'])
+                                              '$\\beta^q$', 'logL'], header=header)
     features = ['$C$', '$\\alpha^\\ell$', '$\\beta^\\ell$', '$\\alpha^q$', '$\\beta^q$']
     X = df[features]
     sv = explainer.shap_values(X)
