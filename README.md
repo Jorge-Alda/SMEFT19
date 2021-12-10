@@ -2,3 +2,5 @@
 
 * [On-line documentation](https://rawcdn.githack.com/Jorge-Alda/SMEFT19/v2.0/docs/html/index.html)    
 * [PDF documentation](https://raw.githubusercontent.com/Jorge-Alda/SMEFT19/v2.0/docs/SMEFT19.pdf)
+* [Jupyter notebooks](https://jorge-alda.github.io/SMEFT19-notebooks/index.html)
+* [Source code for the Jupyter notebooks](https://github.com/Jorge-Alda/SMEFT19-notebooks)
