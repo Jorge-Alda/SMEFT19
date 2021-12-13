@@ -308,4 +308,4 @@ Coupling of the U(1) leptoquarks obtained from the Wilson Coefficients.
         for j in range(0, 3):
             xL[i, j] = np.sqrt(-2*M**2*C * ll[i, i] * lq[j, j])* \
                        np.exp(1j*np.angle(lq[j, 2])-1j*np.angle(ll[i, 2]))
-    return xL
+    return xL.T
