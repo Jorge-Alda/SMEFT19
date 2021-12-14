@@ -21,11 +21,11 @@ Lists the comparison between the pull of each observable in the NP hypothesis an
 
 :Arguments:
     - wfun\: Function that takes a point in parameter space
-             and returns a dictionary of Wilson coefficents.
+      and returns a dictionary of Wilson coefficents.
     - fin\: Path to the file `.yaml` where the ellipsoid is saved.
     - fout\: Path to the `.tex` file where the comaparison table will be written.
-             The observables are ordered by their SM pull, and are shaded in green
-             if the NP improves this pull and in red otherwise.
+      The observables are ordered by their SM pull, and are shaded in green
+      if the NP improves this pull and in red otherwise.
     '''
     dbf = load(fin)
     bf = dbf['bf']
@@ -73,7 +73,7 @@ Determines the observable whose pull changes the most between two NP hypothesis.
 :Arguments:
     - x\: Point in space parameter of the tested NP hypothesis.
     - wfun\: Function that takes a point in parameter space
-             and returns a dictionary of Wilson coefficents.
+      and returns a dictionary of Wilson coefficents.
     - bf\: Point in space parameter of the reference NP hypothesis (e.g. the best fit).
     - [printlevel\: 0 for silent mode, 1 for verbose mode.]
     - [numres\: Number of observables displayed. Default=5.]
@@ -114,8 +114,8 @@ the best fit and the notable points of the ellipsoid.
 
 :Arguments:
     - wfun\: Function that takes a point in parameter space
-             and returns a dictionary of Wilson coefficents.
-     - fin\: Path to the file `.yaml` where the ellipsoid is saved.
+      and returns a dictionary of Wilson coefficents.
+    - fin\: Path to the file `.yaml` where the ellipsoid is saved.
     '''
     dbf = load(fin)
     bf = dbf['bf']
@@ -161,8 +161,8 @@ two opposite notable points of the ellipsoid.
 :Arguments:
     - obscode\: ID-Number of the observable, as returned by comparepulls.pointpull
     - wfun\: Function that takes a point in parameter space
-             and returns a dictionary of Wilson coefficents.
-     - fin\: Path to the file .yaml where the ellipsoid is saved.
+      and returns a dictionary of Wilson coefficents.
+    - fin\: Path to the file .yaml where the ellipsoid is saved.
     - direction\: string with the following format\:
 
         - 'wc' + str(i)\: for the i-th Wilson coefficient.

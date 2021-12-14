@@ -167,7 +167,7 @@ Scenario X\: NP affects to electrons and muons by an opposite ammount.
 def scXI(x):
     r'''
 Scenario XI\: NP affects to electrons and to muons by an opposite ammount,
-              and to taus independently.
+and to taus independently.
 
 :Arguments:
 
@@ -225,8 +225,8 @@ C1 and C3 can be different.
 
 :Arguments:
 
-    -x \: Coordinates in the parameter space of the fit.
-          x = [C1, C3, alpha_l, beta_l, alpha_q, beta_q].
+    - x\: Coordinates in the parameter space of the fit.
+      x = [C1, C3, alpha_l, beta_l, alpha_q, beta_q].
 
 :Returns:
 
@@ -247,8 +247,7 @@ C1 and C3 can be different.
 def rotBI(x):
     r'''
 Scenario BI\: NP affects only the third generation in the interaction basis
-              and then is rotated to the mass basis.
-              Couplings to the first generation negligible.
+and then is rotated to the mass basis. Couplings to the first generation negligible.
 
 :Arguments:
 
@@ -263,12 +262,11 @@ Scenario BI\: NP affects only the third generation in the interaction basis
 def rotBII(x):
     r'''
 Scenario BII\: NP affects only the third generation in the interaction basis
-                and then is rotated to the mass basis.
-                Couplings to the first generation not negligible.
+and then is rotated to the mass basis. Couplings to the first generation not negligible.
 
 :Arguments:
 
-    -x \: Coordinates in the parameter space of the fit. x = [C, alpha_l, beta_l, alpha_q, beta_q].
+    - x\: Coordinates in the parameter space of the fit. x = [C, alpha_l, beta_l, alpha_q, beta_q].
 
 :Returns:
 
@@ -283,7 +281,7 @@ Coupling of the U(1) leptoquarks obtained from the Wilson Coefficients.
 :Arguments:
 
     - x\: Coordinates in the parameter space of the fit.
-          It assumes scenario BI if len(x)==3 or scenario BII if len(x)==5.
+      It assumes scenario BI if len(x)==3 or scenario BII if len(x)==5.
     - [M\: Mass of the leptoquark, in TeV. Default=1.5.]
 
 :Returns:

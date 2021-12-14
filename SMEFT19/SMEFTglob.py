@@ -19,11 +19,12 @@ def restart_smelli(include_likelihoods=None, add_measurements=None,
                    remove_measurements=None, custom_likelihoods=None):
     '''
 Re-starts smelli's Global Likelihood with new parameters.
+
 :Arguments:
-    - [include_likelihoods]\: If not None, only the specified likelihoods will be included.
-    - [add_measurements]\: Adds more experimental measurements not included by smelli.
-    - [remove_measurements]\: Removes more experimental measurements not included by smelli.
-    - [custom_likelihoods]\: Adds new likelihoods.
+    - include_likelihoods\: If not None, only the specified likelihoods will be included.
+    - add_measurements\: Adds more experimental measurements not included by smelli.
+    - remove_measurements\: Removes more experimental measurements not included by smelli.
+    - custom_likelihoods\: Adds new likelihoods.
     '''
     global gl
     gl = smelli.GlobalLikelihood(include_likelihoods=include_likelihoods,
@@ -38,7 +39,7 @@ Calculates the log-likelihood of a NP hypothesis for several classes of observab
 :Arguments:
     - x\: Point in parameter space to be evaluated.
     - wfun\: Function that takes a point in parameter space and
-             returns a dictionary of Wilson coefficents.
+      returns a dictionary of Wilson coefficents.
 
 :Returns:
     - A dictionary of log-likelihoods, for each of the classes of observables defined by `smelli`.
@@ -69,7 +70,7 @@ Calculates the global log-likelihood of a NP hypothesis.
 :Arguments:
     - x\: Point in parameter space to be evaluated.
     - wfun\: Function that takes a point in parameter space
-             and returns a dictionary of Wilson coefficents.
+      and returns a dictionary of Wilson coefficents.
 
 :Returns:
     - The global log-likelihood.
@@ -95,11 +96,11 @@ Interfaces `flavio` to compute the NP prediction of a given observable.
 :Arguments:
     - x\: Point in parameter space to be evaluated.
     - obs\: observable, as defined by flavio, whose prediction will be computed.
-            If the observable does not depend on any parameter, obs is a string.
-            If the observable depends on numerical parameters (such as q2), obs is
-            a list containing a string and one or more floats.
+      If the observable does not depend on any parameter, obs is a string.
+      If the observable depends on numerical parameters (such as q2), obs is
+      a list containing a string and one or more floats.
     - wfun\: Function that takes a point in parameter space and
-             returns a dictionary of Wilson coefficents.
+      returns a dictionary of Wilson coefficents.
 
 :Returns:
     - The prediction of the observable.
@@ -126,11 +127,11 @@ in NP with respect to its experimental value.
 :Arguments:
     - x\: Point in parameter space to be evaluated.
     - obs\: observable, as defined by `flavio`, whose prediction will be computed.
-            If the observable does not depend on any parameter, obs is a string.
-            If the observable depends on numerical parameters (such as q2), obs is
-            a list containing a string and one or more floats.
+      If the observable does not depend on any parameter, obs is a string.
+      If the observable depends on numerical parameters (such as q2), obs is
+      a list containing a string and one or more floats.
     - wfun\: Function that takes a point in parameter space and
-             returns a dictionary of Wilson coefficents.
+      returns a dictionary of Wilson coefficents.
 
 :Returns:
     - The pull of the observable.

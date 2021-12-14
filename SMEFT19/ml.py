@@ -38,8 +38,8 @@ Trains the Machine Learning algorithm with the previously computed Metropolis po
     - fmodel\: Path to the file where the XGBoost model will be saved.
     - bf\: Best fit point.
     - headers\: Header lines in the dataset files.
-                None if there is no header, 0 if the first line contains the header.
-                Admits list if using several dataset files.
+      None if there is no header, 0 if the first line contains the header.
+      Admits list if using several dataset files.
 
 :Returns:
 

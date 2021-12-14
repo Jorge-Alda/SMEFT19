@@ -35,24 +35,24 @@ Plots a contour plot of the log-likelihood of the fit.
 :Arguments:
 
     - grid\: List containing the x coordinates, y corrdinates
-             and a dictionary for the likelihood values in the grid.
+      and a dictionary for the likelihood values in the grid.
     - xmin\: Minimum value of the `x` coordinate.
     - xmax\: Maximum value of the `x` coordinate.
     - ymin\: Minimum value of the `y` coordinate.
     - ymax\: Maximum value of the `y` coordinate.
     - axlabels\: List containing two strings to label the `x` and `y` axes.
     - [fout\: Path to the files where the plots will be saved.
-              Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
-              Extensions are added automatically.]
+      Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
+      Extensions are added automatically.]
     - [locleg\: Position of the legend of the plot, using `matplotlib`'s syntaxis.
-                Default=0 (best position).]
+      Default=0 (best position).]
     - [n_sigma\: List containing the significance (in sigmas) of each contour. Default = (1,2).]
     - [colors\: List with the colors of each contour. Default: flavio palette.]
     - [styles\: List with the linestyles of each contour. Default: All solid.]
     - [widths\: List with the linewidths of each contour. Default: All 1pt.]
     - [ticks\: Interval between ticks in both axes. Default:0.5]
     - [bf\: Coordinates of the best fit point(s). It can be `None` (no point marked)
-            or a list containing two floats (one point marked). Default: `None`.]
+      or a list containing two floats (one point marked). Default: `None`.]
     '''
 
     fig = plt.figure(figsize=(6, 6))
@@ -131,9 +131,9 @@ input arrays.Based on the `flavio` function
       from a predefined palette.]
     - [label\: label that will be added to a legend created with `maplotlib.pyplot.legend()`.]
     - [contour_args\: dictionary of additional options that will be passed to
-                      `matplotlib.pyplot.contour()` (that draws the contour lines).]
+      `matplotlib.pyplot.contour()` (that draws the contour lines).]
     - [contourf_args\: dictionary of additional options that will be passed to
-                       `matplotlib.pyplot.contourf()` (that paints the contour filling).]
+      `matplotlib.pyplot.contourf()` (that paints the contour filling).]
     """
     contour_args = contour_args or {}
     contourf_args = contour_args or {}
@@ -183,8 +183,8 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
 
 :Arguments:
     - fout\: Path to the files where the plots will be saved.
-             Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
-             Extensions are added automatically.
+      Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
+      Extensions are added automatically.
     - plottype\: Selects the observables to be plotted\:
 
         - 'RK'\: Plots RK in the [1.1,6.0] bin and RK\* in the [0.045,1.1] and [1.1,6] bins.
@@ -310,15 +310,14 @@ def binerrorbox(binmin, binmax, central, error, centralline=False, rect_args=Non
 Plots an error box.
 
 :Arguments:
-
     - binmin\: Minimum `x` value of the error box.
     - binmax\: Maximum `x` value of the error box.
-    - central\: Central `y`value.
+    - central\: Central `y` value.
     - error\: Error in the `y` direction.
-              `error` must be a float if the error is symmetric,
-              or a tuple (`error_inf`, `error_sup`) if the error is not symmetric.
+      `error` must be a float if the error is symmetric,
+      or a tuple (`error_inf`, `error_sup`) if the error is not symmetric.
     - centralline\: True to plot a horizontal line for the central value.
-                    Default: False.
+      Default\: False.
     - rect_args\: Optional arguments passed to plot the box.
     - line_args\: Optional arguments passed to plot the central line.
     '''
@@ -343,11 +342,11 @@ Plots the pull of each observable in the SM and in the NP hypothesis.
 :Arguments:
 
     - wfun\: Function that takes a point in parameter space
-             and returns a dictionary of Wilson coefficents.
+      and returns a dictionary of Wilson coefficents.
     - fin\: Path to the `.yaml` file where the ellipsoid is saved.
     - fout\: Path to the files where the plots will be saved.
-             Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
-             Extensions are added automatically.
+      Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
+      Extensions are added automatically.
     '''
     dbf = load(fin)
     bf = dbf['bf']
@@ -363,6 +362,8 @@ Plots the pull of each observable in the SM and in the NP hypothesis.
     NP = []
     SM = []
     for obs in obscoll:
+        if isinstance(obs, list):
+            obs = tuple(obs)
         NP.append(float(obsNP.loc[[obs], 'pull exp.']))
         SM.append(float(obsSM.loc[[obs], 'pull exp.']))
 
@@ -400,7 +401,7 @@ connecting two opposite  notable points of the ellipsoid.
 
     - obscodes\: List of ID-Numbers of the observables, as returned by `comparepulls.pointpull`
     - wfun\: Function that takes a point in parameter space
-             and returns a dictionary of Wilson coefficents.
+      and returns a dictionary of Wilson coefficents.
     - fin\: Path to the `.yaml` file where the ellipsoid is saved.
     - direction\: string with the following format\:
 
@@ -408,8 +409,8 @@ connecting two opposite  notable points of the ellipsoid.
             - 'sm'\: for the direction joining the bf and sm points.
 
     - fout\: Path to the files where the plots will be saved.
-             Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
-             Extensions are added automatically.
+      Two files are created, one `.pdf` and one `.pgf` (to use in TeX).
+      Extensions are added automatically.
     '''
     fig = plt.figure()
     j = 0
@@ -441,9 +442,9 @@ def darken_color(color, amount=0.5):
     Darkens the given color by multiplying luminosity by the given amount.
     Input can be matplotlib color string, hex string, or RGB tuple.
     Examples:
-    >> lighten_color('g', 0.3)
-    >> lighten_color('#F034A3', 0.6)
-    >> lighten_color((.3,.55,.1), 0.5)
+    >> darken_color('g', 0.3)
+    >> darken_color('#F034A3', 0.6)
+    >> darken_color((.3,.55,.1), 0.5)
     """
 
     try:

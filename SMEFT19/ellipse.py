@@ -26,8 +26,8 @@ Finds the minimum of the fit function and approximates its neighbourhood by an e
 
 :Arguments:
     - fit\: function that takes one point in parameter space and returns
-            its negative log-likelihhod.
-            Example\: `-SMEFTglob.likelihood_global(x, scenarios.scVI)`.
+      its negative log-likelihhod.
+      Example\: `-SMEFTglob.likelihood_global(x, scenarios.scVI)`.
     - x0\: list or `np.array` containing an initial guess.
 
 :Returns:
@@ -64,7 +64,7 @@ Maps points on the unit hypersphere to points on the ellipsoid of constant likel
     - [nsigmas\: significance of the isoprobability hypersurface with respect to the best fit.]
 
 :Returns:
-    - xe: Projection of the point xe in the ellipsoid of equal probability
+    - xe: Projection of the point x in the ellipsoid of equal probability
     '''
     r = delta_chi2(nsigmas, len(bf))
     xp = x * sqrt(r/np.diag(d))
@@ -103,16 +103,16 @@ Loads a ellipse saved in a `.yaml` file to a python dictionary.
 
 :Arguments:
     - filename\: Path to the `.yaml` file where the shape of
-                 the ellipse has been saved by the `save` method.
+      the ellipse has been saved by the `save` method.
 
 :Returns:
-A `python` dictionary containing:
-    - bf\: `np.array` with the point in parameter space with the best fit.
-    - v\: `np.matrix` containing the orientation of the axes of the ellipsoid.
-    - d\: `np.array` containing the principal axes of the ellipsoid.
-    - L\: Log-likelihood at the best fit point.
-    - [name\: Name of the fit.]
-    - [fit\: Scenario used in the fit.]
+    A `python` dictionary containing:
+        - bf\: `np.array` with the point in parameter space with the best fit.
+        - v\: `np.matrix` containing the orientation of the axes of the ellipsoid.
+        - d\: `np.array` containing the principal axes of the ellipsoid.
+        - L\: Log-likelihood at the best fit point.
+        - [name\: Name of the fit.]
+        - [fit\: Scenario used in the fit.]
     '''
     with open(filename, 'rt', encoding='utf-8') as f:
         values = yaml.safe_load(f)
