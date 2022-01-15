@@ -1,15 +1,14 @@
-flavio>=2.3.1
-wilson>=1.7
+flavio==2.3.1
+wilson==2.0
 -e git+https://github.com/Jorge-Alda/smelli.git@custom_measurements#egg=smelli
 -e git+https://github.com/Jorge-Alda/parscanning.git@v1.0#egg=parscanning
-numpy
-scipy
-matplotlib
+numpy==1.18.3
+scipy==1.4.1
+matplotlib==3.2.1
 iminuit==1.3.10
-pandas
+pandas==1.0.3
 -e git+https://github.com/Jorge-Alda/texfig.git#egg=texfig
-scipy
-PyYAML
-scikit-learn
-xgboost
-shap
+PyYAML==5.3.1
+scikit-learn==0.22.2.post1
+xgboost==1.0.2
+shap==0.35.0
