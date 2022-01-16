@@ -104,3 +104,5 @@ SMEFT19/texfig.py
 
 # mypy
 .mypy_cache/
+SMEFT19-notebooks/
+temp.Dockerfile
