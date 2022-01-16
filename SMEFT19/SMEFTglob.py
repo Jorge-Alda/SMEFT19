@@ -85,6 +85,8 @@ def fastmeas(obs):
     '''
 Checks if the observable is part of a <<fast-measurement>> in smelli.
     '''
+    if obs not in gl.obstable_sm.keys():
+        raise KeyError(f"The observable '{obs}' is not available in smelli")
     obsm = gl.obstable_sm[obs]
     lhname = obsm['lh_name']
     return lhname[:4] == 'fast'
@@ -105,6 +107,8 @@ Interfaces `flavio` to compute the NP prediction of a given observable.
 :Returns:
     - The prediction of the observable.
     '''
+    if obs not in gl.obstable_sm.keys():
+        raise KeyError(f"The observable '{obs}' is not available in smelli")
     obsm = gl.obstable_sm[obs]
     lhname = obsm['lh_name']
     wc = wfun(x)
@@ -136,6 +140,8 @@ in NP with respect to its experimental value.
 :Returns:
     - The pull of the observable.
     '''
+    if obs not in gl.obstable_sm.keys():
+        raise KeyError(f"The observable '{obs}' is not available in smelli")
     obsm = gl.obstable_sm[obs]
     lhname = obsm['lh_name']
     pred = prediction(x, obs, wfun)
