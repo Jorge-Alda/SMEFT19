@@ -14,4 +14,4 @@ from SMEFT19 import ml
 from SMEFT19 import plots
 from SMEFT19 import utils
 
-__version__ = "2.0"
+__version__ = "3.0.1"
