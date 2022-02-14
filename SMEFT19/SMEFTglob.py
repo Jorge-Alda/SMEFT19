@@ -6,6 +6,7 @@ SMEFTglob
 Common functions used to calculate likelihood values and pulls of the fits.
 '''
 
+import os
 from math import isinf
 import warnings
 from flavio.statistics.functions import pull
@@ -13,7 +14,12 @@ import smelli
 import yaml
 import SMEFT19
 
-gl = smelli.GlobalLikelihood()
+sm_cov_folder = os.path.join(SMEFT19.__path__[0], 'smcovariances')
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore')
+    gl = smelli.GlobalLikelihood()
+gl.load_sm_covariances(sm_cov_folder)
+gl.make_measurement()
 
 def restart_smelli(include_likelihoods=None, add_measurements=None,
                    remove_measurements=None, custom_likelihoods=None):
@@ -27,10 +33,14 @@ Re-starts smelli's Global Likelihood with new parameters.
     - custom_likelihoods\: Adds new likelihoods.
     '''
     global gl
-    gl = smelli.GlobalLikelihood(include_likelihoods=include_likelihoods,
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        gl = smelli.GlobalLikelihood(include_likelihoods=include_likelihoods,
                                  add_measurements=add_measurements,
                                  remove_measurements=remove_measurements,
                                  custom_likelihoods=custom_likelihoods)
+    gl.load_sm_covariances(sm_cov_folder)
+    gl.make_measurement()
 
 def likelihood_fits(x, wfun):
     '''
