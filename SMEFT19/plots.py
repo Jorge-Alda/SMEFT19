@@ -204,7 +204,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     elif plottype == 'RK':
         observables = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1),
                        ('<Rmue>(B0->K*ll)', 1.1, 6.0)]
-        texlabels = [r'$R_K^{[1.1,6]}$', r'$R_{K^*}^{[0.045, 1.1]}$', r'$R_{K^*}^{[1.1, 6]}$']
+        texlabels = [r'$R_{K^+}^{[1.1,6]}$', r'$R_{K^{0*}}^{[0.045, 1.1]}$', r'$R_{K^{0*}}^{[1.1, 6]}$']
         #legloc = 3
     nobs = len(texlabels)
     nhyp = len(flist)
@@ -296,7 +296,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs))
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
-    ax.set_xticklabels(texlabels + [''])
+    ax.set_xticklabels(texlabels)
     if legend == 1:
         plt.legend(fontsize=14, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
     elif legend > 1:
