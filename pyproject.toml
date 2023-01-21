@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "smeft19"
+version = "3.1.0"
+description = "The code that I have used to investigate the impact of New Physics in the form of the SMEFT operators Olq(1) and Olq(3), with various flavour structures, to a large range of physical observables."
+authors = ["Jorge-Alda <jalda@unizar.es>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+shap = "^0.41.0"
+python = ">=3.8,<3.12"
+wilson = "^2.3.2"
+numpy = "1.23.5"
+scipy = "^1.10.0"
+matplotlib = "^3.6.3"
+iminuit = "^2.18.0"
+pandas = "^1.5.3"
+PyYAML = "^6.0"
+scikit-learn = "^1.2.0"
+xgboost = "^1.7.3"
+llvmlite = "^0.39"
+flavio = {git = "https://github.com/Jorge-Alda/flavio.git", rev = "jan2023"}
+smelli = {git = "https://github.com/Jorge-Alda/smelli.git", rev = "jan2023"}
+parscanning = {git = "https://github.com/Jorge-Alda/parscanning.git", rev = "v1.0"}
+texfig = {git = "https://github.com/Jorge-Alda/texfig.git"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
