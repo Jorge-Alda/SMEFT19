@@ -1,4 +1,4 @@
-git+https://github.com/Jorge-Alda/flavio.git@jan2023#egg=smelli
+git+https://github.com/Jorge-Alda/flavio.git@jan2023#egg=flavio
 wilson==2.3.2
 git+https://github.com/Jorge-Alda/smelli.git@jan2023#egg=smelli
 git+https://github.com/Jorge-Alda/parscanning.git@v1.0#egg=parscanning
