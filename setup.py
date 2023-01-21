@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setup(
 	name='SMEFT19',
-	version='3.0.1',
+	version='3.1.0',
 	description='Global likelihood study with the SMEFT operators Olq1 and Qlq3',
 	license='MIT',
 	author='Jorge Alda',

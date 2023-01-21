@@ -1,14 +1,13 @@
-particle==0.14.1
-flavio==2.3.1
-wilson==2.0
--e git+https://github.com/Jorge-Alda/smelli.git@custom_measurements#egg=smelli
--e git+https://github.com/Jorge-Alda/parscanning.git@v1.0#egg=parscanning
-numpy==1.22
-scipy==1.4.1
-matplotlib==3.2.1
-iminuit==1.3.10
+git+https://github.com/Jorge-Alda/flavio.git@jan2023#egg=smelli
+wilson==2.3.2
+git+https://github.com/Jorge-Alda/smelli.git@jan2023#egg=smelli
+git+https://github.com/Jorge-Alda/parscanning.git@v1.0#egg=parscanning
+numpy==1.24.1
+scipy==1.9.3
+matplotlib==3.6.2
+iminuit==2.18.0
 pandas==1.0.3
--e git+https://github.com/Jorge-Alda/texfig.git#egg=texfig
+git+https://github.com/Jorge-Alda/texfig.git#egg=texfig
 PyYAML==5.4
 scikit-learn==0.22.2.post1
 xgboost==1.0.2
