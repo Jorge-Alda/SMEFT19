@@ -6,7 +6,7 @@ numpy==1.24.1
 scipy==1.9.3
 matplotlib==3.6.2
 iminuit==2.18.0
-pandas==1.0.3
+pandas
 git+https://github.com/Jorge-Alda/texfig.git#egg=texfig
 PyYAML==5.4
 scikit-learn==0.22.2.post1
