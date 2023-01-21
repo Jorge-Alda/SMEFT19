@@ -5,6 +5,7 @@ description = "The code that I have used to investigate the impact of New Physic
 authors = ["Jorge-Alda <jalda@unizar.es>"]
 license = "MIT"
 readme = "README.md"
+packages = [{include = "SMEFT19"}]
 
 [tool.poetry.dependencies]
 shap = "^0.41.0"
