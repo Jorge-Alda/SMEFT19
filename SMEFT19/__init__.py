@@ -10,7 +10,7 @@ from SMEFT19 import obsuncert
 from SMEFT19 import comparepulls
 from SMEFT19.SMEFTglob import likelihood_global
 from SMEFT19.SMEFTglob import likelihood_fits
-# from SMEFT19 import ml
+from SMEFT19 import ml
 from SMEFT19 import plots
 from SMEFT19 import utils
 
