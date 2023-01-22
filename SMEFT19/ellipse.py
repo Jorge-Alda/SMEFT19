@@ -38,7 +38,8 @@ Finds the minimum of the fit function and approximates its neighbourhood by an e
     '''
 
     print('Minimizing...')
-    m = Minuit.from_array_func(fit, x0, error=0.01, errordef=0.5, print_level=0)
+    m = Minuit(fit, x0)
+    m.errordef = 0.5
     m.migrad()
     m.hesse()
     bf = m.np_values()
