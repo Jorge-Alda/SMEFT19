@@ -120,4 +120,4 @@ using a MonteCarlo analysis. The observables are :math:`R_{K^{(*)}}` and
             values[str(obs)]['NP']['uStat'] = sqrt(float(var))
 
     with open(fout, 'wt', encoding='utf-8') as f:
-        yaml.dump(values, f)
+        yaml.safe_dump(values, f)

@@ -167,7 +167,7 @@ Creates a `.yaml` file with a list of all observables available, ordered by thei
         if isinstance(o, tuple):
             o = list(o)
     with open(SMEFT19.__path__[0] + '/observables.yaml', 'wt', encoding='utf-8') as fyaml:
-        yaml.dump(obscoll, fyaml)
+        yaml.safe_dump(obscoll, fyaml)
 
 def loadobslist(new=False):
     '''

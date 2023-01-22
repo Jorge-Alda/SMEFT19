@@ -96,7 +96,7 @@ Saves the results of the minimization in a `.yaml` file.
     values['v'] = v.tolist()
     values['d'] = d.tolist()
     with open(filename, 'wt', encoding='utf-8') as f:
-        yaml.dump(values, f)
+        yaml.safe_dump(values, f)
 
 def load(filename):
     r'''
