@@ -42,13 +42,13 @@ Finds the minimum of the fit function and approximates its neighbourhood by an e
     m.errordef = 0.5
     m.migrad()
     m.hesse()
-    bf = m.np_values()
+    bf = np.array(m.values)
     Lmin = m.fval
     dim = len(x0)
     L0 = fit(np.zeros(dim))
     p = pull(2*abs(Lmin-L0), dim)
     print('Pull: ' + str(p) + ' sigma')
-    v, d, _ = svd(m.np_matrix())
+    v, d, _ = svd(m.covariance)
     d_ellipse = np.diag(1/d)
     return bf, v, d_ellipse, Lmin
 
