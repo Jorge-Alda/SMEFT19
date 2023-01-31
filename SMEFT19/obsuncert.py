@@ -14,9 +14,16 @@ from SMEFT19.SMEFTglob import likelihood_global, prediction
 from SMEFT19.ellipse import load
 
 
-obslist = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1),
-           ('<Rmue>(B0->K*ll)', 1.1, 6.0), 'Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)',
-           'Rtaumu(B->D*lnu)']
+obslist = [
+    ('<Rmue>(B+->Kll)', 0.045, 1.1),
+    ('<Rmue>(B+->Kll)', 1.1, 6.0),
+    ('<Rmue>(B0->K*ll)', 0.045, 1.1),
+    ('<Rmue>(B0->K*ll)', 1.1, 6.0),
+    'Rtaul(B->Dlnu)',
+    'Rtaul(B->D*lnu)',
+    'Rtaumu(B->D*lnu)',
+    'Rtaumu(Bc->J/psilnu)',
+]
 
 
 def _residual(x, obs, wfun, central):

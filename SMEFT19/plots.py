@@ -198,13 +198,32 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     else:
         fig = plt.figure()
     if plottype == 'RD':
-        observables = ['Rtaul(B->Dlnu)', 'Rtaul(B->D*lnu)', 'Rtaumu(B->D*lnu)']
-        texlabels = [r'$R_D^\ell$', r'$R_{D^*}^\ell$', r'$R_{D^*}^\mu$']
+        observables = [
+            'Rtaul(B->Dlnu)',
+            'Rtaul(B->D*lnu)',
+            'Rtaumu(B->D*lnu)',
+            'Rtaumu(Bc->J/psilnu)',
+            ]
+        texlabels = [
+            r'$R_D^\ell$',
+            r'$R_{D^*}^\ell$',
+            r'$R_{D^*}^\mu$',
+            r'$R_{J/\psi}^\mu$'
+            ]
         #legloc = 1
     elif plottype == 'RK':
-        observables = [('<Rmue>(B+->Kll)', 1.1, 6.0), ('<Rmue>(B0->K*ll)', 0.045, 1.1),
-                       ('<Rmue>(B0->K*ll)', 1.1, 6.0)]
-        texlabels = [r'$R_K^{[1.1,6]}$', r'$R_{K^*}^{[0.045, 1.1]}$', r'$R_{K^*}^{[1.1, 6]}$']
+        observables = [
+            ('<Rmue>(B+->Kll)', 0.045, 1.1),
+            ('<Rmue>(B+->Kll)', 1.1, 6.0),
+            ('<Rmue>(B0->K*ll)', 0.045, 1.1),
+            ('<Rmue>(B0->K*ll)', 1.1, 6.0),
+            ]
+        texlabels = [
+            r'$R_K^{[0.045, 1.1]}$',
+            r'$R_K^{[1.1,6]}$',
+            r'$R_{K^*}^{[0.045, 1.1]}$',
+            r'$R_{K^*}^{[1.1, 6]}$',
+            ]
         #legloc = 3
     nobs = len(texlabels)
     nhyp = len(flist)
