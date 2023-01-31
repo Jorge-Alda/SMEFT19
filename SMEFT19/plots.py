@@ -8,7 +8,7 @@ This module contains functions to plot the results of the fits.
 
 import colorsys
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle, Patch
 import matplotlib.colors
 import scipy.interpolate
 import numpy as np
@@ -74,6 +74,7 @@ Plots a contour plot of the log-likelihood of the fit.
     x = grid[0]
     y = grid[1]
     zl = grid[2]
+    patches = []
     for i, z in enumerate(zl.values()):
         chi = -2*(z.T-np.max(z))
         # get the correct values for 2D confidence/credibility contours for n sigma
@@ -81,9 +82,11 @@ Plots a contour plot of the log-likelihood of the fit.
             levels = [delta_chi2(n_sigma, dof=2)]
         else:
             levels = [delta_chi2(n, dof=2) for n in n_sigma]
-        hatch_contour(x=x, y=y, z=chi, levels=levels, col=_cols[i], label=list(zl.keys())[i],
+        p = hatch_contour(x=x, y=y, z=chi, levels=levels, col=_cols[i], label=list(zl.keys())[i],
                       interpolation_factor=5, hatched=False,
                       contour_args={'linestyles':lstyle[i], 'linewidths':lwidths[i]})
+        if p is not None:
+            patches.append(p)
         if bf is not None:
             for p in listpoint(bf):
                 plt.scatter(*p, marker='x', color='black')
@@ -104,7 +107,7 @@ Plots a contour plot of the log-likelihood of the fit.
     ax.yaxis.set_ticks(np.arange(ymin, ymax+1e-5, yticks))
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
-    plt.legend(loc=locleg, fontsize=16)
+    plt.legend(handles=patches, loc=locleg, fontsize=16)
     plt.tight_layout(pad=0.5)
     if fout is not None:
         fig.savefig(fout+'.pdf')
@@ -173,8 +176,10 @@ input arrays.Based on the `flavio` function
     CF = ax.contourf(x, y, z, levels=levelsf, **_contourf_args)
     CS = ax.contour(x, y, z, levels=levels, **_contour_args)
     if label is not None:
-        CS.collections[0].set_label(label)
-    return (CS, CF)
+        patch_legend = Patch(color = _contourf_args['colors'][0], label=label)
+    else:
+        patch_legend = None
+    return patch_legend
 
 
 def error_plot(fout, plottype, flist, flist2=None, legend=0):
