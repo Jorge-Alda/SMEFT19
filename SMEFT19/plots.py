@@ -8,7 +8,7 @@ This module contains functions to plot the results of the fits.
 
 import colorsys
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle, Patch
+from matplotlib.patches import Rectangle
 import matplotlib.colors
 import scipy.interpolate
 import numpy as np
@@ -74,7 +74,6 @@ Plots a contour plot of the log-likelihood of the fit.
     x = grid[0]
     y = grid[1]
     zl = grid[2]
-    patches = []
     for i, z in enumerate(zl.values()):
         chi = -2*(z.T-np.max(z))
         # get the correct values for 2D confidence/credibility contours for n sigma
@@ -82,11 +81,9 @@ Plots a contour plot of the log-likelihood of the fit.
             levels = [delta_chi2(n_sigma, dof=2)]
         else:
             levels = [delta_chi2(n, dof=2) for n in n_sigma]
-        p = hatch_contour(x=x, y=y, z=chi, levels=levels, col=_cols[i], label=list(zl.keys())[i],
+        hatch_contour(x=x, y=y, z=chi, levels=levels, col=_cols[i], label=list(zl.keys())[i],
                       interpolation_factor=5, hatched=False,
                       contour_args={'linestyles':lstyle[i], 'linewidths':lwidths[i]})
-        if p is not None:
-            patches.append(p)
         if bf is not None:
             for p in listpoint(bf):
                 plt.scatter(*p, marker='x', color='black')
@@ -107,7 +104,7 @@ Plots a contour plot of the log-likelihood of the fit.
     ax.yaxis.set_ticks(np.arange(ymin, ymax+1e-5, yticks))
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
-    plt.legend(handles=patches, loc=locleg, fontsize=16)
+    plt.legend(loc=locleg, fontsize=16)
     plt.tight_layout(pad=0.5)
     if fout is not None:
         fig.savefig(fout+'.pdf')
@@ -176,10 +173,8 @@ input arrays.Based on the `flavio` function
     CF = ax.contourf(x, y, z, levels=levelsf, **_contourf_args)
     CS = ax.contour(x, y, z, levels=levels, **_contour_args)
     if label is not None:
-        patch_legend = Patch(color = _contourf_args['colors'][0], label=label)
-    else:
-        patch_legend = None
-    return patch_legend
+        CS.collections[0].set_label(label)
+    return (CS, CF)
 
 
 def error_plot(fout, plottype, flist, flist2=None, legend=0):
@@ -207,13 +202,13 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
             'Rtaul(B->Dlnu)',
             'Rtaul(B->D*lnu)',
             'Rtaumu(B->D*lnu)',
-            'Rtaumu(Bc->J/psilnu)',
+            'Rtaumu(Bc->J/pislnu)'
             ]
         texlabels = [
             r'$R_D^\ell$',
             r'$R_{D^*}^\ell$',
             r'$R_{D^*}^\mu$',
-            r'$R_{J/\psi}^\mu$'
+            r"$R_{J/\psi}^\mu$",
             ]
         #legloc = 1
     elif plottype == 'RK':
@@ -224,7 +219,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
             ('<Rmue>(B0->K*ll)', 1.1, 6.0),
             ]
         texlabels = [
-            r'$R_K^{[0.045, 1.1]}$',
+            r'$R_K^{[0.045,1.1]}$',
             r'$R_K^{[1.1,6]}$',
             r'$R_{K^*}^{[0.045, 1.1]}$',
             r'$R_{K^*}^{[1.1, 6]}$',
@@ -320,7 +315,7 @@ Plots the uncertainty intervals for several observables in NP scenarios, SM and 
     ax.set_xticks(np.linspace(0.5, nobs-0.5, nobs))
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
-    ax.set_xticklabels(texlabels + [''])
+    ax.set_xticklabels(texlabels)
     if legend == 1:
         plt.legend(fontsize=14, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
     elif legend > 1:
