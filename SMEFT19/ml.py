@@ -92,9 +92,9 @@ Plots the predicted likelihod vs the actual likelihood and computes their regres
 
     plt.figure(figsize=(5, 5))
     plt.scatter(y, pred, s=0.7)
-    plt.plot([20, 60], [20, 60], c='black', lw=1)
-    plt.xlim([20, 60])
-    plt.ylim([20, 60])
+    plt.plot([20, 50], [20, 50], c='black', lw=1)
+    plt.xlim([20, 50])
+    plt.ylim([20, 50])
     plt.xlabel(r'Actual $\Delta \chi^2_\mathrm{SM}$', fontsize=16)
     plt.ylabel(r'Predicted $\Delta \chi^2_\mathrm{SM}$', fontsize=16)
     plt.xticks(fontsize=16)
