@@ -22,7 +22,7 @@ xgboost = "^1.7.3"
 llvmlite = "^0.39"
 flavio = {git = "https://github.com/Jorge-Alda/flavio.git", rev = "jan2023"}
 smelli = {git = "https://github.com/Jorge-Alda/smelli.git", rev = "jan2023"}
-parscanning = {git = "https://github.com/Jorge-Alda/parscanning.git", rev = "v1.0"}
+parscanning = {git = "https://github.com/Jorge-Alda/parscanning.git"}
 texfig = {git = "https://github.com/Jorge-Alda/texfig.git"}
 
 

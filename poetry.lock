@@ -627,8 +627,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/Jorge-Alda/parscanning.git"
-reference = "v1.0"
-resolved_reference = "6f1ce79b1b38e9372f1472cb5bab547c917c379e"
+reference = "HEAD"
+resolved_reference = "f11963973732c56c6fceef9ee0c6f9f9d21e171b"
 
 [[package]]
 name = "particle"
@@ -1246,4 +1246,4 @@ scikit-learn = ["scikit-learn"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "e70dd93dd099775e1ee2ec4a1323c60aff4e9e73942d7b1454af3b67ea16c218"
+content-hash = "544ca736c981cad9f969893913c52888063dbf44473808a013b1bc222569b543"
