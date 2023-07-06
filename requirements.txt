@@ -4,7 +4,7 @@ wilson==2.0
 -e git+https://github.com/Jorge-Alda/smelli.git@custom_measurements#egg=smelli
 -e git+https://github.com/Jorge-Alda/parscanning.git@v1.0#egg=parscanning
 numpy==1.22
-scipy==1.4.1
+scipy==1.10.0
 matplotlib==3.2.1
 iminuit==1.3.10
 pandas==1.0.3
