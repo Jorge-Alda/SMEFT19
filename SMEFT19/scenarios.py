@@ -274,6 +274,21 @@ and then is rotated to the mass basis. Couplings to the first generation not neg
     '''
     return massrotation([x[0], x[0], x[1], x[2], x[3], x[4]])
 
+def rotBIII(x):
+    r'''
+Scenario BIII\: NP affects only the third generation in the interaction basis
+and then is rotated to the mass basis. Only the quark sector gets rotated. C1 and C3 can be different.
+
+:Arguments:
+
+    - x\: Coordinates in the parameter space of the fit. x = [C1, C3, beta_q].
+
+:Returns:
+
+    - A dictionary containing the SMEFT Wilson Coefficients of the fit.
+    '''
+    return massrotation([x[0], x[1], 0, 0, 0, x[4]])
+
 def rot2lqU1(x, M=1.5):
     r'''
 Coupling of the U(1) leptoquarks obtained from the Wilson Coefficients.
