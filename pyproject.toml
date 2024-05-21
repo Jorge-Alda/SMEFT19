@@ -20,8 +20,8 @@ PyYAML = "^6.0"
 scikit-learn = "^1.2.0"
 xgboost = "^1.7.3"
 llvmlite = "^0.39"
-flavio = {git = "https://github.com/Jorge-Alda/flavio.git", rev = "jan2023"}
-smelli = {git = "https://github.com/Jorge-Alda/smelli.git", rev = "jan2023"}
+flavio = {git = "https://github.com/Jorge-Alda/flavio.git", rev = "may2024"}
+smelli = {git = "https://github.com/Jorge-Alda/smelli.git", rev = "may2024"}
 parscanning = {git = "https://github.com/Jorge-Alda/parscanning.git"}
 texfig = {git = "https://github.com/Jorge-Alda/texfig.git"}
 
