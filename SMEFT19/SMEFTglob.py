@@ -12,8 +12,9 @@ from flavio.statistics.functions import pull
 import smelli
 import yaml
 import SMEFT19
+from pathlib import Path
 
-gl = smelli.GlobalLikelihood()
+gl = smelli.GlobalLikelihood(exp_cov_folder = Path(__file__).parent.joinpath('cov_exp'))
 
 def restart_smelli(include_likelihoods=None, add_measurements=None,
                    remove_measurements=None, custom_likelihoods=None):
